@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="游戏设计新/游戏设计新.vcxproj" />
+  <Project Path="游戏设计新/游戏设计新.vcxproj" Id="85825e69-8226-40c1-97ba-844b1e39237c" />
 </Solution>

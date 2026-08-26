@@ -153,6 +153,8 @@ void DrawMap(int floor, int step) {
 		}
 		cout << endl;
 	}
+	cout << "目前在第" << floor << "层"<<endl;
+	cout << endl;
 	PrintMaphelp();
 }
 
