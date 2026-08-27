@@ -189,6 +189,10 @@ public:
 	bool GetIfHealFull() {
 		return (CurrentHeal == MaxHeal);
 	}
+	double GetDefendingDeveloping() {
+		return DefendingDeveloping;
+	}
+	//能量条与治疗条充能
 	void EnergyUp() {
 		if (!GetIfSkill()) {
 			CurrentEnergy++;
@@ -725,7 +729,7 @@ void RoundStart(int round, shared_ptr<Enemy> enemy) {
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
 		cout << "请选择本回合的行动：" << endl;
 		cout << "1.攻击" << endl;
-		cout << "2.防御(不攻击且防御力提升至" << mycharacter.getLeastharm() << "倍)" << endl;
+		cout << "2.防御(不攻击且防御力提升至" << mycharacter.GetDefendingDeveloping() << "倍)" << endl;
 		cout << "3.释放技能";
 		if (!mycharacter.GetIfSkill()) {
 			cout << "(技能未充能满，无法释放)";
@@ -787,7 +791,9 @@ void RoundStart(int round, shared_ptr<Enemy> enemy) {
 				WaitForSeconds(2);
 			}
 			else {
-				cout << "请选择充能方向，输入1为技能条充能，输入2为治疗条充能：";
+				cout << "请选择充能方向："<<endl;
+				cout << "1.为能量条充能" << endl;
+				cout << "2.为治疗条充能" << endl;
 				int LegalEnergy[2] = { 1,2 };
 				int EnergyChoice;
 				EnergyChoice = Safecin(LegalEnergy, 2, false);
@@ -848,6 +854,7 @@ int main() {
 		}
 		thisfloor = floor;
 		DrawMap(floor, step);
+		cout << "当前符文为："<<endl;
 		cout << Rune[RuneNow] << endl;
 		cout << endl;
 		PrintMaphelp();
