@@ -17,19 +17,19 @@ using namespace std;
 //符文文本
 string Rune[12] = {
 	//通常(0~9)
-	"//死仇//我方和敌方的攻击力+30%。",
-	"//瘟疫//我方和敌方的攻击力-30%。",
-	"//崩溃//我方和敌方的防御力-50%。",
-	"//狂热//我方和敌方技能条所需能量-1",
-	"//暗市//该层的商店不再展示商品详细信息，但该层商店的售价-50%。",
-	"//迷雾//该层不再提前展示敌人技能信息，但可选择的技能+2."
-	"//繁荣//该层的商店售价+50%，但战斗后掉落藏品+1。",
-	"//荒芜//该层的商店售价-50%，但战斗后不再掉落藏品。",
-	"//贪婪//敌方攻击力+30%，但每次移动后额外获得一枚金币。",
-	"//救赎//在该层战斗死亡时可复活（仅限一次）,但该层战斗时防御力-30%。",
+	"//死仇：我方和敌方的攻击力+30%。//",
+	"//瘟疫：我方和敌方的攻击力-30%。//",
+	"//崩溃：我方和敌方的防御力-50%。//",
+	"//狂热：我方和敌方技能条所需能量-1//",
+	"//暗市：该层的商店不再展示商品详细信息，但该层商店的售价-50%。//",
+	"//迷雾：该层不再提前展示敌人技能信息，但可选择的技能+2。//",
+	"//繁荣：该层的商店售价+50%，但战斗后掉落藏品+1。//",
+	"//荒芜：该层的商店售价-50%，但战斗后不再掉落藏品。//",
+	"//贪婪：敌方攻击力+20%，但每次移动后金币+2。//",
+	"//救赎：在该层非boss关战斗死亡时可复活（仅限一次）,但该层战斗时防御力-30%。//",
 	//特殊(10~11)
-	"//希望//在该层每次移动后金币+2，攻击力+30%。",
-	"//绝望//所有敌人攻击力+20%，我方攻击力-20%。"
+	"//希望：在该层每次移动后金币+2，攻击力+30%。//",
+	"//绝望：所有敌人攻击力+20%，我方攻击力-20%。//"
 };
 void Refresh() {
 	cout << "\033[2J\033[H" << flush;
@@ -84,7 +84,182 @@ int Safecin(int legal[], int length, bool ifblank) {
 	}
 }
 //以下为主要运行程序
-
+class MyCharacter {
+public:
+	MyCharacter() = default;
+	//计算基础数值和当前数值
+	void CalculateMyNum() {
+		BasicMaxHP = InitialMaxHP * (1.0+BasicHPDevelopment);
+		BasicAttack = InitialAttack * (1.0 + BasicAttackDevelopment);
+		BasicDefense = InitialDefense * (1.0 + BasicDefenseDevelopment);
+		CurrentMaxHP = BasicMaxHP * (1.0 + CurrentHPDevelopment);
+		CurrentAttack = BasicAttack * (1.0 + CurrentAttackDevelopment);
+		CurrentDefense = BasicDefense * (1.0 + CurrentDefenseDevelopment);
+	}
+	//设置当前血量为当前最大血量
+	void SetCurrentHP() {
+		CurrentHP = CurrentMaxHP;
+	}
+	//获取当前数值
+	int GetCurrentHP() {
+		return CurrentHP;
+	}
+	int GetCurrentMaxHP() {
+		return CurrentMaxHP;
+	}
+	int GetCurrentAttack() {
+		return CurrentAttack;
+	}
+	int GetCurrentDefense() {
+		return CurrentDefense;
+	}
+	//获取当前其他数值
+	//能量
+	int GetCurrentEnergy() {
+		return CurrentEnergy;
+	}
+	int GetMaxEnergy() {
+		return MaxEnergy;
+	}
+	int GetInitialEnergy() {
+		return InitialEnergy;
+	}
+	//治疗条
+	int GetCurrentHeal() {
+		return CurrentHeal;
+	}
+	int GetMaxHeal() {
+		return MaxHeal;
+	}
+	int GetInitialHeal() {
+		return InitialHeal;
+	}
+	int GetHealHP() {
+		return HealHP;
+	}
+	//获取当前金币和等级
+	int GetCoins() {
+		return Coins;
+	}
+	int GetLevel() {
+		return Level;
+	}
+private:
+	//初始数值，仅开局选择buff时会改变
+	int InitialMaxHP=200;
+	int InitialAttack=80;
+	int InitialDefense=50;
+	//基础数值，为初始数值计算藏品加成与等级加成后的数值
+	int BasicMaxHP=200;
+	int BasicAttack=80;
+	int BasicDefense=50;
+	//当前数值，为基础数值计算其余buff/debuff加成后的数值
+	int CurrentMaxHP=200;
+	int CurrentAttack=80;
+	int CurrentDefense=50;
+	//藏品加成与等级加成的总加成
+	int BasicHPDevelopment=0;
+	int BasicAttackDevelopment=0;
+	int BasicDefenseDevelopment=0;
+	//其余buff/debuff加成的总加成
+	int CurrentHPDevelopment=0;
+	int CurrentAttackDevelopment=0;
+	int CurrentDefenseDevelopment=0;
+	//当前血量
+	int CurrentHP=200;
+	//能量
+	int CurrentEnergy=0;
+	int InitialEnergy = 0;
+	int MaxEnergy=3;
+	//治疗条
+	int CurrentHeal=0;
+	int InitialHeal = 0;
+	int MaxHeal=3;
+	//每剂治疗条的治疗量
+	int HealHP = 20;
+	//金币
+	int Coins = 0;
+	//等级
+	int Level = 1;
+};
+MyCharacter mycharacter;
+class Enemy {
+public:
+	Enemy(int hp,int atk,int dfs) : InitialMaxHP(hp), InitialAttack(atk), InitialDefense(dfs) {
+		CalculateMyNum();
+		SetCurrentHP();
+	}
+	Enemy() = default;
+	//计算基础数值和当前数值
+	void CalculateMyNum() {
+		BasicMaxHP = InitialMaxHP * (1.0 + BasicHPDevelopment);
+		BasicAttack = InitialAttack * (1.0 + BasicAttackDevelopment);
+		BasicDefense = InitialDefense * (1.0 + BasicDefenseDevelopment);
+		CurrentMaxHP = BasicMaxHP * (1.0 + CurrentHPDevelopment);
+		CurrentAttack = BasicAttack * (1.0 + CurrentAttackDevelopment);
+		CurrentDefense = BasicDefense * (1.0 + CurrentDefenseDevelopment);
+	}
+	//设置当前血量为当前最大血量
+	void SetCurrentHP() {
+		CurrentHP = CurrentMaxHP;
+	}
+	//获取当前数值
+	int GetCurrentHP() {
+		return CurrentHP;
+	}
+	int GetCurrentMaxHP() {
+		return CurrentMaxHP;
+	}
+	int GetCurrentAttack() {
+		return CurrentAttack;
+	}
+	int GetCurrentDefense() {
+		return CurrentDefense;
+	}
+	//获取能量
+	int GetCurrentEnergy() {
+		return CurrentEnergy;
+	}
+	int GetMaxEnergy() {
+		return MaxEnergy;
+	}
+	int GetInitialEnergy() {
+		return InitialEnergy;
+	}
+	//获取暴击率
+	int GetCriticalRate() {
+		return CriticalRate;
+	}
+private:
+	//初始数值
+	int InitialMaxHP = 0;
+	int InitialAttack = 0;
+	int InitialDefense = 0;
+	//基础数值，为初始数值计算藏品加成与等级加成后的数值
+	int BasicMaxHP = 0;
+	int BasicAttack = 0;
+	int BasicDefense = 0;
+	//当前数值，为基础数值计算其余buff/debuff加成后的数值
+	int CurrentMaxHP = 0;
+	int CurrentAttack = 0;
+	int CurrentDefense = 0;
+	//藏品加成与等级加成的总加成
+	int BasicHPDevelopment = 0;
+	int BasicAttackDevelopment = 0;
+	int BasicDefenseDevelopment = 0;
+	//其余buff/debuff加成的总加成
+	int CurrentHPDevelopment = 0;
+	int CurrentAttackDevelopment = 0;
+	int CurrentDefenseDevelopment = 0;
+	//当前血量
+	int CurrentHP = 100;
+	//能量
+	int CurrentEnergy = 0;
+	int InitialEnergy = 0;
+	int MaxEnergy = 5;
+	//暴击率
+	int CriticalRate = 0.3;
+};
 vector<vector<string>> Themap(8, vector<string>(100, " "));
 void DrawBlock(int blocktype, int line) {
 	if (blocktype != 5 && blocktype != 0) {//blocktype为5为双节点，blocktype为0为已经过节点
@@ -223,7 +398,7 @@ void SupplementDigitNumber(string &num) {
 int Battlerow = 20;
 int Battlecol = 90;
 vector<vector<string>> Battlemap(Battlerow, vector<string>(Battlecol, " "));
-void PrintBalttleGround(int *myData, int *enemyData,int round) {
+void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 90; j++) {
 			Battlemap[i][j] = " ";	
@@ -386,11 +561,26 @@ void PrintBalttleGround(int *myData, int *enemyData,int round) {
 	Battlemap[16][76] = "n";
 	Battlemap[16][77] = "d";
 	Battlemap[16][78] = to_string(round);
-	for(int i=7;i<=11;i++) {
-		Battlemap[i][i+32] = "*";
+	//以下为回合指示器（箭头图案）
+	if (turn == 1) {
+		//我方回合
+		for (int i = 7;i <= 10;i++) {
+			Battlemap[i][i + 32] = "\\";
+		}
+		for (int i = 7;i <= 10;i++) {
+			Battlemap[i][54 - i] = "/";
+		}
+		Battlemap[11][43] = "|";
 	}
-	for(int i=7;i<=10;i++) {
-		Battlemap[i][54-i] = "*";
+	else {
+		//敌方回合
+		for (int i = 8;i <= 11;i++) {
+			Battlemap[i][i+36] = "\\";
+		}
+		for (int i = 8;i <= 11;i++) {
+			Battlemap[i][50-i] = "/";
+		}
+		Battlemap[7][43] = "|";
 	}
 	//打印地图
 	for(int i = 0; i < Battlerow; i++) {
@@ -419,10 +609,48 @@ void PrintEventGround(int Type) {
 		cout << endl;
 	}
 }
-int MydataWhenBattle[6] = { 100, 100, 0, 3, 0, 3 };
-//血量，血量上限，能量，能量上限，治疗条，治疗条上限
-int EnemydataWhenBattle[4] = { 100, 100, 0, 5 };
-//血量，血量上限，能量，能量上限
+int MydataWhenBattle[6] = { 0 };
+int EnemydataWhenBattle[4] = { 0 };
+//回合开始函数
+void RoundStart(int round, shared_ptr<Enemy> enemy) {
+	MydataWhenBattle[0] = mycharacter.GetCurrentHP();
+	MydataWhenBattle[1] = mycharacter.GetCurrentMaxHP();
+	MydataWhenBattle[2] = mycharacter.GetCurrentEnergy();
+	MydataWhenBattle[3] = mycharacter.GetMaxEnergy();
+	MydataWhenBattle[4] = mycharacter.GetCurrentHeal();
+	MydataWhenBattle[5] = mycharacter.GetMaxHeal();
+	//血量，血量上限，能量，能量上限，治疗条，治疗条上限
+	EnemydataWhenBattle[0] = enemy->GetCurrentHP();
+	EnemydataWhenBattle[1] = enemy->GetCurrentMaxHP();
+	EnemydataWhenBattle[2] = enemy->GetCurrentEnergy();
+	EnemydataWhenBattle[3] = enemy->GetMaxEnergy();
+	//血量，血量上限，能量，能量上限
+	//我方回合
+	PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round,1);
+	cin.ignore();
+	//敌方回合
+	PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round,2);
+}
+//战斗开始函数
+void BattleStart(int floor,bool isBoss) {
+	int round = 1;
+	shared_ptr<Enemy> enemy = make_shared<Enemy>();
+	switch (floor) {
+	case 1:
+		if (isBoss) {
+			enemy = make_shared<Enemy>(2000, 100, 40);
+		}
+		else {
+			enemy = make_shared<Enemy>(500, 80, 20);
+		}
+		break;
+	}
+	while (1) {
+		RoundStart(round, enemy);
+		round++;
+		cin.ignore();
+	}
+}
 int main() {
 	int floor = 1;
 	int	step = 0;
@@ -442,12 +670,12 @@ int main() {
 		case 1://普通战斗
 			cout << "进入战斗节点，按回车继续..." << endl;
 			cin.ignore();
-			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, 1);
+			BattleStart(floor, false);
 			break;
 		case 4://boss战斗
 			cout << "进入Boss战斗节点，按回车继续..." << endl;
 			cin.ignore();
-			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, 1);
+			BattleStart(floor, true);
 			break;
 		case 2://非战斗节点
 			cout << "进入未知事件节点，按回车继续..." << endl;
@@ -466,7 +694,7 @@ int main() {
 				int legal[2] = { 1,2 };
 				choice=Safecin(legal, 2, false);
 				if (choice == 1) {
-					PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, 1);
+					BattleStart(floor, false);
 					break;
 				}
 				else if (choice == 2) {
