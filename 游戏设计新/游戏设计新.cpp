@@ -1,6 +1,7 @@
 ﻿/*给小组成员：
 *使用Refresh()以全屏刷新
 *使用rm.getnum(min,max)以获得一定范围（闭区间）的随机int
+*使用rm.getSomeNum(min,max,k)以获得一定范围（闭区间）的k个不重复随机int，返回vector<int>
 *使用a=Safecin(legal,length,ifblank)以获得合法输入，
 *legal为合法数字数组(int数组)，length为数组长度(int)，ifblank为是否允许空输入(bool值)
 */
@@ -9,22 +10,26 @@
 #include<vector>
 #include<memory>
 #include<string>
+#include<numeric>
+#include<algorithm>
+#include<stdexcept>
 using namespace std;
 //符文文本
-string Rune[11] = {
-	//通常(0~8)
-	"死仇：我方和敌方的攻击力+30%。",
-	"虚弱：我方和敌方的攻击力-30%。",
-	"脆弱：我方和敌方的防御力-50%。",
-	"亢奋：我方和敌方技能条所需能量-1",
-	"迷雾：该层的商店不再展示商品详细信息，但该层商店的售价-50%。",
-	"金融：该层的商店售价+50%，但战斗后掉落藏品+1。",
-	"萧条：该层的商店售价-50%，但战斗后不再掉落藏品。",
-	"狂暴：敌方攻击力+30%，但每次移动后额外获得一枚金币。",
-	"教堂：在该层战斗死亡时可复活（仅限一次）,但该层战斗时防御力-30%。",
-	//特殊(9~10)
-	"希望：在该层每次移动后金币+2，攻击力+30%。",
-	"绝望：所有敌人攻击力+20%，我方攻击力-20%。"
+string Rune[12] = {
+	//通常(0~9)
+	"//死仇//我方和敌方的攻击力+30%。",
+	"//瘟疫//我方和敌方的攻击力-30%。",
+	"//崩溃//我方和敌方的防御力-50%。",
+	"//狂热//我方和敌方技能条所需能量-1",
+	"//暗市//该层的商店不再展示商品详细信息，但该层商店的售价-50%。",
+	"//迷雾//该层不再提前展示敌人技能信息，但可选择的技能+2."
+	"//繁荣//该层的商店售价+50%，但战斗后掉落藏品+1。",
+	"//荒芜//该层的商店售价-50%，但战斗后不再掉落藏品。",
+	"//贪婪//敌方攻击力+30%，但每次移动后额外获得一枚金币。",
+	"//救赎//在该层战斗死亡时可复活（仅限一次）,但该层战斗时防御力-30%。",
+	//特殊(10~11)
+	"//希望//在该层每次移动后金币+2，攻击力+30%。",
+	"//绝望//所有敌人攻击力+20%，我方攻击力-20%。"
 };
 void Refresh() {
 	cout << "\033[2J\033[H" << flush;
@@ -36,10 +41,17 @@ private:
 public:
 	RandomManager() :rd(random_device{}()) {}
 	RandomManager(const RandomManager&) = delete;
-	RandomManager operator=(const RandomManager&) = delete;
+	RandomManager& operator=(const RandomManager&) = delete;
 	int getnum(int min, int max) {
 		uniform_int_distribution<int> dist(min, max);
 		return dist(rd);
+	}
+	vector<int> getSomeNum(int min, int max, int k) {
+		int total = max - min + 1;
+		vector<int> pool(total);
+		iota(pool.begin(), pool.end(), min);
+		shuffle(pool.begin(), pool.end(), rd);
+		return vector<int>(pool.begin(), pool.begin() + k);
 	}
 };
 RandomManager rm;
@@ -201,8 +213,6 @@ void DrawMap(int floor, int step) {
 		cout << endl;
 	}
 	cout << "目前在第" << floor << "层"<<endl;
-	cout << endl;
-	PrintMaphelp();
 	cout << endl;
 }
 void SupplementDigitNumber(string &num) {
@@ -409,12 +419,11 @@ void PrintEventGround(int Type) {
 		cout << endl;
 	}
 }
-int MydataWhenBattle[6] = { 120, 300, 2, 3, 1, 3 };
+int MydataWhenBattle[6] = { 100, 100, 0, 3, 0, 3 };
 //血量，血量上限，能量，能量上限，治疗条，治疗条上限
-int EnemydataWhenBattle[4] = { 50, 100, 2, 5 };
+int EnemydataWhenBattle[4] = { 100, 100, 0, 5 };
 //血量，血量上限，能量，能量上限
 int main() {
-	RandomManager rm;
 	int floor = 1;
 	int	step = 0;
 	int RuneNow = -1;
@@ -425,8 +434,9 @@ int main() {
 		}
 		thisfloor = floor;
 		DrawMap(floor, step);
-		cout << "触发了符文" << endl;
 		cout << Rune[RuneNow] << endl;
+		cout << endl;
+		PrintMaphelp();
 		cout << endl;
 		switch (Maptype[step]) {
 		case 1://普通战斗
