@@ -1,4 +1,10 @@
-﻿#include<iostream>
+﻿/*给小组成员：
+*使用Refresh()以全屏刷新
+*使用rm.getnum(min,max)以获得一定范围（闭区间）的随机int
+*使用a=Safecin(legal,length,ifblank)以获得合法输入，
+*legal为合法数字数组(int数组)，length为数组长度(int)，ifblank为是否允许空输入(bool值)
+*/
+#include<iostream>
 #include<random>
 #include<vector>
 #include<memory>
@@ -20,12 +26,6 @@ string Rune[11] = {
 	"希望：在该层每次移动后金币+2，攻击力+30%。",
 	"绝望：所有敌人攻击力+20%，我方攻击力-20%。"
 };
-/*给小组成员：
-*使用Refresh()以全屏刷新
-*使用rm.getnum(min,max)以获得一定范围（闭区间）的随机int
-*使用a=Safecin(legal,length,ifblank)以获得合法输入，
-*legal为合法数字数组(int数组)，length为数组长度(int)，ifblank为是否允许空输入(bool值)
-*/
 void Refresh() {
 	cout << "\033[2J\033[H" << flush;
 }
@@ -390,16 +390,12 @@ void PrintBalttleGround(int *myData, int *enemyData,int round) {
 		cout << endl;
 	}
 }
-void PrintEventGround() {
+void PrintEventGround(int Type) {
 	Refresh();
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 90; j++) {
 			Battlemap[i][j] = " ";
 		}
-	}
-	for (int i = 0; i < Battlerow; i++) {
-		Battlemap[i][0] = "#";
-		Battlemap[i][Battlecol - 1] = "#";
 	}
 	for (int j = 0; j < Battlecol; j++) {
 		Battlemap[0][j] = "#";
@@ -418,11 +414,20 @@ int MydataWhenBattle[6] = { 120, 300, 2, 3, 1, 3 };
 int EnemydataWhenBattle[4] = { 50, 100, 2, 5 };
 //血量，血量上限，能量，能量上限
 int main() {
+	RandomManager rm;
 	int floor = 1;
 	int	step = 0;
-	int Rune = -1;
+	int RuneNow = -1;
+	int thisfloor = 0;
 	while (1) {
+		if (thisfloor != floor) {
+			RuneNow = rm.getnum(0, 8);
+		}
+		thisfloor = floor;
 		DrawMap(floor, step);
+		cout << "触发了符文" << endl;
+		cout << Rune[RuneNow] << endl;
+		cout << endl;
 		switch (Maptype[step]) {
 		case 1://普通战斗
 			cout << "进入战斗节点，按回车继续..." << endl;
@@ -437,15 +442,15 @@ int main() {
 		case 2://非战斗节点
 			cout << "进入未知事件节点，按回车继续..." << endl;
 			cin.ignore();
-			PrintEventGround();
+			PrintEventGround(2);
 			break;
 		case 3://商店节点
 			cout << "进入商店节点，按回车继续..." << endl;
 			cin.ignore();
-			PrintEventGround();
+			PrintEventGround(3);
 			break;
 		case 5://双节点
-			cout << "进入双节点，请选择节点。输入1以选择战斗节点，输入2以选择未知事件节点..." << endl;
+			cout << "进入双节点，请选择节点。输入1以选择战斗节点，输入2以选择未知事件节点：" << endl;
 			while (1) {
 				int choice=0;
 				int legal[2] = { 1,2 };
@@ -455,7 +460,7 @@ int main() {
 					break;
 				}
 				else if (choice == 2) {
-					PrintEventGround();
+					PrintEventGround(2);
 					break;
 				}
 			}
