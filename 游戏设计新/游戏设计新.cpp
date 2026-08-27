@@ -3,7 +3,8 @@
 *使用rm.getnum(min,max)以获得一定范围（闭区间）的随机int
 *使用rm.getSomeNum(min,max,k)以获得一定范围（闭区间）的k个不重复随机int，返回vector<int>
 *使用a=Safecin(legal,length,ifblank)以获得合法输入，
-*legal为合法数字数组(int数组)，length为数组长度(int)，ifblank为是否允许空输入(bool值)
+ legal为合法数字数组(int数组)，length为数组长度(int)，ifblank为是否允许空输入(bool值)
+*使用WaitForSeconds(second)以等待特定秒数(double)
 */
 #include<iostream>
 #include<random>
@@ -13,23 +14,25 @@
 #include<numeric>
 #include<algorithm>
 #include<stdexcept>
+#include<thread>   
+#include<chrono>
 using namespace std;
 //符文文本
 string Rune[12] = {
 	//通常(0~9)
-	"//死仇：我方和敌方的攻击力+30%。//",
-	"//瘟疫：我方和敌方的攻击力-30%。//",
-	"//崩溃：我方和敌方的防御力-50%。//",
+	"//死仇：我方和敌方的攻击力+30%//",
+	"//瘟疫：我方和敌方的攻击力-30%//",
+	"//崩溃：我方和敌方的防御力-50%//",
 	"//狂热：我方和敌方技能条所需能量-1//",
-	"//暗市：该层的商店不再展示商品详细信息，但该层商店的售价-50%。//",
-	"//迷雾：该层不再提前展示敌人技能信息，但可选择的技能+2。//",
-	"//繁荣：该层的商店售价+50%，但战斗后掉落藏品+1。//",
-	"//荒芜：该层的商店售价-50%，但战斗后不再掉落藏品。//",
-	"//贪婪：敌方攻击力+20%，但每次移动后金币+2。//",
-	"//救赎：在该层非boss关战斗死亡时可复活（仅限一次）,但该层战斗时防御力-30%。//",
+	"//暗市：该层的商店不再展示商品详细信息，但该层商店的售价-50%//",
+	"//迷雾：该层不再提前展示敌人技能信息，但可选择的技能+2//",
+	"//繁荣：该层的商店售价+50%，但战斗后掉落藏品+1//",
+	"//荒芜：该层的商店售价-50%，但战斗后不再掉落藏品//",
+	"//贪婪：敌方攻击力+20%，但每次移动后金币+2//",
+	"//救赎：在该层非boss关战斗死亡时可复活（仅限一次）,但该层战斗时防御力-30%//",
 	//特殊(10~11)
-	"//希望：在该层每次移动后金币+2，攻击力+30%。//",
-	"//绝望：所有敌人攻击力+20%，我方攻击力-20%。//"
+	"//希望：在该层每次移动后金币+2，攻击力+30%//",
+	"//绝望：所有敌人攻击力+20%，我方攻击力-20%//"
 };
 void Refresh() {
 	cout << "\033[2J\033[H" << flush;
@@ -83,7 +86,15 @@ int Safecin(int legal[], int length, bool ifblank) {
 		if (ifblank) cout << "(或者回车以继续)";
 	}
 }
+//以下为等待时间函数
+void WaitForSeconds(double Time) {
+	int second = Time * 1000;
+	this_thread::sleep_for(chrono::milliseconds(second));
+}
+
+
 //以下为主要运行程序
+class Enemy;
 class MyCharacter {
 public:
 	MyCharacter() = default;
@@ -144,6 +155,50 @@ public:
 	int GetLevel() {
 		return Level;
 	}
+	//被攻击函数
+	void BeingAttacked(int damage) {
+		int actualDamage = damage - CurrentDefense;
+		if (actualDamage < damage*leastHarm) {
+			actualDamage = damage*leastHarm;
+		}
+		CurrentHP -= actualDamage;
+		if (CurrentHP < 0) {
+			CurrentHP = 0;
+			IsAlive = false;
+		}
+	}
+	//攻击敌人函数，具体实现在Enemy类定义后
+	void AttackEnemy(shared_ptr<Enemy> enemy);
+	//获取存活状态
+	bool GetIsAlive() {
+		return IsAlive;
+	}
+	//获取保底伤害倍数
+	int getLeastharm() {
+		return leastHarm * 10;
+	}
+	//获取技能状态
+	bool GetIfSkill() {
+		return (CurrentEnergy == MaxEnergy);
+	}
+	//获取是否可以治疗（治疗条不为空）
+	bool GetIfHeal() {
+		return (CurrentHeal != 0);
+	}
+	//获取治疗条是否满
+	bool GetIfHealFull() {
+		return (CurrentHeal == MaxHeal);
+	}
+	void EnergyUp() {
+		if (!GetIfSkill()) {
+			CurrentEnergy++;
+		}
+	}
+	void HealUp() {
+		if (!GetIfHealFull()) {
+			CurrentHeal++;
+		}
+	}
 private:
 	//初始数值，仅开局选择buff时会改变
 	int InitialMaxHP=200;
@@ -181,7 +236,14 @@ private:
 	int Coins = 0;
 	//等级
 	int Level = 1;
+	//存活状态
+	bool IsAlive = true;
+	//防御手段防御力加成
+	double DefendingDeveloping = 2;
+	//保底伤害比例
+	double leastHarm = 0.1;
 };
+
 MyCharacter mycharacter;
 class Enemy {
 public:
@@ -230,6 +292,27 @@ public:
 	int GetCriticalRate() {
 		return CriticalRate;
 	}
+	//被攻击函数
+	void BeingAttacked(int damage) {
+		int actualDamage = damage - CurrentDefense;
+		if (actualDamage < damage * 0.1) {
+			actualDamage = damage * 0.1;
+		}
+		CurrentHP -= actualDamage;
+		if (CurrentHP < 0) {
+			CurrentHP = 0;
+			IsAlive = false;
+		}
+	}
+	//攻击我方函数
+	void AttackPlayer(shared_ptr<MyCharacter> player) {
+		int damage = CurrentAttack;
+		player->BeingAttacked(damage);
+	}
+	//获取存活状态
+	bool GetIsAlive() {
+		return IsAlive;
+	}
 private:
 	//初始数值
 	int InitialMaxHP = 0;
@@ -259,7 +342,13 @@ private:
 	int MaxEnergy = 5;
 	//暴击率
 	int CriticalRate = 0.3;
+	//存活状态
+	bool IsAlive = true;
 };
+void MyCharacter::AttackEnemy(shared_ptr<Enemy> enemy) {
+	int damage = CurrentAttack;
+	enemy->BeingAttacked(damage);
+}
 vector<vector<string>> Themap(8, vector<string>(100, " "));
 void DrawBlock(int blocktype, int line) {
 	if (blocktype != 5 && blocktype != 0) {//blocktype为5为双节点，blocktype为0为已经过节点
@@ -611,8 +700,8 @@ void PrintEventGround(int Type) {
 }
 int MydataWhenBattle[6] = { 0 };
 int EnemydataWhenBattle[4] = { 0 };
-//回合开始函数
-void RoundStart(int round, shared_ptr<Enemy> enemy) {
+//更新当前数值状态
+void UpdateData(shared_ptr<Enemy> enemy) {
 	MydataWhenBattle[0] = mycharacter.GetCurrentHP();
 	MydataWhenBattle[1] = mycharacter.GetCurrentMaxHP();
 	MydataWhenBattle[2] = mycharacter.GetCurrentEnergy();
@@ -625,8 +714,105 @@ void RoundStart(int round, shared_ptr<Enemy> enemy) {
 	EnemydataWhenBattle[2] = enemy->GetCurrentEnergy();
 	EnemydataWhenBattle[3] = enemy->GetMaxEnergy();
 	//血量，血量上限，能量，能量上限
+}
+//回合开始函数
+void RoundStart(int round, shared_ptr<Enemy> enemy) {
+	UpdateData(enemy);
 	//我方回合
-	PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round,1);
+	int RoundChoice = 0;
+	int LegalRoundChoice[4] = { 1,2,3,4 };
+	while (1) {
+		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
+		cout << "请选择本回合的行动：" << endl;
+		cout << "1.攻击" << endl;
+		cout << "2.防御(不攻击且防御力提升至" << mycharacter.getLeastharm() << "倍)" << endl;
+		cout << "3.释放技能";
+		if (!mycharacter.GetIfSkill()) {
+			cout << "(技能未充能满，无法释放)";
+		}
+		else {
+			cout << "(///技能已充能满，可以释放///)";
+		}
+		cout << endl;
+		cout << "4.治疗";
+		if (!mycharacter.GetIfHeal()) {
+			cout << "(治疗条为空，无法治疗)";
+		}
+		else {
+			cout << "(将消耗所有治疗条进行治疗，每点治疗条回复" << mycharacter.GetHealHP() << "点生命值)";
+		}
+		cout << endl;
+		RoundChoice=Safecin(LegalRoundChoice, 4, false);
+		if (RoundChoice == 1 || RoundChoice == 2) {
+			break;
+		}
+		else if (RoundChoice == 3) {
+			if (mycharacter.GetIfSkill()) {
+				break;
+			}
+			else {
+				cout << "技能未充能满，无法释放!" << endl;
+				cout << "请重新选择行动。" << endl;
+				cout << "2秒后刷新界面...";
+				WaitForSeconds(1);
+				cout << "\r\033[K" << "1秒后刷新界面..." << flush;
+				WaitForSeconds(1);
+			}
+		}
+		else {
+			if (mycharacter.GetIfHeal()) {
+				break;
+			}
+			else {
+				cout << "治疗条为空，无法治疗!" << endl;
+				cout << "请重新选择行动。"<<endl;
+				cout << "2秒后刷新界面...";
+				WaitForSeconds(1);
+				cout << "\r\033[K" << "1秒后刷新界面..." << flush;
+				WaitForSeconds(1);
+			}
+		}
+	}
+	//选择攻击
+	if (RoundChoice == 1 || RoundChoice == 2) {
+		if (!(mycharacter.GetIfHealFull() && mycharacter.GetIfSkill())){
+			if (mycharacter.GetIfHealFull()) {
+				mycharacter.EnergyUp();
+				cout << "治疗条已满，已自动为能量条充能。(2秒后继续)";
+				WaitForSeconds(2);
+			}
+			else if (mycharacter.GetIfSkill()) {
+				mycharacter.HealUp();
+				cout << "能量条已满，已自动为治疗条充能。(2秒后继续)";
+				WaitForSeconds(2);
+			}
+			else {
+				cout << "请选择充能方向，输入1为技能条充能，输入2为治疗条充能：";
+				int LegalEnergy[2] = { 1,2 };
+				int EnergyChoice;
+				EnergyChoice = Safecin(LegalEnergy, 2, false);
+				if (EnergyChoice == 1) {
+					mycharacter.EnergyUp();
+				}
+				else {
+					mycharacter.HealUp();
+				}
+			}
+		}
+		else {
+			cout << "治疗条与能量条均已满，无法充能。(2秒后继续)";
+			WaitForSeconds(2);
+		}
+	}
+	if (RoundChoice == 1) {
+		int EnemyHP0 = enemy->GetCurrentHP();
+		mycharacter.AttackEnemy(enemy);
+		UpdateData(enemy);
+		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
+		int Harm=EnemyHP0- enemy->GetCurrentHP();
+		cout << "敌方受到了 " << Harm << " 点伤害！"<<endl;
+	}
+	cout << "按回车以进入敌方回合...";
 	cin.ignore();
 	//敌方回合
 	PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round,2);
