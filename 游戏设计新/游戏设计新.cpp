@@ -157,12 +157,197 @@ void DrawMap(int floor, int step) {
 	cout << endl;
 	PrintMaphelp();
 }
-
+void SupplementDigitNumber(string &num) {
+	while (num.length() < 3) {
+		num = "0" + num;
+	}
+}
+int Battlerow = 20;
+int Battlecol = 90;
+vector<vector<string>> Battlemap(Battlerow, vector<string>(Battlecol, " "));
+void PrintBalttleGround(int *myData, int *enemyData,int round) {
+	string myhp = to_string(myData[0]);
+	string myHP = to_string(myData[1]);
+	string enemyhp = to_string(enemyData[0]);
+	string enemyHP = to_string(enemyData[1]);
+	SupplementDigitNumber(myhp);
+	SupplementDigitNumber(myHP);
+	SupplementDigitNumber(enemyhp);
+	SupplementDigitNumber(enemyHP);
+	double MyHpPercent = (double)myData[0] / myData[1];
+	double EnemyHpPercent = (double)enemyData[0] / enemyData[1];
+	double MyEnergyPercent = (double)myData[2] / myData[3];
+	int MyEnergyBarLength = (int)(MyEnergyPercent * 19);
+	double Myhealpercent = (double)myData[4] / myData[5];
+	int MyhealBarLength = (int)(Myhealpercent * 19);
+	double EnemyEnergyPercent = (double)enemyData[2] / enemyData[3];
+	int EnemyEnergyBarLength = (int)(EnemyEnergyPercent * 19);
+	int MyHpBarLength = (int)(MyHpPercent * 28);
+	int EnemyHpBarLength = (int)(EnemyHpPercent * 28);
+	Refresh();
+	for (int i = 0; i < Battlerow; i++) {
+		Battlemap[i][0] = "#";
+		Battlemap[i][Battlecol - 1] = "#";
+	}
+	for (int j = 0; j < Battlecol; j++) {
+		Battlemap[0][j] = "#";
+		Battlemap[Battlerow - 1][j] = "#";
+	}
+	Battlemap[1][40] = "M";
+	Battlemap[1][41] = "y";
+	Battlemap[1][42] = "C";
+	Battlemap[1][43] = "h";
+	Battlemap[1][44] = "a";
+	Battlemap[1][45] = "r";
+	Battlemap[1][46] = "a";
+	Battlemap[1][47] = "c";
+	Battlemap[1][48] = "t";
+	Battlemap[1][49] = "e";
+	Battlemap[1][50] = "r";
+	Battlemap[18][43] = "E";
+	Battlemap[18][44] = "n";
+	Battlemap[18][45] = "e";
+	Battlemap[18][46] = "m";
+	Battlemap[18][47] = "y";
+	//以下为我方血量条位置
+	for (int i = 2;i <= 4;i++) {
+		Battlemap[i][31] = "#";
+		Battlemap[i][60] = "#";
+	}
+	for(int j=32;j<=59;j++) {
+		Battlemap[2][j] = "-";
+		Battlemap[4][j] = "-";
+	}
+	for(int j=32;j<32+MyHpBarLength;j++) {
+		Battlemap[3][j] = "|";
+	}
+	Battlemap[5][40] = "H";
+	Battlemap[5][41] = "P";
+	Battlemap[5][42] = ":";
+	Battlemap[5][43] = myhp[0];
+	Battlemap[5][44] = myhp[1];
+	Battlemap[5][45] = myhp[2];
+	Battlemap[5][46] = "/";
+	Battlemap[5][47] = myHP[0];
+	Battlemap[5][48] = myHP[1];
+	Battlemap[5][49] = myHP[2];
+	//以下为我方能量条位置
+	for (int i = 2;i <= 4;i++) {
+		Battlemap[i][5] = "#";
+		Battlemap[i][25] = "#";
+	}
+	for (int j = 6;j <= 24;j++) {
+		Battlemap[2][j] = "-";
+		Battlemap[4][j] = "-";
+	}
+	Battlemap[5][11] = "E";
+	Battlemap[5][12] = "n";
+	Battlemap[5][13] = "e";
+	Battlemap[5][14] = "r";
+	Battlemap[5][15] = "g";
+	Battlemap[5][16] = "y";
+	Battlemap[5][17] = ":";
+	Battlemap[5][18] = to_string(myData[2]);
+	Battlemap[5][19] = "/";
+	Battlemap[5][20] = to_string(myData[3]);
+	for (int j = 6;j < 6 + MyEnergyBarLength;j++) {
+		Battlemap[3][j] = "|";
+	}
+	//以下为我方治疗条位置
+	for (int i = 2;i <= 4;i++) {
+		Battlemap[i][66] = "#";
+		Battlemap[i][86] = "#";
+	}
+	for (int j = 67;j <= 85;j++) {
+		Battlemap[2][j] = "-";
+		Battlemap[4][j] = "-";
+	}
+	Battlemap[5][73] = "H";
+	Battlemap[5][74] = "e";
+	Battlemap[5][75] = "a";
+	Battlemap[5][76] = "l";
+	Battlemap[5][77] = ":";
+	Battlemap[5][78] = to_string(myData[4]);
+	Battlemap[5][79] = "/";
+	Battlemap[5][80] = to_string(myData[5]);
+	for (int j = 67;j < 67 + MyhealBarLength;j++) {
+		Battlemap[3][j] = "|";
+	}
+	//以下为敌方血量条位置
+	for (int i = 15;i <= 17;i++) {
+		Battlemap[i][31] = "#";
+		Battlemap[i][60] = "#";
+	}
+	for(int j=32;j<=59;j++) {
+		Battlemap[15][j] = "-";
+		Battlemap[17][j] = "-";
+	}
+	for (int j = 32;j < 32 + EnemyHpBarLength;j++) {
+		Battlemap[16][j] = "|";
+	}
+	Battlemap[14][40] = "H";
+	Battlemap[14][41] = "P";
+	Battlemap[14][42] = ":";
+	Battlemap[14][43] = enemyhp[0];
+	Battlemap[14][44] = enemyhp[1];
+	Battlemap[14][45] = enemyhp[2];
+	Battlemap[14][46] = "/";
+	Battlemap[14][47] = enemyHP[0];
+	Battlemap[14][48] = enemyHP[1];
+	Battlemap[14][49] = enemyHP[2];
+	//以下为敌方能量条位置
+	for (int i = 15;i <= 17;i++) {
+		Battlemap[i][5] = "#";
+		Battlemap[i][25] = "#";
+	}
+	for (int j = 6;j <= 24;j++) {
+		Battlemap[15][j] = "-";
+		Battlemap[17][j] = "-";
+	}
+	Battlemap[14][11] = "E";
+	Battlemap[14][12] = "n";
+	Battlemap[14][13] = "e";
+	Battlemap[14][14] = "r";
+	Battlemap[14][15] = "g";
+	Battlemap[14][16] = "y";
+	Battlemap[14][17] = ":";
+	Battlemap[14][18] = to_string(enemyData[2]);
+	Battlemap[14][19] = "/";
+	Battlemap[14][20] = to_string(enemyData[3]);
+	for (int j = 6;j < 6 + EnemyEnergyBarLength;j++) {
+		Battlemap[16][j] = "|";
+	}
+	Battlemap[16][73] = "R";
+	Battlemap[16][74] = "o";
+	Battlemap[16][75] = "u";
+	Battlemap[16][76] = "n";
+	Battlemap[16][77] = "d";
+	Battlemap[16][78] = to_string(round);
+	for(int i=7;i<=11;i++) {
+		Battlemap[i][i+32] = "*";
+	}
+	for(int i=7;i<=10;i++) {
+		Battlemap[i][54-i] = "*";
+	}
+	//打印地图
+	for(int i = 0; i < Battlerow; i++) {
+		for(int j = 0; j < Battlecol; j++) {
+			cout << Battlemap[i][j];
+		}
+		cout << endl;
+	}
+}
+int MydataWhenBattle[6] = { 120, 200, 2, 3, 1, 3 };
+//血量，血量上限，能量，能量上限，治疗条，治疗条上限
+int EnemydataWhenBattle[4] = { 50, 100, 2, 5 };
+//血量，血量上限，能量，能量上限
 int main() {
 	int floor = 1;
 	int	step = 0;
+	
 	while (1) {
-		DrawMap(floor, step);
+		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle,1);
+		
 		cin.ignore();
 		step++;
 		if (step >= Maptype.size() && floor < 3) {
