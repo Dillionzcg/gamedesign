@@ -89,7 +89,7 @@ int Safecin(int legal[], int length, bool ifblank) {
 }
 //以下为等待时间函数
 void WaitForSeconds(double Time) {
-	int second = Time * 1000;
+	int second =(int) Time * 1000;
 	this_thread::sleep_for(chrono::milliseconds(second));
 }
 
@@ -158,8 +158,11 @@ public:
 		}
 	}
 	//设置当前血量为当前最大血量
-	void SetCurrentHP() {
+	void SetCurrentNum() {
 		CurrentHP = CurrentMaxHP;
+		CurrentHeal = InitialHeal;
+		CurrentEnergy = InitialEnergy;
+		IsAlive = true;
 	}
 	//获取当前数值
 	int GetCurrentHP() {
@@ -213,7 +216,7 @@ public:
 			actualDamage = damage*leastHarm;
 		}
 		CurrentHP -= actualDamage;
-		if (CurrentHP < 0) {
+		if (CurrentHP <= 0) {
 			CurrentHP = 0;
 			IsAlive = false;
 		}
@@ -254,6 +257,32 @@ public:
 			CurrentHeal++;
 		}
 	}
+	//消耗所有能量条或治疗条
+	void UsingEnergy() {
+		CurrentEnergy = 0;
+	}
+	void UsingHeal() {
+		CurrentHeal = 0;
+	}
+	//回复血量
+	void Heal_UsingHeal() {
+		int heal = CurrentHeal * HealHP;
+		if (CurrentHP + heal <= CurrentMaxHP) {
+			CurrentHP += heal;
+		}
+		else {
+			CurrentHP = CurrentMaxHP;
+		}
+		UsingHeal();
+	}
+	void Heal(int heal) {
+		if (CurrentHP + heal <= CurrentMaxHP) {
+			CurrentHP += heal;
+		}
+		else {
+			CurrentHP = CurrentMaxHP;
+		}
+	}
 private:
 	//初始数值，仅开局选择buff时会改变
 	int InitialMaxHP=200;
@@ -289,7 +318,7 @@ private:
 	int InitialHeal = 0;
 	int MaxHeal=3;
 	//每剂治疗条的治疗量
-	int HealHP = 20;
+	int HealHP = 30;
 	//金币
 	int Coins = 0;
 	//等级
@@ -365,6 +394,9 @@ public:
 	int GetCriticalRate() {
 		return CriticalRate;
 	}
+	double GetCriticalHarm() {
+		return CriticalHarm;
+	}
 	//被攻击函数
 	void BeingAttacked(int damage, vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
 		CalculateMyNum(RoundBuffGroup);
@@ -373,20 +405,42 @@ public:
 			actualDamage = damage * 0.1;
 		}
 		CurrentHP -= actualDamage;
-		if (CurrentHP < 0) {
+		if (CurrentHP <= 0) {
 			CurrentHP = 0;
 			IsAlive = false;
 		}
 	}
 	//攻击我方函数
-	void AttackPlayer(shared_ptr<MyCharacter> player, vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
+	bool AttackPlayer(MyCharacter& player, vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
 		CalculateMyNum(RoundBuffGroup);
-		int damage = CurrentAttack;
-		player->BeingAttacked(damage,RoundBuffGroup);
+		int NumforCritical = rm.getnum(1, 100);
+		bool IfCritical = (NumforCritical <= CriticalRate);
+		int damage=0;
+		if (IfCritical) {
+			damage = CurrentAttack*CriticalHarm;
+		}
+		else {
+			damage = CurrentAttack;
+		}
+		
+		player.BeingAttacked(damage,RoundBuffGroup);
+		return IfCritical;
 	}
 	//获取存活状态
 	bool GetIsAlive() {
 		return IsAlive;
+	}
+	bool GetIfSkill() {
+		return (CurrentEnergy == MaxEnergy);
+	}
+	//回复血量
+	void Heal(int heal) {
+		if (CurrentHP + heal <= CurrentMaxHP) {
+			CurrentHP += heal;
+		}
+		else {
+			CurrentHP = CurrentMaxHP;
+		}
 	}
 private:
 	//初始数值
@@ -418,8 +472,9 @@ private:
 	int CurrentEnergy = 0;
 	int InitialEnergy = 0;
 	int MaxEnergy = 5;
-	//暴击率
-	int CriticalRate = 30;
+	//暴击率与暴击伤害
+	int CriticalRate = 20;
+	double CriticalHarm = 2;
 	//存活状态
 	bool IsAlive = true;
 };
@@ -558,13 +613,14 @@ void DrawMap(int floor, int step) {
 	cout << "目前在第" << floor << "层"<<endl;
 	cout << endl;
 }
-void SupplementDigitNumber(string &num) {
-	while (num.length() < 3) {
+void SupplementDigitNumber(string &num,int digit) {
+	while (num.length() < digit) {
 		num = " " + num;
 	}
 }
 int Battlerow = 20;
 int Battlecol = 90;
+bool IfBattleIsOver = false;
 vector<vector<string>> Battlemap(Battlerow, vector<string>(Battlecol, " "));
 void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 	for (int i = 0; i < 20; i++) {
@@ -576,10 +632,10 @@ void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 	string myHP = to_string(myData[1]);
 	string enemyhp = to_string(enemyData[0]);
 	string enemyHP = to_string(enemyData[1]);
-	SupplementDigitNumber(myhp);
-	SupplementDigitNumber(myHP);
-	SupplementDigitNumber(enemyhp);
-	SupplementDigitNumber(enemyHP);
+	SupplementDigitNumber(myhp,4);
+	SupplementDigitNumber(myHP,4);
+	SupplementDigitNumber(enemyhp,4);
+	SupplementDigitNumber(enemyHP,4);
 	double MyHpPercent = (double)myData[0] / myData[1];
 	double EnemyHpPercent = (double)enemyData[0] / enemyData[1];
 	double MyEnergyPercent = (double)myData[2] / myData[3];
@@ -590,7 +646,9 @@ void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 	int EnemyEnergyBarLength = (int)(EnemyEnergyPercent * 19);
 	int MyHpBarLength = (int)(MyHpPercent * 28);
 	int EnemyHpBarLength = (int)(EnemyHpPercent * 28);
-	Refresh();
+	if (turn == 1) {
+		Refresh();
+	}
 	for (int i = 0; i < Battlerow; i++) {
 		Battlemap[i][0] = "#";
 		Battlemap[i][Battlecol - 1] = "#";
@@ -626,17 +684,22 @@ void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 	}
 	for(int j=32;j<32+MyHpBarLength;j++) {
 		Battlemap[3][j] = "|";
+		if (!IfBattleIsOver) {
+			Battlemap[3][32] = "|";
+		}
 	}
-	Battlemap[5][40] = "H";
-	Battlemap[5][41] = "P";
-	Battlemap[5][42] = ":";
-	Battlemap[5][43] = myhp[0];
-	Battlemap[5][44] = myhp[1];
-	Battlemap[5][45] = myhp[2];
-	Battlemap[5][46] = "/";
-	Battlemap[5][47] = myHP[0];
-	Battlemap[5][48] = myHP[1];
-	Battlemap[5][49] = myHP[2];
+	Battlemap[5][38] = "H";
+	Battlemap[5][39] = "P";
+	Battlemap[5][40] = ":";
+	Battlemap[5][41] = myhp[0];
+	Battlemap[5][42] = myhp[1];
+	Battlemap[5][43] = myhp[2];
+	Battlemap[5][44] = myhp[3];
+	Battlemap[5][45] = "/";
+	Battlemap[5][46] = myHP[0];
+	Battlemap[5][47] = myHP[1];
+	Battlemap[5][48] = myHP[2];
+	Battlemap[5][49] = myHP[3];
 	//以下为我方能量条位置
 	for (int i = 2;i <= 4;i++) {
 		Battlemap[i][5] = "#";
@@ -690,17 +753,22 @@ void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 	}
 	for (int j = 32;j < 32 + EnemyHpBarLength;j++) {
 		Battlemap[16][j] = "|";
+		if (!IfBattleIsOver) {
+			Battlemap[16][32] = "|";
+		}
 	}
-	Battlemap[14][40] = "H";
-	Battlemap[14][41] = "P";
-	Battlemap[14][42] = ":";
-	Battlemap[14][43] = enemyhp[0];
-	Battlemap[14][44] = enemyhp[1];
-	Battlemap[14][45] = enemyhp[2];
-	Battlemap[14][46] = "/";
-	Battlemap[14][47] = enemyHP[0];
-	Battlemap[14][48] = enemyHP[1];
-	Battlemap[14][49] = enemyHP[2];
+	Battlemap[14][38] = "H";
+	Battlemap[14][39] = "P";
+	Battlemap[14][40] = ":";
+	Battlemap[14][41] = enemyhp[0];
+	Battlemap[14][42] = enemyhp[1];
+	Battlemap[14][43] = enemyhp[2];
+	Battlemap[14][44] = enemyhp[3];
+	Battlemap[14][45] = "/";
+	Battlemap[14][46] = enemyHP[0];
+	Battlemap[14][47] = enemyHP[1];
+	Battlemap[14][48] = enemyHP[2];
+	Battlemap[14][49] = enemyHP[3];
 	//以下为敌方能量条位置
 	for (int i = 15;i <= 17;i++) {
 		Battlemap[i][5] = "#";
@@ -728,7 +796,8 @@ void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 	Battlemap[16][75] = "u";
 	Battlemap[16][76] = "n";
 	Battlemap[16][77] = "d";
-	Battlemap[16][78] = to_string(round);
+	Battlemap[16][78] = to_string(round/10);
+	Battlemap[16][79] = to_string(round%10);
 	//以下为回合指示器（箭头图案）
 	if (turn == 1) {
 		//我方回合
@@ -820,7 +889,7 @@ void UpdateData(shared_ptr<Enemy> enemy) {
 }
 
 //回合开始函数
-void RoundStart(int round, shared_ptr<Enemy> enemy) {
+int RoundStart(int round, shared_ptr<Enemy> enemy) {
 	//检查该回合过期的buff
 	RoundBuffGroup.clear();
 	for (auto& item : InitialRoundBuffGroup) {
@@ -832,7 +901,7 @@ void RoundStart(int round, shared_ptr<Enemy> enemy) {
 	UpdateData(enemy);
 	//我方回合
 	int RoundChoice = 0;
-	int LegalRoundChoice[4] = { 1,2,3,4 };
+	int LegalRoundChoice[8] = { 1,2,3,4,11,12,21,22 };
 	while (1) {
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
 		cout << "请选择本回合的行动：" << endl;
@@ -846,7 +915,7 @@ void RoundStart(int round, shared_ptr<Enemy> enemy) {
 			cout << "(///技能已充能满，可以释放///)";
 		}
 		cout << endl;
-		cout << "4.治疗";
+		cout << "4.治疗(治疗条能量不低于2时将额外进行一次防御)";
 		if (!mycharacter.GetIfHeal()) {
 			cout << "(治疗条为空，无法治疗)";
 		}
@@ -854,8 +923,8 @@ void RoundStart(int round, shared_ptr<Enemy> enemy) {
 			cout << "(将消耗所有治疗条进行治疗，每点治疗条回复" << mycharacter.GetHealHP() << "点生命值)";
 		}
 		cout << endl;
-		RoundChoice=Safecin(LegalRoundChoice, 4, false);
-		if (RoundChoice == 1 || RoundChoice == 2) {
+		RoundChoice=Safecin(LegalRoundChoice, 8, false);
+		if (RoundChoice == 1 || RoundChoice == 2||RoundChoice == 11 || RoundChoice == 12 || RoundChoice == 21 || RoundChoice == 22) {
 			break;
 		}
 		else if (RoundChoice == 3) {
@@ -871,7 +940,7 @@ void RoundStart(int round, shared_ptr<Enemy> enemy) {
 				WaitForSeconds(1);
 			}
 		}
-		else {
+		else if(RoundChoice==4){
 			if (mycharacter.GetIfHeal()) {
 				break;
 			}
@@ -886,31 +955,53 @@ void RoundStart(int round, shared_ptr<Enemy> enemy) {
 		}
 	}
 	//选择攻击
-	if (RoundChoice == 1 || RoundChoice == 2) {
-		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
+	if (RoundChoice == 1 || RoundChoice == 2||RoundChoice==11||RoundChoice==12||RoundChoice==21||RoundChoice==22) {
+
 		if (!(mycharacter.GetIfHealFull() && mycharacter.GetIfSkill())){
 			if (mycharacter.GetIfHealFull()) {
-				mycharacter.EnergyUp();
-				cout << "治疗条已满，已自动为能量条充能。(2秒后继续)";
-				WaitForSeconds(2);
-			}
-			else if (mycharacter.GetIfSkill()) {
-				mycharacter.HealUp();
-				cout << "能量条已满，已自动为治疗条充能。(2秒后继续)";
-				WaitForSeconds(2);
-			}
-			else {
-				cout << "请选择充能方向："<<endl;
-				cout << "1.为能量条充能" << endl;
-				cout << "2.为治疗条充能" << endl;
-				int LegalEnergy[2] = { 1,2 };
-				int EnergyChoice;
-				EnergyChoice = Safecin(LegalEnergy, 2, false);
-				if (EnergyChoice == 1) {
+				if (RoundChoice == 11 || RoundChoice == 21) {
 					mycharacter.EnergyUp();
 				}
 				else {
+					mycharacter.EnergyUp();
+					cout << "治疗条已满，已自动为能量条充能。(2秒后继续)";
+					WaitForSeconds(2);
+				}
+				
+			}
+			else if (mycharacter.GetIfSkill()) {
+				if (RoundChoice == 12 || RoundChoice == 22) {
 					mycharacter.HealUp();
+				}
+				else {
+					mycharacter.HealUp();
+					cout << "能量条已满，已自动为治疗条充能。(2秒后继续)";
+					WaitForSeconds(2);
+				}
+			}
+			else {
+				if (RoundChoice == 1 || RoundChoice == 2) {
+					PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
+					cout << "请选择充能方向：" << endl;
+					cout << "1.为能量条充能" << endl;
+					cout << "2.为治疗条充能" << endl;
+					int LegalEnergy[2] = { 1,2 };
+					int EnergyChoice;
+					EnergyChoice = Safecin(LegalEnergy, 2, false);
+					if (EnergyChoice == 1) {
+						mycharacter.EnergyUp();
+					}
+					else {
+						mycharacter.HealUp();
+					}
+				}
+				else {
+					if (RoundChoice == 11 || RoundChoice == 21) {
+						mycharacter.EnergyUp();
+					}
+					else {
+						mycharacter.HealUp();
+					}
 				}
 			}
 		}
@@ -919,108 +1010,176 @@ void RoundStart(int round, shared_ptr<Enemy> enemy) {
 			WaitForSeconds(2);
 		}
 	}
-	if (RoundChoice == 1) {
+	if (RoundChoice == 1||RoundChoice==11||RoundChoice==12) {
 		int EnemyHP0 = enemy->GetCurrentHP();
+		UpdateData(enemy);
 		mycharacter.AttackEnemy(enemy,RoundBuffGroup);
 		UpdateData(enemy);
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
 		int Harm=EnemyHP0- enemy->GetCurrentHP();
 		cout << "敌方受到了 " << Harm << " 点伤害！"<<endl;
 	}
-	else if (RoundChoice == 2) {
+	else if (RoundChoice == 2||RoundChoice==21||RoundChoice==22) {
 		AddRoundBuff("MD", mycharacter.GetDefendingDeveloping() - 1, 1);
 		UpdateData(enemy);
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
 		cout << "已使用防御，本回合防御力提升至"<<mycharacter.GetDefendingDeveloping()<<"倍。" << endl;
 	}
+	else if(RoundChoice==4){
+		bool IfUsingDefense = false;
+		if (mycharacter.GetCurrentHeal() > 1) {
+			AddRoundBuff("MD", mycharacter.GetDefendingDeveloping() - 1, 1);
+			IfUsingDefense = true;
+		}
+		int MyHP0 = mycharacter.GetCurrentHP();
+		mycharacter.Heal_UsingHeal();
+		UpdateData(enemy);
+		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
+		if (IfUsingDefense) {
+			cout << "治疗条能量不低于2，已进行一次防御。" << endl;
+		}
+		cout << "已消耗所有治疗条回复" << mycharacter.GetCurrentHP() - MyHP0 << "点血量。" << endl;
+	}
+	if (!enemy->GetIsAlive()) {
+		IfBattleIsOver = true;
+		cout << "战斗胜利。" << endl;
+		cout << "按回车以继续。" << endl;
+		return 1;
+	}
 	cout << "按回车以进入敌方回合...";
 	cin.ignore();
 	//敌方回合
-	PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round,2);
+	Refresh();
+	if (!enemy->GetIfSkill()) {
+		int MyHP0 = mycharacter.GetCurrentHP();
+		bool IfCritical = false;
+		UpdateData(enemy);
+		IfCritical=enemy->AttackPlayer(mycharacter, RoundBuffGroup);
+		UpdateData(enemy);
+		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 2);
+		int Harm = MyHP0 - mycharacter.GetCurrentHP();
+		cout << "敌方发动了普通攻击！" << endl;
+		if (IfCritical) {
+			cout << "敌方造成了暴击伤害！攻击力提升至" << enemy->GetCriticalHarm()<<"倍!"<<endl;
+		}
+		cout << "我方受到了 " <<Harm << " 点伤害！" << endl;
+		
+	}
+	UpdateData(enemy);
+	if (mycharacter.GetIsAlive()) {
+		cout << "按回车以进入我方回合..." << endl;
+		return -1;
+	}
+	else {
+		IfBattleIsOver = true;
+		cout << "生命值归零。" << endl;
+		cout << "你迷失在符文秘境。" << endl;
+		return 0;
+	}
 }
 //战斗开始函数
-void BattleStart(int floor,bool isBoss) {
+bool BattleStart(int floor,bool isBoss) {
+	IfBattleIsOver = false;
+	mycharacter.SetCurrentNum();
 	int round = 1;
 	shared_ptr<Enemy> enemy = make_shared<Enemy>();
 	switch (floor) {
-	case 1:
+	//敌方数值区域
+	case 1://第一层
 		if (isBoss) {
-			enemy = make_shared<Enemy>(2000, 100, 40,RoundBuffGroup);
+			enemy = make_shared<Enemy>(1000, 100, 40,RoundBuffGroup);
 		}
 		else {
-			enemy = make_shared<Enemy>(500, 80, 20,RoundBuffGroup);
+			enemy = make_shared<Enemy>(300, 80, 20,RoundBuffGroup);
 		}
 		break;
 	}
+	int IfWin = -1;
 	while (1) {
-		RoundStart(round, enemy);
+		IfWin=RoundStart(round, enemy);
+		if (IfWin == 1||IfWin==0) {
+			break;
+		}
 		round++;
 		cin.ignore();
 	}
+	if (IfWin == 1) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 int main() {
-	int floor = 1;
-	int	step = 0;
-	int RuneNow = -1;
-	int thisfloor = 0;
 	while (1) {
-		if (thisfloor != floor) {
-			RuneNow = rm.getnum(0, 8);
-		}
-		thisfloor = floor;
-		DrawMap(floor, step);
-		cout << "当前符文为："<<endl;
-		cout << Rune[RuneNow] << endl;
-		cout << endl;
-		PrintMaphelp();
-		cout << endl;
-		switch (Maptype[step]) {
-		case 1://普通战斗
-			cout << "进入战斗节点，按回车继续..." << endl;
-			cin.ignore();
-			BattleStart(floor, false);
-			break;
-		case 4://boss战斗
-			cout << "进入Boss战斗节点，按回车继续..." << endl;
-			cin.ignore();
-			BattleStart(floor, true);
-			break;
-		case 2://非战斗节点
-			cout << "进入未知事件节点，按回车继续..." << endl;
-			cin.ignore();
-			PrintEventGround(2);
-			break;
-		case 3://商店节点
-			cout << "进入商店节点，按回车继续..." << endl;
-			cin.ignore();
-			PrintEventGround(3);
-			break;
-		case 5://双节点
-			cout << "进入双节点，请选择节点。输入1以选择战斗节点，输入2以选择未知事件节点：" << endl;
-			while (1) {
-				int choice=0;
-				int legal[2] = { 1,2 };
-				choice=Safecin(legal, 2, false);
-				if (choice == 1) {
-					BattleStart(floor, false);
-					break;
-				}
-				else if (choice == 2) {
-					PrintEventGround(2);
-					break;
-				}
+		//程序运行总循环，输了之后会回到这里
+		int floor = 1;
+		int	step = 0;
+		int RuneNow = -1;
+		int thisfloor = 0;
+		bool Ifwin = true;
+		while (1) {
+			//一局游戏循环
+			if (thisfloor != floor) {
+				RuneNow = rm.getnum(0, 8);
 			}
-			break;
+			thisfloor = floor;
+			DrawMap(floor, step);
+			cout << "当前符文为：" << endl;
+			cout << Rune[RuneNow] << endl;
+			cout << endl;
+			PrintMaphelp();
+			cout << endl;
+			Ifwin = true;
+			switch (Maptype[step]) {
+			case 1://普通战斗
+				cout << "进入战斗节点，按回车继续..." << endl;
+				cin.ignore();
+				Ifwin=BattleStart(floor, false);
+				break;
+			case 4://boss战斗
+				cout << "进入Boss战斗节点，按回车继续..." << endl;
+				cin.ignore();
+				Ifwin=BattleStart(floor, true);
+				break;
+			case 2://非战斗节点
+				cout << "进入未知事件节点，按回车继续..." << endl;
+				cin.ignore();
+				PrintEventGround(2);
+				break;
+			case 3://商店节点
+				cout << "进入商店节点，按回车继续..." << endl;
+				cin.ignore();
+				PrintEventGround(3);
+				break;
+			case 5://双节点
+				cout << "进入双节点，请选择节点。输入1以选择战斗节点，输入2以选择未知事件节点：" << endl;
+				while (1) {
+					int choice = 0;
+					int legal[2] = { 1,2 };
+					choice = Safecin(legal, 2, false);
+					if (choice == 1) {
+						BattleStart(floor, false);
+						break;
+					}
+					else if (choice == 2) {
+						PrintEventGround(2);
+						break;
+					}
+				}
+				break;
+			}
+			cin.ignore();
+			step++;
+			if (step >= Maptype.size() && floor < 3) {
+				step = 0;
+				floor++;
+			}
+			if (step >= Maptype.size() && floor == 3) {
+				break;
+			}
 		}
-		cin.ignore();
-		step++;
-		if (step >= Maptype.size() && floor < 3) {
-			step = 0;
-			floor++;
-		}
-		if (step >= Maptype.size() && floor == 3) {
-			break;
-		}
+		if (!Ifwin) break;
 	}
 	return 0;
 }
