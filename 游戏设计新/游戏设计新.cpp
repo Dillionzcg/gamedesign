@@ -928,10 +928,10 @@ void RoundStart(int round, shared_ptr<Enemy> enemy) {
 		cout << "敌方受到了 " << Harm << " 点伤害！"<<endl;
 	}
 	else if (RoundChoice == 2) {
-		AddRoundBuff("MD", 1, 1);
+		AddRoundBuff("MD", mycharacter.GetDefendingDeveloping() - 1, 1);
 		UpdateData(enemy);
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
-		cout << "已使用防御，本回合防御力翻倍。" << endl;
+		cout << "已使用防御，本回合防御力提升至"<<mycharacter.GetDefendingDeveloping()<<"倍。" << endl;
 	}
 	cout << "按回车以进入敌方回合...";
 	cin.ignore();
