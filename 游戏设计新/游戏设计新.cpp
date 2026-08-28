@@ -1169,6 +1169,9 @@ int main() {
 				}
 				break;
 			}
+			if (!Ifwin) {
+				break;
+			}
 			cin.ignore();
 			step++;
 			if (step >= Maptype.size() && floor < 3) {
@@ -1179,7 +1182,7 @@ int main() {
 				break;
 			}
 		}
-		if (!Ifwin) break;
+		
 	}
 	return 0;
 }
