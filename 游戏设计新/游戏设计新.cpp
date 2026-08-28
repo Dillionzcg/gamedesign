@@ -84,6 +84,7 @@ int Safecin(int legal[], int length, bool ifblank) {
 		}
 		cout << "中选择一个数字:";
 		if (ifblank) cout << "(或者回车以继续)";
+		cout << flush;
 	}
 }
 //以下为等待时间函数
@@ -100,8 +101,8 @@ class RoundBuff {
 public:
 	RoundBuff() = default;
 	~RoundBuff() = default;
-	RoundBuff(int type, double Buffnum, int round) {
-		//1,我方攻击加成，2,我方防御加成，3,敌方攻击加成，4,敌方防御加成
+	RoundBuff(string type, double Buffnum, int round) {
+		//MA,我方攻击加成，MD,我方防御加成，EA,敌方攻击加成，ED,敌方防御加成
 		LastingRounds = round;
 		Bufftype = type;
 		Development = Buffnum;
@@ -117,7 +118,7 @@ public:
 	bool GetIfover() {
 		return Ifover;
 	}
-	int GetType() {
+	string GetType() {
 		return Bufftype;
 	}
 	double GetDevelopment() {
@@ -126,7 +127,7 @@ public:
 private:
 	double Development = 0;
 	int LastingRounds = 0;
-	int Bufftype = 0;
+	string Bufftype="0";
 	bool Ifover = false;
 };
 class MyCharacter {
@@ -147,10 +148,10 @@ public:
 		RoundDefenseDevelopment = 0;
 		if (!RoundBuffGroup.empty()) {
 			for (auto& item : RoundBuffGroup) {
-				if (item->GetType() == 1) {
+				if (item->GetType() == "MA") {
 					RoundAttackDevelopment = item->GetDevelopment();
 				}
-				else if (item->GetType() == 2) {
+				else if (item->GetType() == "MD") {
 					RoundDefenseDevelopment = item->GetDevelopment();
 				}
 			}
@@ -314,10 +315,10 @@ public:
 		RoundDefenseDevelopment = 0;
 		if (!RoundBuffGroup.empty()) {
 			for (auto& item : RoundBuffGroup) {
-				if (item->GetType() == 3) {
+				if (item->GetType() == "EA") {
 					RoundAttackDevelopment = item->GetDevelopment();
 				}
-				else if (item->GetType() == 4) {
+				else if (item->GetType() == "ED") {
 					RoundDefenseDevelopment = item->GetDevelopment();
 				}
 			}
@@ -418,7 +419,7 @@ private:
 	int InitialEnergy = 0;
 	int MaxEnergy = 5;
 	//暴击率
-	int CriticalRate = 0.3;
+	int CriticalRate = 30;
 	//存活状态
 	bool IsAlive = true;
 };
@@ -763,7 +764,7 @@ void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 	for (int i = 0;i < 20;i++) {
 		cout << " ";
 	}
-	cout << "敌方攻击力:【" << enemyData[4] << "】,敌方防御力:【" << enemyData[5] << "】,敌方暴击率:【" << enemyData[6] << "】" << endl;
+	cout << "敌方攻击力:【" << enemyData[4] << "】,敌方防御力:【" << enemyData[5] << "】,敌方暴击率:【" << enemyData[6] << "%】" << endl;
 	cout << endl;
 }
 void PrintEventGround(int Type) {
@@ -790,7 +791,7 @@ int EnemydataWhenBattle[7] = { 0 };
 vector<shared_ptr<RoundBuff>> InitialRoundBuffGroup;//创建时使用的数组
 vector<shared_ptr<RoundBuff>> RoundBuffGroup;//筛选后实际使用的数组
 //添加局内buff函数
-void AddRoundBuff(int type, double buffnum, int round) {
+void AddRoundBuff(string type, double buffnum, int round) {
 	InitialRoundBuffGroup.push_back(make_shared<RoundBuff>(type, buffnum, round));
 	RoundBuffGroup.push_back(make_shared<RoundBuff>(type, buffnum, round));
 }
@@ -826,7 +827,6 @@ void RoundStart(int round, shared_ptr<Enemy> enemy) {
 		item->RoundPass();
 		if (!item->GetIfover()) {
 			RoundBuffGroup.push_back(item);
-			cout << "debug";
 		}
 	}
 	UpdateData(enemy);
@@ -928,7 +928,7 @@ void RoundStart(int round, shared_ptr<Enemy> enemy) {
 		cout << "敌方受到了 " << Harm << " 点伤害！"<<endl;
 	}
 	else if (RoundChoice == 2) {
-		AddRoundBuff(2, 1, 3);
+		AddRoundBuff("MD", 1, 1);
 		UpdateData(enemy);
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
 		cout << "已使用防御，本回合防御力翻倍。" << endl;
