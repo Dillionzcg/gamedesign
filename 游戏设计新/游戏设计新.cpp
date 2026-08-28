@@ -16,6 +16,7 @@
 #include<stdexcept>
 #include<thread>   
 #include<chrono>
+#include<limits>
 using namespace std;
 //符文文本
 string Rune[12] = {
@@ -86,6 +87,9 @@ int Safecin(int legal[], int length, bool ifblank) {
 		if (ifblank) cout << "(或者回车以继续)";
 		cout << flush;
 	}
+}
+void SafeEnter() {
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 //以下为等待时间函数
 void WaitForSeconds(double Time) {
@@ -636,16 +640,27 @@ void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 	SupplementDigitNumber(myHP,4);
 	SupplementDigitNumber(enemyhp,4);
 	SupplementDigitNumber(enemyHP,4);
-	double MyHpPercent = (double)myData[0] / myData[1];
-	double EnemyHpPercent = (double)enemyData[0] / enemyData[1];
-	double MyEnergyPercent = (double)myData[2] / myData[3];
+	auto safe_div = [](int a, int b) -> double { return (b > 0) ? (double)a / b : 0.0; };
+	double MyHpPercent = safe_div(myData[0], myData[1]);
+	double EnemyHpPercent = safe_div(enemyData[0], enemyData[1]);
+	double MyEnergyPercent = safe_div(myData[2], myData[3]);
 	int MyEnergyBarLength = (int)(MyEnergyPercent * 19);
-	double Myhealpercent = (double)myData[4] / myData[5];
+	double Myhealpercent = safe_div(myData[4], myData[5]);
 	int MyhealBarLength = (int)(Myhealpercent * 19);
-	double EnemyEnergyPercent = (double)enemyData[2] / enemyData[3];
+	double EnemyEnergyPercent = safe_div(enemyData[2], enemyData[3]);
 	int EnemyEnergyBarLength = (int)(EnemyEnergyPercent * 19);
 	int MyHpBarLength = (int)(MyHpPercent * 28);
 	int EnemyHpBarLength = (int)(EnemyHpPercent * 28);
+	if (MyEnergyBarLength < 0) MyEnergyBarLength = 0;
+	if (MyEnergyBarLength > 19) MyEnergyBarLength = 19;
+	if (MyhealBarLength < 0) MyhealBarLength = 0;
+	if (MyhealBarLength > 19) MyhealBarLength = 19;
+	if (EnemyEnergyBarLength < 0) EnemyEnergyBarLength = 0;
+	if (EnemyEnergyBarLength > 19) EnemyEnergyBarLength = 19;
+	if (MyHpBarLength < 0) MyHpBarLength = 0;
+	if (MyHpBarLength > 28) MyHpBarLength = 28;
+	if (EnemyHpBarLength < 0) EnemyHpBarLength = 0;
+	if (EnemyHpBarLength > 28) EnemyHpBarLength = 28;
 	if (turn == 1) {
 		Refresh();
 	}
@@ -899,6 +914,10 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		}
 	}
 	UpdateData(enemy);
+	if (round == 1) {
+		mycharacter.SetCurrentNum();
+		UpdateData(enemy);
+	}
 	//我方回合
 	int RoundChoice = 0;
 	int LegalRoundChoice[8] = { 1,2,3,4,11,12,21,22 };
@@ -1047,7 +1066,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		return 1;
 	}
 	cout << "按回车以进入敌方回合...";
-	cin.ignore();
+	SafeEnter();
 	//敌方回合
 	Refresh();
 	if (!enemy->GetIfSkill()) {
@@ -1074,13 +1093,13 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		IfBattleIsOver = true;
 		cout << "生命值归零。" << endl;
 		cout << "你迷失在符文秘境。" << endl;
+		SafeEnter();
 		return 0;
 	}
 }
 //战斗开始函数
 bool BattleStart(int floor,bool isBoss) {
 	IfBattleIsOver = false;
-	mycharacter.SetCurrentNum();
 	int round = 1;
 	shared_ptr<Enemy> enemy = make_shared<Enemy>();
 	switch (floor) {
@@ -1101,7 +1120,7 @@ bool BattleStart(int floor,bool isBoss) {
 			break;
 		}
 		round++;
-		cin.ignore();
+		SafeEnter();
 	}
 	if (IfWin == 1) {
 		return true;
@@ -1134,22 +1153,22 @@ int main() {
 			switch (Maptype[step]) {
 			case 1://普通战斗
 				cout << "进入战斗节点，按回车继续..." << endl;
-				cin.ignore();
+				SafeEnter();
 				Ifwin=BattleStart(floor, false);
 				break;
 			case 4://boss战斗
 				cout << "进入Boss战斗节点，按回车继续..." << endl;
-				cin.ignore();
+				SafeEnter();
 				Ifwin=BattleStart(floor, true);
 				break;
 			case 2://非战斗节点
 				cout << "进入未知事件节点，按回车继续..." << endl;
-				cin.ignore();
+				SafeEnter();
 				PrintEventGround(2);
 				break;
 			case 3://商店节点
 				cout << "进入商店节点，按回车继续..." << endl;
-				cin.ignore();
+				SafeEnter();
 				PrintEventGround(3);
 				break;
 			case 5://双节点
@@ -1159,7 +1178,7 @@ int main() {
 					int legal[2] = { 1,2 };
 					choice = Safecin(legal, 2, false);
 					if (choice == 1) {
-						BattleStart(floor, false);
+						Ifwin = BattleStart(floor, false);
 						break;
 					}
 					else if (choice == 2) {
@@ -1172,7 +1191,7 @@ int main() {
 			if (!Ifwin) {
 				break;
 			}
-			cin.ignore();
+			SafeEnter();
 			step++;
 			if (step >= Maptype.size() && floor < 3) {
 				step = 0;
