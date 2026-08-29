@@ -446,6 +446,14 @@ public:
 			CurrentHP = CurrentMaxHP;
 		}
 	}
+	void EnergyUp() {
+		if (!GetIfSkill()) {
+			CurrentEnergy++;
+		}
+	}
+	void UsingEnergy() {
+		CurrentEnergy = 0;
+	}
 private:
 	//初始数值
 	int InitialMaxHP = 0;
@@ -661,7 +669,7 @@ void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 	if (MyHpBarLength > 28) MyHpBarLength = 28;
 	if (EnemyHpBarLength < 0) EnemyHpBarLength = 0;
 	if (EnemyHpBarLength > 28) EnemyHpBarLength = 28;
-	if (turn == 1) {
+	if (turn != 2) {
 		Refresh();
 	}
 	for (int i = 0; i < Battlerow; i++) {
@@ -814,7 +822,7 @@ void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 	Battlemap[16][78] = to_string(round/10);
 	Battlemap[16][79] = to_string(round%10);
 	//以下为回合指示器（箭头图案）
-	if (turn == 1) {
+	/*if (turn == 1) {
 		//我方回合
 		for (int i = 7;i <= 10;i++) {
 			Battlemap[i][i + 32] = "\\";
@@ -833,6 +841,26 @@ void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 			Battlemap[i][50-i] = "/";
 		}
 		Battlemap[7][43] = "|";
+	}*/
+	if (turn == 1) {
+		// 等待用户输入 - 显示 "Please input..."
+		string prompt = "Please input...";
+		int prow = 9;
+		int pcol = 39; // 从原有位置开始填充
+		for (size_t k = 0; k < prompt.size(); ++k) {
+			if (pcol + (int)k >= 0 && pcol + (int)k < Battlecol)
+				Battlemap[prow][pcol + k] = string(1, prompt[k]);
+		}
+	}
+	else {
+		// 敌方回合 - 在居中位置显示 "Enter"
+		string enter = "Enter";
+		int erow = 9;
+		int ecol = (Battlecol - (int)enter.size()) / 2; // 水平居中起始列
+		for (size_t k = 0; k < enter.size(); ++k) {
+			if (ecol + (int)k >= 0 && ecol + (int)k < Battlecol)
+				Battlemap[erow][ecol + k] = string(1, enter[k]);
+		}
 	}
 	for (int i = 0;i < 20;i++) {
 		cout << " ";
@@ -973,7 +1001,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			}
 		}
 	}
-	//选择攻击
+	//选择充能
 	if (RoundChoice == 1 || RoundChoice == 2||RoundChoice==11||RoundChoice==12||RoundChoice==21||RoundChoice==22) {
 
 		if (!(mycharacter.GetIfHealFull() && mycharacter.GetIfSkill())){
@@ -1034,15 +1062,27 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		UpdateData(enemy);
 		mycharacter.AttackEnemy(enemy,RoundBuffGroup);
 		UpdateData(enemy);
-		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
+		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 		int Harm=EnemyHP0- enemy->GetCurrentHP();
 		cout << "敌方受到了 " << Harm << " 点伤害！"<<endl;
 	}
 	else if (RoundChoice == 2||RoundChoice==21||RoundChoice==22) {
 		AddRoundBuff("MD", mycharacter.GetDefendingDeveloping() - 1, 1);
 		UpdateData(enemy);
-		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
+		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 		cout << "已使用防御，本回合防御力提升至"<<mycharacter.GetDefendingDeveloping()<<"倍。" << endl;
+	}
+	else if (RoundChoice == 3) {//我方技能，暂时设为2倍攻击
+		AddRoundBuff("MA", 1, 1);
+		int EnemyHP0 = enemy->GetCurrentHP();
+		UpdateData(enemy);
+		mycharacter.AttackEnemy(enemy, RoundBuffGroup);
+		mycharacter.UsingEnergy();
+		UpdateData(enemy);
+		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
+		int Harm = EnemyHP0 - enemy->GetCurrentHP();
+		cout << "已使用技能，攻击提升至2倍。" << endl;
+		cout << "敌方受到了 " << Harm << " 点伤害！" << endl;
 	}
 	else if(RoundChoice==4){
 		bool IfUsingDefense = false;
@@ -1053,7 +1093,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		int MyHP0 = mycharacter.GetCurrentHP();
 		mycharacter.Heal_UsingHeal();
 		UpdateData(enemy);
-		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
+		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 		if (IfUsingDefense) {
 			cout << "治疗条能量不低于2，已进行一次防御。" << endl;
 		}
@@ -1074,6 +1114,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		bool IfCritical = false;
 		UpdateData(enemy);
 		IfCritical=enemy->AttackPlayer(mycharacter, RoundBuffGroup);
+		enemy->EnergyUp();
 		UpdateData(enemy);
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 2);
 		int Harm = MyHP0 - mycharacter.GetCurrentHP();
@@ -1084,6 +1125,23 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		cout << "我方受到了 " <<Harm << " 点伤害！" << endl;
 		
 	}
+	else {//技能部分，暂时设为2倍攻击
+		int MyHP0 = mycharacter.GetCurrentHP();
+		bool IfCritical = false;
+		AddRoundBuff("EA", 1, 1);
+		UpdateData(enemy);
+		IfCritical = enemy->AttackPlayer(mycharacter, RoundBuffGroup);
+		enemy->UsingEnergy();
+		UpdateData(enemy);
+		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 2);
+		int Harm = MyHP0 - mycharacter.GetCurrentHP();
+		cout << "敌方发动了技能！攻击力提升至2倍！" << endl;
+		if (IfCritical) {
+			cout << "敌方造成了暴击伤害！攻击力提升至" << enemy->GetCriticalHarm() << "倍!" << endl;
+		}
+		enemy->EnergyUp();
+		cout << "我方受到了 " << Harm << " 点伤害！" << endl;
+	}
 	UpdateData(enemy);
 	if (mycharacter.GetIsAlive()) {
 		cout << "按回车以进入我方回合..." << endl;
@@ -1093,6 +1151,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		IfBattleIsOver = true;
 		cout << "生命值归零。" << endl;
 		cout << "你迷失在符文秘境。" << endl;
+		cout << "按回车以返回标题界面" << endl;
 		SafeEnter();
 		return 0;
 	}
