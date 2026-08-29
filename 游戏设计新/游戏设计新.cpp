@@ -2,8 +2,8 @@
 *使用Refresh()以全屏刷新
 *使用rm.getnum(min,max)以获得一定范围（闭区间）的随机int
 *使用rm.getSomeNum(min,max,k)以获得一定范围（闭区间）的k个不重复随机int，返回vector<int>
-*使用a=Safecin(legal,length,ifblank)以获得合法输入，
- legal为合法数字数组(int数组)，length为数组长度(int)，ifblank为是否允许空输入(bool值)
+*使用a=Safecin(legal,ifblank)以获得合法输入，
+ legal为合法数字向量(vector<int>)，ifblank为是否允许空输入(bool值)
 *使用WaitForSeconds(second)以等待特定秒数(double)
 */
 #include<iostream>
@@ -35,6 +35,8 @@ string Rune[12] = {
 	"//希望：在该层每次移动后金币+2，攻击力+30%//",
 	"//绝望：所有敌人攻击力+20%，我方攻击力-20%//"
 };
+
+
 void Refresh() {
 	cout << "\033[2J\033[H" << flush;
 }
@@ -61,11 +63,11 @@ public:
 RandomManager rm;
 //以下为输入检查函数
 vector<string> forcheck;
-int Safecin(int legal[], int length, bool ifblank) {
+int Safecin(const vector<int>& legal, bool ifblank) {
 	string chose;
 	forcheck.clear();
-	for (int i = 0; i < length; i++) {
-		forcheck.push_back(to_string(legal[i]));
+	for (auto v : legal) {
+		forcheck.push_back(to_string(v));
 	}
 	while (1) {
 		getline(cin, chose);
@@ -99,6 +101,47 @@ void WaitForSeconds(double Time) {
 
 
 //以下为主要运行程序
+class SkillManage {
+public:
+	SkillManage(int num) :ID(num) {}
+	string GetDescribe() {
+		return SkillList[ID];
+	}
+	string GetName() {
+		switch (ID) {
+		case 0: return "EA";
+		case 1: return "ED";
+		case 2: return "MA";
+		case 3: return "MD";
+		case 4: return "MB";
+		case 5: return "HA";
+		case 6: return "AH";
+		case 7: return "AE";
+		case 8: return "IA";
+		case 9: return "DA";
+		}
+	}
+	string GetDescribethroughNum(int num) {
+		return SkillList[num];
+	}
+private:
+	int ID;
+	vector<string> SkillList = {
+	//若干回合内生效
+	"//使对方攻击力在3回合内下降30%，并攻击一次//",//EA
+	"//使对方防御力在3回合内下降70%，并攻击一次//",//ED
+	"//使包括此回合的3回合内的攻击力+50%，并攻击一次//",//MA
+	"//使包括此回合的3回合内的防御力+70%，并防御一次//",//MD
+	"//使包括此回合的3回合内\"防御\"手段对防御力的加成翻倍，并防御一次//",//MB
+	"//使包括此回合的3回合内每次受到伤害后回复30点血量，并防御一次//",//HA
+	//仅作用于该回合
+	"//对敌方进行一次200%攻击力的攻击，并回复40点血量//",//AH
+	"//对敌方进行一次200%攻击力的攻击，并使敌方能量条能量-1//",//AE
+	"//对敌方造成一次无视防御的180%攻击力的伤害//",//IA
+	"//使该回合内敌方晕眩（无法行动），并攻击一次//"//DA
+	};
+};
+
 class Enemy;
 //局内buff管理，每个对象只负责一个buff
 class RoundBuff {
@@ -106,7 +149,7 @@ public:
 	RoundBuff() = default;
 	~RoundBuff() = default;
 	RoundBuff(string type, double Buffnum, int round) {
-		//MA,我方攻击加成，MD,我方防御加成，EA,敌方攻击加成，ED,敌方防御加成
+		//MA,我方攻击加成，MD,我方防御加成，MB,我方防御手段增益，EA,敌方攻击加成，ED,敌方防御加成
 		LastingRounds = round;
 		Bufftype = type;
 		Development = Buffnum;
@@ -146,10 +189,12 @@ public:
 		CurrentMaxHP = BasicMaxHP * (1.0 + CurrentHPDevelopment);
 		CurrentAttack = BasicAttack * (1.0 + CurrentAttackDevelopment+RoundAttackDevelopment);
 		CurrentDefense = BasicDefense * (1.0 + CurrentDefenseDevelopment+RoundDefenseDevelopment);
+		DefendingDeveloping = BasicDefendingDeveloping + RoundDefendingBuff;
 	}
 	void CalculateMyRoundBuff(vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
 		RoundAttackDevelopment = 0;
 		RoundDefenseDevelopment = 0;
+		RoundDefendingBuff = 0;
 		if (!RoundBuffGroup.empty()) {
 			for (auto& item : RoundBuffGroup) {
 				if (item->GetType() == "MA") {
@@ -157,6 +202,9 @@ public:
 				}
 				else if (item->GetType() == "MD") {
 					RoundDefenseDevelopment = item->GetDevelopment();
+				}
+				else if (item->GetType() == "MB") {
+					RoundDefendingBuff = item->GetDevelopment();
 				}
 			}
 		}
@@ -287,6 +335,9 @@ public:
 			CurrentHP = CurrentMaxHP;
 		}
 	}
+	int GetChoiceNum() {
+		return SkillChoiceNum;
+	}
 private:
 	//初始数值，仅开局选择buff时会改变
 	int InitialMaxHP=200;
@@ -311,6 +362,7 @@ private:
 	//局内buff/debuff加成的总加成
 	int RoundAttackDevelopment = 0;
 	int RoundDefenseDevelopment = 0;
+	int RoundDefendingBuff = 0;
 	//当前血量
 	int CurrentHP=200;
 	//能量
@@ -330,9 +382,12 @@ private:
 	//存活状态
 	bool IsAlive = true;
 	//防御手段防御力加成
+	double BasicDefendingDeveloping = 2;
 	double DefendingDeveloping = 2;
 	//保底伤害比例
 	double leastHarm = 0.1;
+	//开局可抽取技能个数
+	int SkillChoiceNum = 3;
 };
 
 MyCharacter mycharacter;
@@ -494,6 +549,30 @@ void MyCharacter::AttackEnemy(shared_ptr<Enemy> enemy, vector<shared_ptr<RoundBu
 	CalculateMyNum(RoundBuffGroup);
 	int damage = CurrentAttack;
 	enemy->BeingAttacked(damage,RoundBuffGroup);
+}
+vector<shared_ptr<SkillManage>> MySkillManager;
+shared_ptr<SkillManage> ChooseSkill(int ChoiceNum) {
+	Refresh();
+	vector<int> Choice=rm.getSomeNum(0, 9, ChoiceNum);
+	MySkillManager.clear();
+	for (auto& item:Choice) {
+		MySkillManager.push_back(make_shared<SkillManage>(item));
+	}
+	cout << "请在下列技能中选择一个,技能在技能条满时可以释放："<<endl;
+	cout << endl;
+	int i = 0;
+	for (auto& item : MySkillManager) {
+		i++;
+		cout << i << "." << item->GetDescribe()<<endl;
+		cout << endl;
+	}
+	vector<int> legal;
+	for (int idx = 1; idx <= ChoiceNum; ++idx) legal.push_back(idx);
+	int pick = Safecin(legal, false);
+	if (pick >= 1 && pick <= (int)MySkillManager.size()) {
+		return MySkillManager[pick - 1];
+	}
+	return MySkillManager[0];
 }
 vector<vector<string>> Themap(8, vector<string>(100, " "));
 void DrawBlock(int blocktype, int line) {
@@ -930,7 +1009,31 @@ void UpdateData(shared_ptr<Enemy> enemy) {
 	EnemydataWhenBattle[6] = enemy->GetCriticalRate();
 	//血量，血量上限，能量，能量上限，攻击，防御，暴击率
 }
-
+shared_ptr<SkillManage> MySkill;
+shared_ptr<SkillManage> EnemySkill;
+int UseSkill(shared_ptr<SkillManage> skill) {
+	string name = skill->GetName();
+	if (name == "EA") {
+		AddRoundBuff("EA", -0.3, 3);
+		return 1;//攻击一次
+	}
+	else if (name == "ED") {
+		AddRoundBuff("ED", -0.7, 3);
+		return 1;
+	}
+	else if(name=="MA") {
+		AddRoundBuff("MA", 0.5, 3);
+		return 1;
+	}
+	else if(name=="MD") {
+		AddRoundBuff("MD", 0.7, 3);
+		return 2;
+	}
+	else if (name == "MB") {
+		AddRoundBuff("MB", 1, 3);
+		return 2;
+	}
+}
 //回合开始函数
 int RoundStart(int round, shared_ptr<Enemy> enemy) {
 	//检查该回合过期的buff
@@ -947,14 +1050,15 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		UpdateData(enemy);
 	}
 	//我方回合
-	int RoundChoice = 0;
-	int LegalRoundChoice[8] = { 1,2,3,4,11,12,21,22 };
+		int RoundChoice = 0;
+	vector<int> LegalRoundChoice = { 1,2,3,4,11,12,21,22 };
 	while (1) {
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
 		cout << "请选择本回合的行动：" << endl;
 		cout << "1.攻击" << endl;
 		cout << "2.防御(不攻击且防御力提升至" << mycharacter.GetDefendingDeveloping() << "倍)" << endl;
 		cout << "3.释放技能";
+		cout << "(我方技能为：" << MySkill->GetDescribe() << ")";
 		if (!mycharacter.GetIfSkill()) {
 			cout << "(技能未充能满，无法释放)";
 		}
@@ -970,7 +1074,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			cout << "(将消耗所有治疗条进行治疗，每点治疗条回复" << mycharacter.GetHealHP() << "点生命值)";
 		}
 		cout << endl;
-		RoundChoice=Safecin(LegalRoundChoice, 8, false);
+		RoundChoice = Safecin(LegalRoundChoice, false);
 		if (RoundChoice == 1 || RoundChoice == 2||RoundChoice == 11 || RoundChoice == 12 || RoundChoice == 21 || RoundChoice == 22) {
 			break;
 		}
@@ -1032,9 +1136,9 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 					cout << "请选择充能方向：" << endl;
 					cout << "1.为能量条充能" << endl;
 					cout << "2.为治疗条充能" << endl;
-					int LegalEnergy[2] = { 1,2 };
+					vector<int> LegalEnergy = { 1,2 };
 					int EnergyChoice;
-					EnergyChoice = Safecin(LegalEnergy, 2, false);
+					EnergyChoice = Safecin(LegalEnergy, false);
 					if (EnergyChoice == 1) {
 						mycharacter.EnergyUp();
 					}
@@ -1072,8 +1176,8 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 		cout << "已使用防御，本回合防御力提升至"<<mycharacter.GetDefendingDeveloping()<<"倍。" << endl;
 	}
-	else if (RoundChoice == 3) {//我方技能，暂时设为2倍攻击
-		AddRoundBuff("MA", 1, 1);
+	else if (RoundChoice == 3) {//我方技能
+		UseSkill(MySkill);
 		int EnemyHP0 = enemy->GetCurrentHP();
 		UpdateData(enemy);
 		mycharacter.AttackEnemy(enemy, RoundBuffGroup);
@@ -1161,6 +1265,8 @@ bool BattleStart(int floor,bool isBoss) {
 	IfBattleIsOver = false;
 	int round = 1;
 	shared_ptr<Enemy> enemy = make_shared<Enemy>();
+	
+	MySkill=ChooseSkill(mycharacter.GetChoiceNum());
 	switch (floor) {
 	//敌方数值区域
 	case 1://第一层
@@ -1234,8 +1340,8 @@ int main() {
 				cout << "进入双节点，请选择节点。输入1以选择战斗节点，输入2以选择未知事件节点：" << endl;
 				while (1) {
 					int choice = 0;
-					int legal[2] = { 1,2 };
-					choice = Safecin(legal, 2, false);
+					vector<int> legal = { 1,2 };
+					choice = Safecin(legal, false);
 					if (choice == 1) {
 						Ifwin = BattleStart(floor, false);
 						break;
