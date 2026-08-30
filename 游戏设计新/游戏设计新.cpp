@@ -24,7 +24,7 @@ string Rune[12] = {
 	"//死仇：我方和敌方的攻击力+30%//",
 	"//瘟疫：我方和敌方的攻击力-30%//",
 	"//崩溃：我方和敌方的防御力-50%//",
-	"//狂热：我方和敌方技能条所需能量-1//",
+	"//狂热：我方和敌方技能条初始能量+2//",
 	"//暗市：该层的商店不再展示商品详细信息，但该层商店的售价-50%//",
 	"//迷雾：该层不再提前展示敌人技能信息，但可选择的技能+2//",
 	"//繁荣：该层的商店售价+50%，但战斗后掉落藏品+1//",
@@ -198,13 +198,13 @@ public:
 		if (!RoundBuffGroup.empty()) {
 			for (auto& item : RoundBuffGroup) {
 				if (item->GetType() == "MA") {
-					RoundAttackDevelopment = item->GetDevelopment();
+					RoundAttackDevelopment += item->GetDevelopment();
 				}
 				else if (item->GetType() == "MD") {
-					RoundDefenseDevelopment = item->GetDevelopment();
+					RoundDefenseDevelopment += item->GetDevelopment();
 				}
 				else if (item->GetType() == "MB") {
-					RoundDefendingBuff = item->GetDevelopment();
+					RoundDefendingBuff += item->GetDevelopment();
 				}
 			}
 		}
@@ -387,7 +387,7 @@ private:
 	//保底伤害比例
 	double leastHarm = 0.1;
 	//开局可抽取技能个数
-	int SkillChoiceNum = 3;
+	int SkillChoiceNum = 10;
 };
 
 MyCharacter mycharacter;
@@ -404,10 +404,10 @@ public:
 		if (!RoundBuffGroup.empty()) {
 			for (auto& item : RoundBuffGroup) {
 				if (item->GetType() == "EA") {
-					RoundAttackDevelopment = item->GetDevelopment();
+					RoundAttackDevelopment += item->GetDevelopment();
 				}
 				else if (item->GetType() == "ED") {
-					RoundDefenseDevelopment = item->GetDevelopment();
+					RoundDefenseDevelopment += item->GetDevelopment();
 				}
 			}
 		}
@@ -508,6 +508,9 @@ public:
 	}
 	void UsingEnergy() {
 		CurrentEnergy = 0;
+	}
+	void CriticalRateCrease(int num) {
+		CriticalRate += num;
 	}
 private:
 	//初始数值
@@ -1053,7 +1056,6 @@ int UseSkill(shared_ptr<SkillManage> skill) {
 	}
 }
 void MyAttack(shared_ptr<Enemy> enemy,int round,bool ifskill) {
-
 	int EnemyHP0 = enemy->GetCurrentHP();
 	UpdateData(enemy);
 	mycharacter.AttackEnemy(enemy, RoundBuffGroup);
@@ -1066,7 +1068,8 @@ void MyAttack(shared_ptr<Enemy> enemy,int round,bool ifskill) {
 	cout << "敌方受到了 " << Harm << " 点伤害！" << endl;
 }
 void MyDefend(shared_ptr<Enemy> enemy, int round,bool ifskill){
-	
+	// 若之前使用了 MB 等会修改防御倍数的技能，先重新计算以包含这些回合buff
+	mycharacter.CalculateMyNum(RoundBuffGroup);
 	AddRoundBuff("MD", mycharacter.GetDefendingDeveloping() - 1, 1);
 	UpdateData(enemy);
 	PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
@@ -1077,6 +1080,7 @@ void MyDefend(shared_ptr<Enemy> enemy, int round,bool ifskill){
 }
 //回合开始函数
 int RoundStart(int round, shared_ptr<Enemy> enemy) {
+	if (round % 10 == 0) enemy->CriticalRateCrease(15);//每十回合敌方的暴击率提升15
 	//检查该回合过期的buff
 	RoundBuffGroup.clear();
 	for (auto& item : InitialRoundBuffGroup) {
