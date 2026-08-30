@@ -132,7 +132,7 @@ private:
 	"//使对方防御力在3回合内下降70%，并攻击一次//",//ED
 	"//使包括此回合的3回合内的攻击力+50%，并攻击一次//",//MA
 	"//使包括此回合的3回合内的防御力+70%，并防御一次//",//MD
-	"//使包括此回合的3回合内\"防御\"手段对防御力的加成翻倍，并防御一次//",//MB
+	"//使包括此回合的4回合内\"防御\"手段对防御力的加成翻倍，并防御一次//",//MB
 	"//使包括此回合的3回合内每次受到伤害后回复30点血量，并防御一次//",//HA
 	//仅作用于该回合
 	"//对敌方进行一次200%攻击力的攻击，并回复40点血量//",//AH
@@ -360,9 +360,9 @@ private:
 	int CurrentAttackDevelopment=0;
 	int CurrentDefenseDevelopment=0;
 	//局内buff/debuff加成的总加成
-	int RoundAttackDevelopment = 0;
-	int RoundDefenseDevelopment = 0;
-	int RoundDefendingBuff = 0;
+	double RoundAttackDevelopment = 0;
+	double RoundDefenseDevelopment = 0;
+	double RoundDefendingBuff = 0;
 	//当前血量
 	int CurrentHP=200;
 	//能量
@@ -531,8 +531,8 @@ private:
 	int CurrentAttackDevelopment = 0;
 	int CurrentDefenseDevelopment = 0;
 	//局内buff/debuff加成的总加成
-	int RoundAttackDevelopment = 0;
-	int RoundDefenseDevelopment = 0;
+	double RoundAttackDevelopment = 0;
+	double RoundDefenseDevelopment = 0;
 	//当前血量
 	int CurrentHP = 100;
 	//能量
@@ -695,13 +695,31 @@ void DrawMap(int floor, int step) {
 	else {
 		Themap[7][step * 9 + 2] = "^";
 	}
+	switch (floor) {
+	case 1:
+		cout << "第一层 初始遗迹" << endl;
+		cout << endl;
+		cout << "远古石碑流转着晦暗的微光，斑驳的苔藓下封印着破碎的咒文。\n唯有踏入这片禁忌废墟，试炼的钟声方才悄然敲响。" << endl;
+		break;
+	case 2:
+		cout << "第二层 迷失回廊" << endl;
+		cout << endl;
+		cout << "虚无的迷雾中回荡着失落的低语，错综的符文法阵真假难辨。\n唯有堪破内心深处的恐惧，才能寻得通往核心的唯一生路。" << endl;
+		break;
+	case 3:
+		cout << "第三层 终焉圣殿" << endl;
+		cout << endl;
+		cout << "狂暴的魔力风暴撕裂苍穹，远古神祇的虚影在血色符文中苏醒。\n唯有直面神明的终极审判，方能揭开秘境尘封的真相。" << endl;
+		break;
+	}
+	cout << endl;
+	cout << endl;
 	for (int i = 0;i < 8;i++) {
 		for (int j = 0;j < 100;j++) {
 			cout << Themap[i][j];
 		}
 		cout << endl;
 	}
-	cout << "目前在第" << floor << "层"<<endl;
 	cout << endl;
 }
 void SupplementDigitNumber(string &num,int digit) {
@@ -1030,9 +1048,32 @@ int UseSkill(shared_ptr<SkillManage> skill) {
 		return 2;
 	}
 	else if (name == "MB") {
-		AddRoundBuff("MB", 1, 3);
+		AddRoundBuff("MB", 1, 4);
 		return 2;
 	}
+}
+void MyAttack(shared_ptr<Enemy> enemy,int round,bool ifskill) {
+
+	int EnemyHP0 = enemy->GetCurrentHP();
+	UpdateData(enemy);
+	mycharacter.AttackEnemy(enemy, RoundBuffGroup);
+	UpdateData(enemy);
+	PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
+	int Harm = EnemyHP0 - enemy->GetCurrentHP();
+	if (ifskill) {
+		cout << "已使用技能" << MySkill->GetDescribe() << endl;
+	}
+	cout << "敌方受到了 " << Harm << " 点伤害！" << endl;
+}
+void MyDefend(shared_ptr<Enemy> enemy, int round,bool ifskill){
+	
+	AddRoundBuff("MD", mycharacter.GetDefendingDeveloping() - 1, 1);
+	UpdateData(enemy);
+	PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
+	if (ifskill) {
+		cout << "已使用技能" << MySkill->GetDescribe() << endl;
+	}
+	cout << "已使用防御，本回合防御力提升至" << mycharacter.GetDefendingDeveloping() << "倍。" << endl;
 }
 //回合开始函数
 int RoundStart(int round, shared_ptr<Enemy> enemy) {
@@ -1162,31 +1203,22 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		}
 	}
 	if (RoundChoice == 1||RoundChoice==11||RoundChoice==12) {
-		int EnemyHP0 = enemy->GetCurrentHP();
-		UpdateData(enemy);
-		mycharacter.AttackEnemy(enemy,RoundBuffGroup);
-		UpdateData(enemy);
-		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
-		int Harm=EnemyHP0- enemy->GetCurrentHP();
-		cout << "敌方受到了 " << Harm << " 点伤害！"<<endl;
+		MyAttack(enemy, round,false);
 	}
-	else if (RoundChoice == 2||RoundChoice==21||RoundChoice==22) {
-		AddRoundBuff("MD", mycharacter.GetDefendingDeveloping() - 1, 1);
-		UpdateData(enemy);
-		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
-		cout << "已使用防御，本回合防御力提升至"<<mycharacter.GetDefendingDeveloping()<<"倍。" << endl;
+	else if (RoundChoice == 2 || RoundChoice == 21 || RoundChoice == 22) {
+		MyDefend(enemy, round,false);
 	}
 	else if (RoundChoice == 3) {//我方技能
-		UseSkill(MySkill);
-		int EnemyHP0 = enemy->GetCurrentHP();
-		UpdateData(enemy);
-		mycharacter.AttackEnemy(enemy, RoundBuffGroup);
+		int AttachingAction = 0;
+		AttachingAction=UseSkill(MySkill);
 		mycharacter.UsingEnergy();
-		UpdateData(enemy);
-		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
-		int Harm = EnemyHP0 - enemy->GetCurrentHP();
-		cout << "已使用技能，攻击提升至2倍。" << endl;
-		cout << "敌方受到了 " << Harm << " 点伤害！" << endl;
+		if (AttachingAction == 1) {
+			MyAttack(enemy, round,true);
+		}
+		else if (AttachingAction == 2) {
+			MyDefend(enemy, round,true);
+		}
+		
 	}
 	else if(RoundChoice==4){
 		bool IfUsingDefense = false;
@@ -1262,6 +1294,8 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 }
 //战斗开始函数
 bool BattleStart(int floor,bool isBoss) {
+	RoundBuffGroup.clear();
+	InitialRoundBuffGroup.clear();
 	IfBattleIsOver = false;
 	int round = 1;
 	shared_ptr<Enemy> enemy = make_shared<Enemy>();
