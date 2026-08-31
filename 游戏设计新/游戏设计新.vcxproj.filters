@@ -18,5 +18,8 @@
     <ClCompile Include="游戏设计新.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="测试用.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
