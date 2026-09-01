@@ -416,17 +416,17 @@ private:
 	int CurrentAttack=0;
 	int CurrentDefense=0;
 	//藏品加成
-	int BasicHPDevelopment=0;
-	int BasicAttackDevelopment=0;
-	int BasicDefenseDevelopment=0;
+	double BasicHPDevelopment=0;
+	double BasicAttackDevelopment=0;
+	double BasicDefenseDevelopment=0;
 	//等级加成
-	int LevelHPDevelopment = 0;
-	int LevelAttackDevelopment = 0;
-	int LevelDefenseDevelopment = 0;
+	double LevelHPDevelopment = 0;
+	double LevelAttackDevelopment = 0;
+	double LevelDefenseDevelopment = 0;
 	//其余buff/debuff加成的总加成
-	int CurrentHPDevelopment=0;
-	int CurrentAttackDevelopment=0;
-	int CurrentDefenseDevelopment=0;
+	double CurrentHPDevelopment=0;
+	double CurrentAttackDevelopment=0;
+	double CurrentDefenseDevelopment=0;
 	//局内buff/debuff加成的总加成
 	double RoundAttackDevelopment = 0;
 	double RoundDefenseDevelopment = 0;
@@ -715,6 +715,7 @@ void ChooseEnemy(int floor, bool IsBoss) {
 vector<shared_ptr<SkillManage>> MySkillManager;
 shared_ptr<SkillManage> ChooseSkill(int ChoiceNum,int floor,bool IsBoss) {
 	Refresh();
+	cout << WHITE;
 	vector<int> Choice=rm.getSomeNum(0, 9, ChoiceNum);
 	MySkillManager.clear();
 	for (auto& item:Choice) {
@@ -1529,7 +1530,7 @@ int main() {
 			cout << endl;
 			PrintMaphelp();
 			cout << endl;
-			cout << WHITE;
+		
 			Ifwin = true;
 			switch (Maptype[step]) {
 			case 1://普通战斗
