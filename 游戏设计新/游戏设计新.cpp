@@ -18,24 +18,6 @@
 #include<chrono>
 #include<limits>
 using namespace std;
-//符文文本
-string Rune[12] = {
-	//通常(0~9)
-	"//死仇：我方和敌方的攻击力+30%//",
-	"//瘟疫：我方和敌方的攻击力-30%//",
-	"//崩溃：我方和敌方的防御力-50%//",
-	"//狂热：我方和敌方技能条初始能量+2//",
-	"//暗市：该层的商店不再展示商品详细信息，但该层商店的售价-50%//",
-	"//迷雾：该层不再提前展示敌人信息，但可选择的技能+2//",
-	"//繁荣：该层的商店售价+50%，但战斗后掉落藏品+1//",
-	"//荒芜：该层的商店售价-50%，但战斗后不再掉落藏品//",
-	"//贪婪：敌方攻击力+20%，但每次移动后金币+2//",
-	"//救赎：在该层非boss关战斗死亡时可复活（仅限一次）,但该层战斗时防御力-30%//",
-	//特殊(10~11)
-	"//希望：在该层每次移动后金币+2，攻击力+30%//",
-	"//绝望：所有敌人攻击力+20%，我方攻击力-20%//"
-};
-
 
 void Refresh() {
 	cout << "\033[2J\033[H" << flush;
@@ -98,9 +80,71 @@ void WaitForSeconds(double Time) {
 	int second =(int) Time * 1000;
 	this_thread::sleep_for(chrono::milliseconds(second));
 }
-
-
+class RuneManager;
+shared_ptr<RuneManager> RuneNow;
 //以下为主要运行程序
+class RuneManager {
+public:
+	RuneManager(int num) :ID(num) {}
+	RuneManager() = default;
+	string GetDescribe() {
+		return RuneList[ID];
+	}
+	string GetDescribethroughNum(int num) {
+		return RuneList[num];
+	}
+	string GetName() {
+		return RuneName[ID];
+	}
+	static void RandomChangeRune() {
+		int num = rm.getnum(0, 9);
+		RuneNow = make_shared<RuneManager>(num);
+	}
+private:
+	int ID=0;
+	string name="0";
+	//符文文本
+	vector<string> RuneList = {
+		//通常(0~9)
+		"//死仇：我方和敌方的攻击力+30%//",
+		"//瘟疫：我方和敌方的攻击力-30%//",
+		"//崩溃：我方和敌方的防御力-50%//",
+		"//狂热：我方和敌方技能条初始能量+2//",
+		"//暗市：该层的商店不再展示商品详细信息，但该层商店的售价-50%//",
+		"//迷雾：该层不再提前展示敌人信息，但可选择的技能+2//",
+		"//繁荣：该层的商店售价+50%，但战斗后掉落藏品+1//",
+		"//荒芜：该层的商店售价-50%，但战斗后不再掉落藏品//",
+		"//贪婪：敌方攻击力+20%，但每次移动后金币+2//",
+		"//救赎：在该层非boss关战斗死亡时可复活（仅限一次）,但该层战斗时防御力-30%//",
+		//特殊(10~11)
+		"//希望：在该层每次移动后金币+2，攻击力+30%//",
+		"//绝望：所有敌人攻击力+20%，我方攻击力-20%//"
+	};
+	vector<string> RuneName = {
+		"死仇",
+		"瘟疫",
+		"崩溃",
+		"狂热",
+		"暗市",
+		"迷雾",
+		"繁荣",
+		"荒芜",
+		"贪婪",
+		"救赎",
+		"希望",
+		"绝望"
+	};
+};
+//藏品池
+vector<RuneManager> Pool1 = {
+
+};
+vector<RuneManager> Pool2 = {
+
+};
+vector<RuneManager> Pool3 = {
+
+};
 class SkillManage {
 public:
 	SkillManage(int num) :ID(num) {}
@@ -132,7 +176,7 @@ private:
 	"//使对方防御力在3回合内降至0，并攻击一次//",//ED
 	"//使包括此回合的3回合内的攻击力+50%，并攻击一次//",//MA
 	"//使包括此回合的3回合内的防御力+70%，并防御一次//",//MD
-	"//使包括此回合的4回合内\"防御\"手段对防御力的加成翻倍，并防御一次//",//MB
+	"//使包括此回合的4回合内\"防御\"行动对防御力的加成翻倍，并防御一次//",//MB
 	"//使包括此回合的3回合内每次受到伤害后回复20点血量，并防御一次//",//HA
 	//仅作用于该回合
 	"//对敌方进行一次250%攻击力的攻击，并回复40点血量//",//AH
@@ -142,6 +186,30 @@ private:
 	};
 };
 
+class Object {
+public:
+	Object(int rarity, string camp, string type, string describe,int buffnum) :Rarity(rarity), Camp(camp), Type(type), Describe(describe),BuffNum(buffnum) {
+		NeedingCoin = RarityCoin[Rarity-1];
+	}
+	int GetRarity() {
+		return Rarity;
+	}
+	int GetNeedingCoin() {
+		return NeedingCoin;
+	}
+	string GetDescribe() {
+		return Describe;
+	}
+private:
+	int Rarity;//稀有度,1/2/3
+	vector<int> RarityCoin = { 2,4,6 };//稀有度对应金币数
+	int NeedingCoin;//购买所需金币数
+	string Describe;//藏品描述
+	string Camp;//阵营，"M"为我方，"E"为敌方
+	string Type;//类型
+	bool IfGotten = false;//是否已获得
+	int BuffNum;//加成数值
+};
 class Enemy;
 //局内buff管理，每个对象只负责一个buff
 class RoundBuff {
@@ -1497,27 +1565,53 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 }
 void PostWarSettleMent(bool IfBoss) {
 	Refresh();
-	if (IfBoss) {
-		cout << "已升级\nLv." << mycharacter.GetLevel();
-		mycharacter.Levelup(2);
-		cout << " -> Lv." << mycharacter.GetLevel() << endl;
-		cout << "获得了藏品：" << endl;
-		cout << "获得了6枚金币" << endl;
-		mycharacter.GainCoin(6);
-		cout << "当前金币数为：" << mycharacter.GetCoins() << endl;
-		cout << "当前等级为基础生命上限，基础攻击力，基础防御力加成为" << (mycharacter.GetLevel() - 1) * 10 <<"%" << endl;
-	}
-	else {
-		cout << "已升级\nLv." << mycharacter.GetLevel();
-		mycharacter.Levelup(1);
-		cout << " -> Lv." << mycharacter.GetLevel() << endl;
-		cout << "获得了藏品：" << endl;
-		cout << "获得了3枚金币" << endl;
-		mycharacter.GainCoin(3);
-		cout << "当前金币数为：" << mycharacter.GetCoins() << endl;
-		cout << "当前等级为基础生命上限，基础攻击力，基础防御力加成为" << (mycharacter.GetLevel()-1) * 10<<"%" << endl;
-	}
-	cout << "按回车继续..." << endl;
+	string separator = string(55, '=');
+	cout << separator << endl;
+	cout << "战斗结束，你汲取了战场上的生命能量！" << endl;
+	int levelUp = IfBoss ? 2 : 1;
+	cout << "等级提升：Lv." << mycharacter.GetLevel();
+	mycharacter.Levelup(levelUp);
+	cout << " → Lv." << mycharacter.GetLevel() << endl;
+	cout << separator << endl << endl;
+	struct Artifact {
+		string name;
+		string effect;
+		string rarity;
+	};
+
+	cout << separator << endl;
+	cout << "你从秘境中获得了藏品！" << endl;
+	//cout << "【" << reward.rarity << "】" << reward.name << " —— " << reward.effect << endl;
+	cout << separator << endl << endl;
+
+	int coinGain = IfBoss ? 6 : 3;
+	vector<string> bossCoinStories = {
+		"你从 Boss 腐朽的宝座上发现了一袋沉甸甸的金币，散发着远古的光泽。",
+		"你搜索 Boss 的遗物箱，找到了 6 枚刻有神秘符文的古金币。",
+		"你在 Boss 的巢穴深处发现了一个隐藏的金库，里面整齐码放着 6 枚金币。"
+	};
+	vector<string> normalCoinStories = {
+		"你在敌人残骸中翻找，摸到了 3 枚带着余温的金币。",
+		"你掀开一块松动的石板，下面赫然藏着 3 枚金币。",
+		"破旧的宝箱里发出叮当声，你打开后获得 3 枚金币。",
+		"你从敌人褴褛的衣袋里搜出 3 枚金币，看来是搜刮来的战利品。",
+		"一只乌鸦叼来一个钱袋，里面恰好有 3 枚金币——算是友好的馈赠。"
+	};
+	vector<string>& stories = IfBoss ? bossCoinStories : normalCoinStories;
+	int storyIdx = rm.getnum(0, (int)stories.size() - 1);
+
+	cout << separator << endl;
+	cout << stories[storyIdx] << endl;
+	cout << "你获得了 " << coinGain << " 枚金币！" << endl;
+	mycharacter.GainCoin(coinGain);
+	cout << "当前金币总数：" << mycharacter.GetCoins() << endl;
+	cout << separator << endl << endl;
+
+	// ==================== 4. 当前等级加成 ====================
+	cout << separator << endl;
+	cout << "当前等级加成：基础生命/攻击/防御 +" << (mycharacter.GetLevel() - 1) * 10 << "%" << endl;
+	cout << separator << endl;
+	cout << "\n按回车继续...";
 }
 //战斗开始函数
 bool BattleStart(int floor,bool isBoss) {
@@ -1550,18 +1644,17 @@ int main() {
 		//程序运行总循环，输了之后会回到这里
 		int floor = 1;
 		int	step = 0;
-		int RuneNow = -1;
 		int thisfloor = 0;
 		bool Ifwin = true;
 		while (1) {
 			//一局游戏循环
 			if (thisfloor != floor) {
-				RuneNow = rm.getnum(0, 8);
+				RuneManager::RandomChangeRune();
 			}
 			thisfloor = floor;
 			DrawMap(floor, step);
 			cout << "当前符文为：" << endl;
-			cout << Rune[RuneNow] << endl;
+			cout << RuneNow->GetDescribe() << endl;
 			cout << endl;
 			PrintMaphelp();
 			cout << endl;
