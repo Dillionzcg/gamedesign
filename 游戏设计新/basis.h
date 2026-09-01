@@ -20,14 +20,15 @@ const string BG_BLACK = "\033[40m";
 const string WHITE = "\033[38;5;255m";
 const string CREAM_WHITE = "\033[38;5;230m";
 const string CREAM_WHITE_BOLD = "\033[1;38;5;230m";
-const string CREAM_WHITE_ITALIC = "\033[3;38;5;230m";
-const string RED_BOLD = "\033[1;31m";   // 亮红加粗
-const string RED_DARK = "\033[1;31m"; // 暗红
+const string CREAM_WHITE_ITALIC = "\033[3;38;5;230m";//高白
+const string RED_BOLD = "\033[38;5;196m";   // 亮红加粗
+const string RED_DARK = "\033[38;5;203m"; // 暗红
 const string GOLD_BOLD = "\033[38;5;220m";  // 金色加粗
-const string DARK_GOLD = "\033[38;5;136m";
-const string PURPLE = "\033[38;5;141m";
-const string YELLOW = "\033[38;5;226m";
-const string QING = "\033[38;5;37m";
+const string DARK_GOLD = "\033[38;5;136m";//暗金
+const string PURPLE = "\033[38;5;141m";//紫色
+const string YELLOW = "\033[38;5;226m";//亮黄色
+const string QING = "\033[38;5;37m";//青色
+const string HUI = "\033[38;5;245m";
 void Refresh() {
     cout << "\033[2J\033[H" << flush;
 }

@@ -739,6 +739,7 @@ shared_ptr<SkillManage> ChooseSkill(int ChoiceNum,int floor,bool IsBoss) {
 }
 vector<vector<string>> Themap(8, vector<string>(100, " "));
 void DrawBlock(int blocktype, int line) {
+	
 	if (blocktype != 5 && blocktype != 0) {//blocktype为5为双节点，blocktype为0为已经过节点
 		for (int j = line; j < line + 5;j++) {
 			Themap[2][j] = "#";
@@ -809,6 +810,7 @@ void DrawBlock(int blocktype, int line) {
 	}
 }
 void PrintMaphelp() {
+	cout << PURPLE;
 	cout << "地图说明：" << endl;
 	cout << " * :战斗节点" << endl;
 	cout << " ? :未知事件节点" << endl;
@@ -860,16 +862,19 @@ void DrawMap(int floor, int step) {
 	}
 	switch (floor) {
 	case 1:
+		cout << PURPLE;
 		cout << "第一层 初始遗迹" << endl;
 		cout << endl;
 		cout << "远古石碑流转着晦暗的微光，斑驳的苔藓下封印着破碎的咒文。\n唯有踏入这片禁忌废墟，试炼的钟声方才悄然敲响。" << endl;
 		break;
 	case 2:
+		cout << PURPLE;
 		cout << "第二层 迷失回廊" << endl;
 		cout << endl;
 		cout << "虚无的迷雾中回荡着失落的低语，错综的符文法阵真假难辨。\n唯有堪破内心深处的恐惧，才能寻得通往核心的唯一生路。" << endl;
 		break;
 	case 3:
+		cout << PURPLE;
 		cout << "第三层 终焉圣殿" << endl;
 		cout << endl;
 		cout << "狂暴的魔力风暴撕裂苍穹，远古神祇的虚影在血色符文中苏醒。\n唯有直面神明的终极审判，方能揭开秘境尘封的真相。" << endl;
@@ -879,12 +884,13 @@ void DrawMap(int floor, int step) {
 	cout << endl;
 	for (int i = 0;i < 8;i++) {
 		for (int j = 0;j < 100;j++) {
-			cout << Themap[i][j];
+			cout << Themap[i][j]<< RED_BOLD;
 		}
 		cout << endl;
 	}
 	cout << endl;
 }
+
 void SupplementDigitNumber(string &num,int digit) {
 	while (num.length() < digit) {
 		num = " " + num;
@@ -1671,11 +1677,12 @@ int main() {
 			}
 			thisfloor = floor;
 			DrawMap(floor, step);
-			cout << "当前符文为：" << endl;
+			cout << PURPLE << "当前符文为：" << endl;
 			cout << RuneNow->GetDescribe() << endl;
 			cout << endl;
 			PrintMaphelp();
 			cout << endl;
+			cout << WHITE;
 			Ifwin = true;
 			switch (Maptype[step]) {
 			case 1://普通战斗
