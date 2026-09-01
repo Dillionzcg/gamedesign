@@ -1,20 +1,5 @@
 #pragma once
 #include"basis.h"
-const string RESET = "\033[0m";
-const string BOLD = "\033[1m";
-const string ITALIC = "\033[3m";
-const string BG_BLACK = "\033[40m";
-const string WHITE = "\033[38;5;255m";
-const string CREAM_WHITE = "\033[38;5;230m";
-const string CREAM_WHITE_BOLD = "\033[1;38;5;230m";
-const string CREAM_WHITE_ITALIC = "\033[3;38;5;230m";
-const string RED_BOLD = "\033[1;31m";   // 亮红加粗
-const string RED_DARK = "\033[1;31m"; // 暗红
-const string GOLD_BOLD = "\033[38;5;220m";  // 金色加粗
-const string DARK_GOLD = "\033[38;5;136m";
-const string PURPLE = "\033[38;5;141m";
-const string YELLOW = "\033[38;5;226m";
-const string QING = "\033[38;5;37m";
 // 分隔线：红色加粗
 void PrintRuneDivider(int length = 60) {
     cout << GOLD_BOLD;

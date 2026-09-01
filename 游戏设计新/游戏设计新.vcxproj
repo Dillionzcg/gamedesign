@@ -146,7 +146,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basis.h" />
-    <ClInclude Include="buffer.h">
+    <ClInclude Include="FirstEnter.h" />
+    <ClInclude Include="StartBuff.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
   </ItemGroup>

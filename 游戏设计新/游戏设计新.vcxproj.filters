@@ -23,10 +23,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="buffer.h">
+    <ClInclude Include="StartBuff.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="basis.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FirstEnter.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

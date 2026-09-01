@@ -1,4 +1,5 @@
-﻿#include"buffer.h"
+﻿#include"StartBuff.h"
+#include"FirstENter.h"
 using namespace std;
 
 class RuneManager;
@@ -1661,6 +1662,7 @@ int main() {
 		int	step = 0;
 		int thisfloor = 0;
 		bool Ifwin = true;
+		showTitle();
 		enterbuff();
 		while (1) {
 			//一局游戏循环
