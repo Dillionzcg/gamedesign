@@ -176,7 +176,7 @@ private:
 	"//使该回合内敌方晕眩（无法行动），并造成一次无视防御的150%攻击力的伤害//"//DA
 	};
 };
-
+//藏品类
 class Object {
 public:
 	Object(int rarity, string camp, string type, string describe,int buffnum) :Rarity(rarity), Camp(camp), Type(type), Describe(describe),BuffNum(buffnum) {
@@ -191,6 +191,15 @@ public:
 	string GetDescribe() {
 		return Describe;
 	}
+	double GetBuffNum() {
+		return BuffNum;
+	}
+	bool GetIfGotten() {
+		return IfGotten;
+	}
+	void GainObject() {
+		IfGotten = true;
+	}
 private:
 	int Rarity;//稀有度,1/2/3
 	vector<int> RarityCoin = { 2,4,6 };//稀有度对应金币数
@@ -199,10 +208,10 @@ private:
 	string Camp;//阵营，"M"为我方，"E"为敌方
 	string Type;//类型
 	bool IfGotten = false;//是否已获得
-	int BuffNum;//加成数值
+	double BuffNum;//加成数值
 };
 //藏品池
-vector<shared_ptr<Object>> Pool1 = {//初级藏品
+vector<shared_ptr<Object>> ObjectPool1 = {//初级藏品
 	make_shared<Object>(1,"M","A","攻击力+10%",0.1),
 	make_shared<Object>(1,"M","D","防御力+20%",0.2),
 	make_shared<Object>(1,"M","H","生命上限+30%",0.3),
@@ -212,7 +221,7 @@ vector<shared_ptr<Object>> Pool1 = {//初级藏品
 	make_shared<Object>(1,"E","H","敌人生命上限-10%",-0.1),
 	make_shared<Object>(1,"E","CR","敌人暴击率-5%",-5),
 };
-vector<shared_ptr<Object>> Pool2 = {//中级藏品
+vector<shared_ptr<Object>> ObjectPool2 = {//中级藏品
 	make_shared<Object>(2,"M","A","攻击力+20%",0.2),
 	make_shared<Object>(2,"M","D","防御力+30%",0.3),
 	make_shared<Object>(2,"M","H","生命上限+40%",0.4),
@@ -227,7 +236,7 @@ vector<shared_ptr<Object>> Pool2 = {//中级藏品
 	make_shared<Object>(2,"M","MHE","我方治疗能量上限+2",2),
 	make_shared<Object>(2,"M","SC","可选择技能+1",1),
 };
-vector<shared_ptr<Object>> Pool3 = {//高级藏品
+vector<shared_ptr<Object>> ObjectPool3 = {//高级藏品
 	make_shared<Object>(3,"M","A","攻击力+30%",0.3),
 	make_shared<Object>(3,"M","D","防御力+40%",0.4),
 	make_shared<Object>(3,"M","H","生命上限+50%",0.5),
@@ -241,8 +250,10 @@ vector<shared_ptr<Object>> Pool3 = {//高级藏品
 	make_shared<Object>(3,"M","IHE","我方初始治疗能量+2",2),
 	make_shared<Object>(3,"M","EN","我方技能所需能量-1",-1),
 	make_shared<Object>(3,"E","EN","敌方技能所需能量+2",2),
-	make_shared<Object>(2,"M","SC","可选择技能+1",1),
+	make_shared<Object>(2,"M","SC","可选择技能+2",2),
 };
+
+vector<shared_ptr<Object>> MyObjectGroup;//我方藏品组
 class Enemy;
 //局内buff管理，每个对象只负责一个buff
 class RoundBuff {
@@ -458,6 +469,16 @@ public:
 	}
 	void GainCoin(int num) {
 		Coins += num;
+	}
+	void ReSetNum() {
+		InitialMaxHP = 300;
+		InitialAttack = 80;
+		InitialDefense = 50;
+		Coins = 0;
+		Level = 1;
+		IsAlive = true;
+		SkillChoiceNum = 3;
+
 	}
 private:
 	//初始数值，仅开局选择buff时会改变
@@ -1138,27 +1159,6 @@ void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
 	Battlemap[16][77] = "d";
 	Battlemap[16][78] = to_string(round/10);
 	Battlemap[16][79] = to_string(round%10);
-	//以下为回合指示器（箭头图案）
-	/*if (turn == 1) {
-		//我方回合
-		for (int i = 7;i <= 10;i++) {
-			Battlemap[i][i + 32] = "\\";
-		}
-		for (int i = 7;i <= 10;i++) {
-			Battlemap[i][54 - i] = "/";
-		}
-		Battlemap[11][43] = "|";
-	}
-	else {
-		//敌方回合
-		for (int i = 8;i <= 11;i++) {
-			Battlemap[i][i+36] = "\\";
-		}
-		for (int i = 8;i <= 11;i++) {
-			Battlemap[i][50-i] = "/";
-		}
-		Battlemap[7][43] = "|";
-	}*/
 	if (turn == 1) {
 		// 等待用户输入 - 显示 "Please input..."
 		string prompt = "Please input...";
@@ -1585,6 +1585,8 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			cout << "生命值归零。" << endl;
 			cout << "你迷失在符文秘境。" << endl;
 			cout << "按回车以返回标题界面..." << endl;
+			RoundBuffGroup.clear();
+			MyObjectGroup.clear();
 			SafeEnter();
 			return 0;
 		}
@@ -1614,7 +1616,66 @@ void PostWarSettleMent(bool IfBoss) {
 
 	cout << separator << endl;
 	cout << "你从秘境中获得了藏品！" << endl;
-	//cout << "【" << reward.rarity << "】" << reward.name << " —— " << reward.effect << endl;
+	int RandomNumForObject = rm.getnum(1, 100);
+	vector<shared_ptr<Object>> ObjectPoolForRandom;
+	//随机选择藏品池，40%概率一级，40%概率二级，20%概率三级
+	if (RandomNumForObject <= 40) {
+		for (auto& item : ObjectPool1) {
+			if (!item->GetIfGotten()) {
+				ObjectPoolForRandom.push_back(item);
+			}
+		}
+	}
+	else if (RandomNumForObject <= 80) {
+		for (auto& item : ObjectPool2) {
+			if (!item->GetIfGotten()) {
+				ObjectPoolForRandom.push_back(item);
+			}
+		}
+	}
+	else {
+		for (auto& item : ObjectPool3) {
+			if (!item->GetIfGotten()) {
+				ObjectPoolForRandom.push_back(item);
+			}
+		}
+	}
+	int ObjectNum = rm.getnum(0, (int)ObjectPoolForRandom.size() - 1);
+	shared_ptr<Object> RandomObject = ObjectPoolForRandom[ObjectNum];
+	MyObjectGroup.push_back(RandomObject);
+	cout << RandomObject->GetRarity() << " 级藏品:" << endl;
+	cout << RandomObject->GetDescribe()<<endl;
+	if (IfBoss) {//如果是boss战斗，额外获得一个藏品
+		int RandomNumForObject_2 = rm.getnum(1, 100);
+		vector<shared_ptr<Object>> ObjectPoolForRandom_2;
+		//随机选择藏品池，40%概率一级，40%概率二级，20%概率三级
+		if (RandomNumForObject_2 <= 40) {
+			for (auto& item : ObjectPool1) {
+				if (!item->GetIfGotten()) {
+					ObjectPoolForRandom_2.push_back(item);
+				}
+			}
+		}
+		else if (RandomNumForObject_2 <= 80) {
+			for (auto& item : ObjectPool2) {
+				if (!item->GetIfGotten()) {
+					ObjectPoolForRandom_2.push_back(item);
+				}
+			}
+		}
+		else {
+			for (auto& item : ObjectPool3) {
+				if (!item->GetIfGotten()) {
+					ObjectPoolForRandom_2.push_back(item);
+				}
+			}
+		}
+		int ObjectNum_2 = rm.getnum(0, (int)ObjectPoolForRandom_2.size() - 1);
+		shared_ptr<Object> RandomObject_2 = ObjectPoolForRandom_2[ObjectNum_2];
+		MyObjectGroup.push_back(RandomObject_2);
+		cout << RandomObject_2->GetRarity() << " 级藏品:" << endl;
+		cout << RandomObject_2->GetDescribe() << endl;
+	}
 	cout << separator << endl << endl;
 
 	int coinGain = IfBoss ? 6 : 3;
@@ -1639,8 +1700,7 @@ void PostWarSettleMent(bool IfBoss) {
 	mycharacter.GainCoin(coinGain);
 	cout << "当前金币总数：" << mycharacter.GetCoins() << endl;
 	cout << separator << endl << endl;
-
-	// ==================== 4. 当前等级加成 ====================
+	//当前等级加成
 	cout << separator << endl;
 	cout << "当前等级加成：基础生命/攻击/防御 +" << (mycharacter.GetLevel() - 1) * 10 << "%" << endl;
 	cout << separator << endl;
@@ -1675,6 +1735,7 @@ bool BattleStart(int floor,bool isBoss) {
 int main() {
 	while (1) {
 		//程序运行总循环，输了之后会回到这里
+		mycharacter.ReSetNum();
 		int floor = 1;
 		int	step = 0;
 		int thisfloor = 0;
