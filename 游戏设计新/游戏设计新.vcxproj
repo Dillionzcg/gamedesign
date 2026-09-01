@@ -145,8 +145,9 @@
     <ClCompile Include="游戏设计新.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="basis.h" />
     <ClInclude Include="buffer.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

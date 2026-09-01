@@ -1,12 +1,4 @@
-﻿/*给小组成员：
-*使用Refresh()以全屏刷新
-*使用rm.getnum(min,max)以获得一定范围（闭区间）的随机int
-*使用rm.getSomeNum(min,max,k)以获得一定范围（闭区间）的k个不重复随机int，返回vector<int>
-*使用a=Safecin(legal,ifblank)以获得合法输入，
- legal为合法数字向量(vector<int>)，ifblank为是否允许空输入(bool值)
-*使用WaitForSeconds(second)以等待特定秒数(double)
-*/
-#include<iostream>
+﻿#include<iostream>
 #include<random>
 #include<vector>
 #include<memory>

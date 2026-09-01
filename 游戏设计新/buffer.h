@@ -1,11 +1,5 @@
 #pragma once
-#include<iostream>
-#include<vector>
-#include<string>
-#include<cstdlib>
-#include<ctime>
-using namespace std;
-//颜色配置
+#include"basis.h"
 const string RESET = "\033[0m";
 const string BOLD = "\033[1m";
 const string ITALIC = "\033[3m";
@@ -21,31 +15,6 @@ const string DARK_GOLD = "\033[38;5;136m";
 const string PURPLE = "\033[38;5;141m";
 const string YELLOW = "\033[38;5;226m";
 const string QING = "\033[38;5;37m";
-
-void Refresh() {
-    cout << "\033[2J\033[H" << flush;
-}
-
-vector<string> forcheck;
-
-int Safecin(const vector<int>& legal, bool ifblank) {
-    string chose;
-    forcheck.clear();
-    for (auto v : legal) forcheck.push_back(to_string(v));
-    while (true) {
-        getline(cin, chose);
-        if (ifblank && chose.empty()) return -1;
-        for (auto& item : forcheck) {
-            if (item == chose) return stoi(chose);
-        }
-        cout << "请在";
-        for (auto& item : forcheck) cout << item << ",";
-        cout << "中选择一个数字:";
-        if (ifblank) cout << "(或者回车以继续)";
-        cout << flush;
-    }
-}
-
 // 分隔线：红色加粗
 void PrintRuneDivider(int length = 60) {
     cout << GOLD_BOLD;
@@ -141,6 +110,6 @@ void enterbuff() {
     case 1: cout << "惜生（生命上限 +50%）" << RESET << endl; break;
     case 2: cout << "贪财（金币 +50）" << RESET << endl; break;
     }
-    cout << "\n" << RED_BOLD << "按回车键退出..." << RESET;
-    cin.get();
+    cout << "按回车继续..." << WHITE << endl;
+    SafeEnter();
 }

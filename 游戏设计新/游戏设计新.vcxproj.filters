@@ -26,5 +26,8 @@
     <ClInclude Include="buffer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="basis.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
