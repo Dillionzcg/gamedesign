@@ -87,13 +87,7 @@ vector<int> Maptype;
 int Map1[5] = { 1,2,5,3,4 };
 int Map2[6] = { 2,1,1,5,3,4 };
 int Map3[7] = { 2,2,1,1,5,3,4 };
-void DrawMap(int floor, int step) {
-	Refresh();
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 100; j++) {
-			Themap[i][j] = " ";
-		}
-	}
+void UpdateMap(int floor, int step) {
 	Maptype.clear();
 	switch (floor) {
 	case 1:
@@ -115,6 +109,16 @@ void DrawMap(int floor, int step) {
 	for (int n = 0; n < step; n++) {
 		Maptype[n] = 0;
 	}
+}
+void DrawMap(int floor, int step) {
+	Refresh();
+	UpdateMap(floor, step);
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 100; j++) {
+			Themap[i][j] = " ";
+		}
+	}
+
 	for (int n = 0; n < Maptype.size(); n++) {
 		DrawBlock(Maptype[n], n * 9);
 	}

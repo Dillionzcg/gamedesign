@@ -661,32 +661,32 @@ void PrintMyCharacterStatus() {
 	cout << "  【基础属性】" << endl;
 	cout << "  ────────────────────────────────────────────────" << endl;
 
-	cout << "    生命上限        :  " << mycharacter.GetCurrentMaxHP() << endl;
-	cout << "    攻击力          :  " << mycharacter.GetCurrentAttack() << endl;
-	cout << "    防御力          :  " << mycharacter.GetCurrentDefense() << endl;
+	cout << "    生命上限          :  " << mycharacter.GetCurrentMaxHP() << endl;
+	cout << "    攻击力            :  " << mycharacter.GetCurrentAttack() << endl;
+	cout << "    防御力            :  " << mycharacter.GetCurrentDefense() << endl;
 
 	cout << endl;
 
 	cout << "  【能量】" << endl;
 	cout << "  ────────────────────────────────────────────────" << endl;
 
-	cout << "    能量上限        :  " << mycharacter.GetMaxEnergy() << endl;
+	cout << "    能量上限          :  " << mycharacter.GetMaxEnergy() << endl;
 
 	cout << endl;
 
 	cout << "  【治疗】" << endl;
 	cout << "  ────────────────────────────────────────────────" << endl;
 
-	cout << "    治疗能量上限    :  " << mycharacter.GetMaxHeal() << endl;
-	cout << "    每点治疗能量    :  " << mycharacter.GetHealHP() << " 点生命" << endl;
+	cout << "    治疗能量上限      :  " << mycharacter.GetMaxHeal() << endl;
+	cout << "    每点治疗能量恢复  :  " << mycharacter.GetHealHP() << " 点生命" << endl;
 
 	cout << endl;
 
-	cout << "  【冒险信息】" << endl;
+	cout << "  【探险信息】" << endl;
 	cout << "  ────────────────────────────────────────────────" << endl;
 
-	cout << "    等级            :  " << mycharacter.GetLevel() << endl;
-	cout << "    金币            :  " << mycharacter.GetCoins() << endl;
+	cout << "    等级              :  " << "Lv." << mycharacter.GetLevel() << endl;
+	cout << "    金币              :  " << mycharacter.GetCoins() << endl;
 
 	cout << endl;
 	cout << "==================================================" << endl;
@@ -695,11 +695,47 @@ void PrintMyCharacterStatus() {
 
 	SafeEnter();
 }
-bool MapChoose() {
-	vector<int> MapLegalChoice = { 0,1 };
+int MapChoose(int floor,int step,int type) {
+	vector<int> MapLegalChoice;
+	if (type != 5) {
+		MapLegalChoice = { 0,9 };
+	}
+	else {
+		MapLegalChoice = { 0,1,2,9 };
+	}
+	
 	int MapChoice = 0;
 	while (1) {
-		MapChoice = Safecin(MapLegalChoice, true);
+		DrawMap(floor, step);
+		cout << PURPLE << "当前符文为：" << endl;
+		cout << RuneNow->GetDescribe() << endl;
+		cout << endl;
+		PrintMaphelp();
+		cout << endl;
+		switch (type) {
+		case 1://普通战斗
+			cout << "进入战斗节点，按回车继续...（或输入0以查看当前状态，输入9以存档）" << endl;
+			break;
+		case 4://boss战斗
+			cout << "进入Boss战斗节点，按回车继续...（或输入0以查看当前状态，输入9以存档）" << endl;
+			break;
+		case 2://非战斗节点
+			cout << "进入未知事件节点，按回车继续...（或输入0以查看当前状态，输入9以存档）" << endl;
+			break;
+		case 3://商店节点
+			cout << "进入商店节点，按回车继续...（或输入0以查看当前状态，输入9以存档）" << endl;
+			break;
+		case 5://双节点
+			cout << "进入双节点，请选择节点。输入1以选择战斗节点，输入2以选择未知事件节点：（或输入0以查看当前状态，输入9以存档）" << endl;
+			break;
+		}
+		if (type != 5) {
+			MapChoice = Safecin(MapLegalChoice, true);
+		}
+		else {
+			MapChoice = Safecin(MapLegalChoice, false);
+		}
+		
 		if (MapChoice != 0) {
 			break;
 		}
@@ -707,12 +743,7 @@ bool MapChoose() {
 			PrintMyCharacterStatus();
 		}
 	}
-	if (MapChoice == 1) {
-		return true;
-	}
-	else {
-		return false;
-	}
+	return MapChoice;
 }
 int main() {
 	while (1) {
@@ -741,50 +772,33 @@ int main() {
 				RuneManager::RandomChangeRune();
 			}
 			thisfloor = floor;
-			DrawMap(floor, step);
-			cout << PURPLE << "当前符文为：" << endl;
-			cout << RuneNow->GetDescribe() << endl;
-			cout << endl;
-			PrintMaphelp();
-			cout << endl;
-			
-			bool IfSave=false;
+			int IfSave = 0;
 			Ifwin = true;
+			UpdateMap(floor,step);
 			switch (Maptype[step]) {
 			case 1://普通战斗
-				cout << "进入战斗节点，按回车继续...（或输入0以查看当前状态，输入1以存档）" << endl;
-				IfSave=MapChoose();
+				IfSave=MapChoose(floor,step,1);
 				Ifwin = BattleStart(floor, false);
 				break;
 			case 4://boss战斗
-				cout << "进入Boss战斗节点，按回车继续...（或输入0以查看当前状态，输入1以存档）" << endl;
-				IfSave = MapChoose();
+				IfSave = MapChoose(floor,step,4);
 				Ifwin=BattleStart(floor, true);
 				break;
 			case 2://非战斗节点
-				cout << "进入未知事件节点，按回车继续...（或输入0以查看当前状态，输入1以存档）" << endl;
-				IfSave = MapChoose();
+				IfSave = MapChoose(floor, step,2);
 				PrintEventGround(2);
 				break;
 			case 3://商店节点
-				cout << "进入商店节点，按回车继续...（或输入0以查看当前状态，输入1以存档）" << endl;
-				IfSave = MapChoose();
+				IfSave = MapChoose(floor, step,3);
 				PrintEventGround(3);
 				break;
 			case 5://双节点
-				cout << "进入双节点，请选择节点。输入1以选择战斗节点，输入2以选择未知事件节点：" << endl;
-				while (1) {
-					int choice = 0;
-					vector<int> legal = { 1,2 };
-					choice = Safecin(legal, false);
-					if (choice == 1) {
-						Ifwin = BattleStart(floor, false);
-						break;
-					}
-					else if (choice == 2) {
-						PrintEventGround(2);
-						break;
-					}
+				IfSave = MapChoose(floor, step, 5);
+				if (IfSave == 1) {
+					Ifwin = BattleStart(floor, false);
+				}
+				else if (IfSave == 2) {
+					PrintEventGround(2);
 				}
 				break;
 			}

@@ -21,9 +21,6 @@
     <ClCompile Include="测试用.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="商店部分.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartBuff.h">
@@ -36,6 +33,27 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassEnemy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassMycharacter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassRuneManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassSkill_RoundBuff.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shop.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="UnknownEvent.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
