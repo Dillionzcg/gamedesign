@@ -3,13 +3,15 @@
 #include"Map.h"
 #include"ClassObject.h"
 #include"ClassRuneManager.h"
-#include"UnknownEvent.h"
 #include"ClassMycharacter.h"
 #include"Shop.h"
 #include"ClassSkill_RoundBuff.h"
 #include"ClassEnemy.h"
+#include"UnknownEvent.h"
 
 using namespace std;
+vector<string> forcheck;
+RandomManager rm;
 
 //攻击函数的实现
 void MyCharacter::AttackEnemy(shared_ptr<Enemy> enemy, vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
@@ -592,7 +594,6 @@ void PostWarSettleMent(bool IfBoss) {
 
 	int coinGain = IfBoss ? 6 : 3;
 	vector<string> bossCoinStories = {
-		"你从 Boss 腐朽的宝座上发现了一袋沉甸甸的金币，散发着远古的光泽。",
 		"你搜索 Boss 的遗物箱，找到了 6 枚刻有神秘符文的古金币。",
 		"你在 Boss 的巢穴深处发现了一个隐藏的金库，里面整齐码放着 6 枚金币。"
 	};
@@ -786,7 +787,7 @@ int main() {
 				break;
 			case 2://非战斗节点
 				IfSave = MapChoose(floor, step,2);
-				PrintEventGround(2);
+				EnterUnknownEvent(floor, step);
 				break;
 			case 3://商店节点
 				IfSave = MapChoose(floor, step,3);

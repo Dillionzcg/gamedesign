@@ -12,33 +12,37 @@
 #include<thread>   
 #include<chrono>
 #include<limits>
+
 using namespace std;
-const string RESET = "\033[0m";
-const string BOLD = "\033[1m";
-const string ITALIC = "\033[3m";
-const string BG_BLACK = "\033[40m";
-const string WHITE = "\033[38;5;255m";
-const string CREAM_WHITE = "\033[38;5;230m";
-const string CREAM_WHITE_BOLD = "\033[1;38;5;230m";
-const string CREAM_WHITE_ITALIC = "\033[3;38;5;230m";//高白
-const string RED_BOLD = "\033[38;5;196m";   // 亮红加粗
-const string RED_DARK = "\033[38;5;203m"; // 暗红
-const string GOLD_BOLD = "\033[38;5;220m";  // 金色加粗
-const string DARK_GOLD = "\033[38;5;136m";//暗金
-const string PURPLE = "\033[38;5;141m";//紫色
-const string YELLOW = "\033[38;5;226m";//亮黄色
-const string QING = "\033[38;5;37m";//青色
-const string HUI = "\033[38;5;245m";
-void Refresh() {
+
+inline const string RESET = "\033[0m";
+inline const string BOLD = "\033[1m";
+inline const string ITALIC = "\033[3m";
+inline const string BG_BLACK = "\033[40m";
+inline const string WHITE = "\033[38;5;255m";
+inline const string CREAM_WHITE = "\033[38;5;230m";
+inline const string CREAM_WHITE_BOLD = "\033[1;38;5;230m";
+inline const string CREAM_WHITE_ITALIC = "\033[3;38;5;230m";//高白
+inline const string RED_BOLD = "\033[38;5;196m";    // 亮红加粗
+inline const string RED_DARK = "\033[38;5;203m"; // 暗红
+inline const string GOLD_BOLD = "\033[38;5;220m";  // 金色加粗
+inline const string DARK_GOLD = "\033[38;5;136m";//暗金
+inline const string PURPLE = "\033[38;5;141m";//紫色
+inline const string YELLOW = "\033[38;5;226m";//亮黄色
+inline const string QING = "\033[38;5;37m";//青色
+inline const string HUI = "\033[38;5;245m";
+
+
+inline void Refresh() {
     cout << "\033[2J\033[H" << flush;
 }
 
-//以下为随机数生成器
+//  随机数生成器类
 class RandomManager {
 private:
     mt19937 rd;
 public:
-    RandomManager() :rd(random_device{}()) {}
+    RandomManager() : rd(random_device{}()) {}
     RandomManager(const RandomManager&) = delete;
     RandomManager& operator=(const RandomManager&) = delete;
     int getnum(int min, int max) {
@@ -54,18 +58,21 @@ public:
     }
 };
 
-vector<string> forcheck;
-RandomManager rm;
-//以下为输入检查函数
-void SafeEnter() {
+
+extern vector<string> forcheck;
+extern RandomManager rm;
+
+
+inline void SafeEnter() {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
-//以下为等待时间函数
-void WaitForSeconds(double Time) {
-    int second = (int)Time * 1000;
+
+inline void WaitForSeconds(double Time) {
+    int second = (int)(Time * 1000);
     this_thread::sleep_for(chrono::milliseconds(second));
 }
-int Safecin(const vector<int>& legal, bool ifblank) {
+
+inline int Safecin(const vector<int>& legal, bool ifblank) {
     string chose;
     forcheck.clear();
     for (auto v : legal) forcheck.push_back(to_string(v));
@@ -83,7 +90,7 @@ int Safecin(const vector<int>& legal, bool ifblank) {
     }
 }
 
-void SupplementDigitNumber(string& num, int digit) {
+inline void SupplementDigitNumber(string& num, int digit) {
     while (num.length() < digit) {
         num = " " + num;
     }
