@@ -82,6 +82,12 @@ int Safecin(const vector<int>& legal, bool ifblank) {
         cout << flush;
     }
 }
+
+void SupplementDigitNumber(string& num, int digit) {
+    while (num.length() < digit) {
+        num = " " + num;
+    }
+}
 /*给小组成员：
 *使用Refresh()以全屏刷新
 *使用rm.getnum(min,max)以获得一定范围（闭区间）的随机int

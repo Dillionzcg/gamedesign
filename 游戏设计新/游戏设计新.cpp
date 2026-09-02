@@ -1,652 +1,25 @@
 ﻿#include"StartBuff.h"
-#include"FirstENter.h"
+#include"FirstEnter.h"
 #include"Map.h"
+#include"ClassObject.h"
+#include"ClassRuneManager.h"
+#include"UnknownEvent.h"
+#include"ClassMycharacter.h"
+#include"Shop.h"
+#include"ClassSkill_RoundBuff.h"
+#include"ClassEnemy.h"
+
 using namespace std;
-class RuneManager;
-shared_ptr<RuneManager> RuneNow;
-//以下为主要运行程序
-class RuneManager {
-public:
-	RuneManager(int num) :ID(num) {}
-	RuneManager() = default;
-	string GetDescribe() {
-		return RuneList[ID];
-	}
-	string GetDescribethroughNum(int num) {
-		return RuneList[num];
-	}
-	string GetName() {
-		return RuneName[ID];
-	}
-	static void RandomChangeRune() {
-		int num = rm.getnum(0, 9);
-		RuneNow = make_shared<RuneManager>(num);
-	}
-private:
-	int ID=0;
-	string name="0";
-	//符文文本
-	vector<string> RuneList = {
-		//通常(0~9)
-		"//死仇：我方和敌方的攻击力+30%//",
-		"//瘟疫：我方和敌方的攻击力-30%//",
-		"//崩溃：我方和敌方的防御力-50%//",
-		"//狂热：我方和敌方技能条初始能量+2//",
-		"//暗市：该层的商店不再展示商品详细信息，但该层商店的售价-50%//",
-		"//迷雾：该层不再提前展示敌人信息，但可选择的技能+2//",
-		"//繁荣：该层的商店售价+50%，但战斗后掉落藏品+1//",
-		"//荒芜：该层的商店售价-50%，但战斗后不再掉落藏品//",
-		"//贪婪：敌方攻击力+20%，但每次移动后金币+2//",
-		"//救赎：在该层非boss关战斗死亡时可复活（仅限一次）,但该层战斗时防御力-30%//",
-		//特殊(10~11)
-		"//希望：在该层每次移动后金币+2，攻击力+30%//",
-		"//绝望：所有敌人攻击力+20%，我方攻击力-20%//"
-	};
-	vector<string> RuneName = {
-		"死仇",
-		"瘟疫",
-		"崩溃",
-		"狂热",
-		"暗市",
-		"迷雾",
-		"繁荣",
-		"荒芜",
-		"贪婪",
-		"救赎",
-		"希望",
-		"绝望"
-	};
-};
 
-class SkillManage {
-public:
-	SkillManage(int num) :ID(num) {}
-	string GetDescribe() {
-		return SkillList[ID];
-	}
-	string GetName() {
-		switch (ID) {
-		case 0: return "EA";
-		case 1: return "ED";
-		case 2: return "MA";
-		case 3: return "MD";
-		case 4: return "MB";
-		case 5: return "HA";
-		case 6: return "AH";
-		case 7: return "AE";
-		case 8: return "IA";
-		case 9: return "DA";
-		}
-	}
-	string GetDescribethroughNum(int num) {
-		return SkillList[num];
-	}
-private:
-	int ID;
-	vector<string> SkillList = {
-	//若干回合内生效
-	"//使对方攻击力在3回合内下降30%，并攻击一次//",//EA
-	"//使对方防御力在3回合内降至0，并攻击一次//",//ED
-	"//使包括此回合的3回合内的攻击力+50%，并攻击一次//",//MA
-	"//使包括此回合的3回合内的防御力+70%，并防御一次//",//MD
-	"//使包括此回合的4回合内\"防御\"行动对防御力的加成翻倍，并防御一次//",//MB
-	"//使包括此回合的3回合内每次受到伤害后回复20点血量，并防御一次//",//HA
-	//仅作用于该回合
-	"//对敌方进行一次250%攻击力的攻击，并回复40点血量//",//AH
-	"//对敌方进行一次250%攻击力的攻击，并使敌方能量条能量-1//",//AE
-	"//对敌方造成一次无视防御的300%攻击力的伤害//",//IA
-	"//使该回合内敌方晕眩（无法行动），并造成一次无视防御的150%攻击力的伤害//"//DA
-	};
-};
-//藏品类
-class Object {
-public:
-	Object(int rarity, string camp, string type, string describe,int buffnum) :Rarity(rarity), Camp(camp), Type(type), Describe(describe),BuffNum(buffnum) {
-		NeedingCoin = RarityCoin[Rarity-1];
-	}
-	int GetRarity() {
-		return Rarity;
-	}
-	int GetNeedingCoin() {
-		return NeedingCoin;
-	}
-	string GetDescribe() {
-		return Describe;
-	}
-	double GetBuffNum() {
-		return BuffNum;
-	}
-	bool GetIfGotten() {
-		return IfGotten;
-	}
-	void GainObject() {
-		IfGotten = true;
-	}
-private:
-	int Rarity;//稀有度,1/2/3
-	vector<int> RarityCoin = { 2,4,6 };//稀有度对应金币数
-	int NeedingCoin;//购买所需金币数
-	string Describe;//藏品描述
-	string Camp;//阵营，"M"为我方，"E"为敌方
-	string Type;//类型
-	bool IfGotten = false;//是否已获得
-	double BuffNum;//加成数值
-};
-//藏品池
-vector<shared_ptr<Object>> ObjectPool1 = {//初级藏品
-	make_shared<Object>(1,"M","A","攻击力+10%",0.1),
-	make_shared<Object>(1,"M","D","防御力+20%",0.2),
-	make_shared<Object>(1,"M","H","生命上限+30%",0.3),
-	make_shared<Object>(1,"M","HE","每点治疗能量治疗量+5",5),
-	make_shared<Object>(1,"E","A","敌人攻击力-10%",-0.1),
-	make_shared<Object>(1,"E","D","敌人防御力-10%",-0.1),
-	make_shared<Object>(1,"E","H","敌人生命上限-10%",-0.1),
-	make_shared<Object>(1,"E","CR","敌人暴击率-5%",-5),
-};
-vector<shared_ptr<Object>> ObjectPool2 = {//中级藏品
-	make_shared<Object>(2,"M","A","攻击力+20%",0.2),
-	make_shared<Object>(2,"M","D","防御力+30%",0.3),
-	make_shared<Object>(2,"M","H","生命上限+40%",0.4),
-	make_shared<Object>(2,"M","HE","每点治疗能量治疗量+10",10),
-	make_shared<Object>(2,"E","A","敌人攻击力-15%",-0.15),
-	make_shared<Object>(2,"E","D","敌人防御力-15%",-0.15),
-	make_shared<Object>(2,"E","H","敌人生命上限-15%",-0.15),
-	make_shared<Object>(2,"E","CR","敌人暴击率-10%",-10),
-
-	make_shared<Object>(2,"M","IE","我方初始能量+1",1),
-	make_shared<Object>(2,"M","IHE","我方初始治疗能量+1",1),
-	make_shared<Object>(2,"M","MHE","我方治疗能量上限+2",2),
-	make_shared<Object>(2,"M","SC","可选择技能+1",1),
-};
-vector<shared_ptr<Object>> ObjectPool3 = {//高级藏品
-	make_shared<Object>(3,"M","A","攻击力+30%",0.3),
-	make_shared<Object>(3,"M","D","防御力+40%",0.4),
-	make_shared<Object>(3,"M","H","生命上限+50%",0.5),
-	make_shared<Object>(3,"M","HE","每点治疗能量治疗量+15",15),
-	make_shared<Object>(3,"E","A","敌人攻击力-20%",-0.2),
-	make_shared<Object>(3,"E","D","敌人防御力-20%",-0.2),
-	make_shared<Object>(3,"E","H","敌人生命上限-20%",-0.2),
-	make_shared<Object>(3,"E","CR","敌人暴击率-15%",-15),
-
-	make_shared<Object>(3,"M","IE","我方初始能量+2",2),
-	make_shared<Object>(3,"M","IHE","我方初始治疗能量+2",2),
-	make_shared<Object>(3,"M","EN","我方技能所需能量-1",-1),
-	make_shared<Object>(3,"E","EN","敌方技能所需能量+2",2),
-	make_shared<Object>(2,"M","SC","可选择技能+2",2),
-};
-
-vector<shared_ptr<Object>> MyObjectGroup;//我方藏品组
-class Enemy;
-//局内buff管理，每个对象只负责一个buff
-class RoundBuff {
-public:
-	RoundBuff() = default;
-	~RoundBuff() = default;
-	RoundBuff(string type, double Buffnum, int round) {
-		//MA,我方攻击加成，MD,我方防御加成，MB,我方防御手段增益，EA,敌方攻击加成，ED,敌方防御加成
-		LastingRounds = round;
-		Bufftype = type;
-		Development = Buffnum;
-	}
-	void RoundPass() {
-		if (LastingRounds > 0) {
-			LastingRounds--;
-		}
-		if (LastingRounds == 0) {
-			Ifover = true;
-		}
-	}
-	bool GetIfover() {
-		return Ifover;
-	}
-	string GetType() {
-		return Bufftype;
-	}
-	double GetDevelopment() {
-		return Development;
-	}
-private:
-	double Development = 0;
-	int LastingRounds = 0;
-	string Bufftype="0";
-	bool Ifover = false;
-};
-class MyCharacter {
-public:
-	MyCharacter() = default;
-	//计算基础数值和当前数值
-	void CalculateMyNum(vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
-		CalculateMyRoundBuff(RoundBuffGroup);
-		CalculateMyLevelBuff();
-		BasicMaxHP = InitialMaxHP * (1.0 + BasicHPDevelopment+LevelHPDevelopment);
-		BasicAttack = InitialAttack * (1.0 + BasicAttackDevelopment+LevelAttackDevelopment);
-		BasicDefense = InitialDefense * (1.0 + BasicDefenseDevelopment+LevelDefenseDevelopment);
-		CurrentMaxHP = BasicMaxHP * (1.0 + CurrentHPDevelopment);
-		CurrentAttack = BasicAttack * (1.0 + CurrentAttackDevelopment + RoundAttackDevelopment);
-		CurrentDefense = BasicDefense * (1.0 + CurrentDefenseDevelopment + RoundDefenseDevelopment);
-		DefendingDeveloping = BasicDefendingDeveloping + RoundDefendingBuff;
-	}
-	void CalculateMyLevelBuff() {
-		LevelHPDevelopment = (Level - 1) * 0.1;
-		LevelAttackDevelopment = (Level - 1) * 0.1;
-		LevelDefenseDevelopment = (Level - 1) * 0.1;
-	}
-	void CalculateMyRoundBuff(vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
-		RoundAttackDevelopment = 0;
-		RoundDefenseDevelopment = 0;
-		RoundDefendingBuff = 0;
-		HealAfterHarm = 0;
-		if (!RoundBuffGroup.empty()) {
-			for (auto& item : RoundBuffGroup) {
-				if (item->GetType() == "MA") {
-					RoundAttackDevelopment += item->GetDevelopment();
-				}
-				else if (item->GetType() == "MD") {
-					RoundDefenseDevelopment += item->GetDevelopment();
-				}
-				else if (item->GetType() == "MB") {
-					RoundDefendingBuff += item->GetDevelopment();
-				}
-				else if (item->GetType() == "HA") {
-					HealAfterHarm+= item->GetDevelopment();
-				}
-			}
-		}
-	}
-	//设置当前血量为当前最大血量
-	void SetCurrentNum() {
-		CurrentHP = CurrentMaxHP;
-		CurrentHeal = InitialHeal;
-		CurrentEnergy = InitialEnergy;
-		IsAlive = true;
-	}
-	//获取当前数值
-	int GetCurrentHP() {
-		return CurrentHP;
-	}
-	int GetCurrentMaxHP() {
-		return CurrentMaxHP;
-	}
-	int GetCurrentAttack() {
-		return CurrentAttack;
-	}
-	int GetCurrentDefense() {
-		return CurrentDefense;
-	}
-	//获取当前其他数值
-	//能量
-	int GetCurrentEnergy() {
-		return CurrentEnergy;
-	}
-	int GetMaxEnergy() {
-		return MaxEnergy;
-	}
-	int GetInitialEnergy() {
-		return InitialEnergy;
-	}
-	//治疗条
-	int GetCurrentHeal() {
-		return CurrentHeal;
-	}
-	int GetMaxHeal() {
-		return MaxHeal;
-	}
-	int GetInitialHeal() {
-		return InitialHeal;
-	}
-	int GetHealHP() {
-		return HealHP;
-	}
-	//获取当前金币和等级
-	int GetCoins() {
-		return Coins;
-	}
-	int GetLevel() {
-		return Level;
-	}
-	//被攻击函数
-	void BeingAttacked(int damage, vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
-		CalculateMyNum(RoundBuffGroup);
-		int actualDamage = damage - CurrentDefense;
-		if (actualDamage < damage * leastHarm) {
-			actualDamage = damage * leastHarm;
-		}
-		CurrentHP -= actualDamage;
-		if (CurrentHP <= 0) {
-			CurrentHP = 0;
-			IsAlive = false;
-		}
-	}
-	//攻击敌人函数，具体实现在Enemy类定义后
-	void AttackEnemy(shared_ptr<Enemy> enemy, vector<shared_ptr<RoundBuff>> RoundBuffGroup);
-	void SpecialAttackEnemy(shared_ptr<Enemy> enemy, vector<shared_ptr<RoundBuff>> RoundBuffGroup, bool IfCalDefense, double AttackCrease);
-	//获取存活状态
-	bool GetIsAlive() {
-		return IsAlive;
-	}
-	//获取保底伤害倍数
-	int getLeastharm() {
-		return leastHarm * 10;
-	}
-	//获取技能状态
-	bool GetIfSkill() {
-		return (CurrentEnergy == MaxEnergy);
-	}
-	//获取是否可以治疗（治疗条不为空）
-	bool GetIfHeal() {
-		return (CurrentHeal != 0);
-	}
-	//获取治疗条是否满
-	bool GetIfHealFull() {
-		return (CurrentHeal == MaxHeal);
-	}
-	double GetDefendingDeveloping() {
-		return DefendingDeveloping;
-	}
-	//能量条与治疗条充能
-	void EnergyUp() {
-		if (!GetIfSkill()) {
-			CurrentEnergy++;
-		}
-	}
-	void HealUp() {
-		if (!GetIfHealFull()) {
-			CurrentHeal++;
-		}
-	}
-	//消耗所有能量条或治疗条
-	void UsingEnergy() {
-		CurrentEnergy = 0;
-	}
-	void UsingHeal() {
-		CurrentHeal = 0;
-	}
-	//回复血量
-	void Heal_UsingHeal() {
-		int heal = CurrentHeal * HealHP;
-		if (CurrentHP + heal <= CurrentMaxHP) {
-			CurrentHP += heal;
-		}
-		else {
-			CurrentHP = CurrentMaxHP;
-		}
-		UsingHeal();
-	}
-	void Heal(int heal) {
-		if (CurrentHP + heal <= CurrentMaxHP) {
-			CurrentHP += heal;
-		}
-		else {
-			CurrentHP = CurrentMaxHP;
-		}
-	}
-	int GetChoiceNum() {
-		return SkillChoiceNum;
-	}
-	int GetHealAfterHarm() {
-		return HealAfterHarm;
-	}
-	void Levelup(int num) {
-		Level += num;
-	}
-	void GainCoin(int num) {
-		Coins += num;
-	}
-	void ReSetNum() {
-		InitialMaxHP = 300;
-		InitialAttack = 80;
-		InitialDefense = 50;
-		Coins = 0;
-		Level = 1;
-		IsAlive = true;
-		SkillChoiceNum = 3;
-
-	}
-private:
-	//初始数值，仅开局选择buff时会改变
-	int InitialMaxHP=300;
-	int InitialAttack=80;
-	int InitialDefense=50;
-	//基础数值，为初始数值计算藏品加成与等级加成后的数值
-	int BasicMaxHP=0;
-	int BasicAttack=0;
-	int BasicDefense=0;
-	//当前数值，为基础数值计算其余buff/debuff加成后的数值
-	int CurrentMaxHP=0;
-	int CurrentAttack=0;
-	int CurrentDefense=0;
-	//藏品加成
-	double BasicHPDevelopment=0;
-	double BasicAttackDevelopment=0;
-	double BasicDefenseDevelopment=0;
-	//等级加成
-	double LevelHPDevelopment = 0;
-	double LevelAttackDevelopment = 0;
-	double LevelDefenseDevelopment = 0;
-	//其余buff/debuff加成的总加成
-	double CurrentHPDevelopment=0;
-	double CurrentAttackDevelopment=0;
-	double CurrentDefenseDevelopment=0;
-	//局内buff/debuff加成的总加成
-	double RoundAttackDevelopment = 0;
-	double RoundDefenseDevelopment = 0;
-	double RoundDefendingBuff = 0;
-	//当前血量
-	int CurrentHP=0;
-	//能量
-	int CurrentEnergy=0;
-	int InitialEnergy = 0;
-	int MaxEnergy=3;
-	//治疗条
-	int CurrentHeal=0;
-	int InitialHeal = 0;
-	int MaxHeal=3;
-	//每剂治疗条的治疗量
-	int HealHP = 30;
-	//金币
-	int Coins = 0;
-	//等级
-	int Level = 1;
-	//存活状态
-	bool IsAlive = true;
-	//防御手段防御力加成
-	double BasicDefendingDeveloping = 2;
-	double DefendingDeveloping = 2;
-	//保底伤害比例
-	double leastHarm = 0.1;
-	//开局可抽取技能个数
-	int SkillChoiceNum = 3;
-	//被攻击后回复血量
-	int HealAfterHarm = 0;
-};
-
-MyCharacter mycharacter;
-class Enemy {
-public:
-	Enemy(int hp,int atk,int dfs, vector<shared_ptr<RoundBuff>> RoundBuffGroup) : InitialMaxHP(hp), InitialAttack(atk), InitialDefense(dfs) {
-		CalculateMyNum(RoundBuffGroup);
-		SetCurrentHP();
-	}
-	Enemy() = default;
-	void CalculateMyRoundBuff(vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
-		RoundAttackDevelopment = 0;
-		RoundDefenseDevelopment = 0;
-		if (!RoundBuffGroup.empty()) {
-			for (auto& item : RoundBuffGroup) {
-				if (item->GetType() == "EA") {
-					RoundAttackDevelopment += item->GetDevelopment();
-				}
-				else if (item->GetType() == "ED") {
-					RoundDefenseDevelopment += item->GetDevelopment();
-				}
-			}
-		}
-	}
-	//计算基础数值和当前数值
-	void CalculateMyNum(vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
-		CalculateMyRoundBuff(RoundBuffGroup);
-		BasicMaxHP = InitialMaxHP * (1.0 + BasicHPDevelopment);
-		BasicAttack = InitialAttack * (1.0 + BasicAttackDevelopment);
-		BasicDefense = InitialDefense * (1.0 + BasicDefenseDevelopment);
-		CurrentMaxHP = BasicMaxHP * (1.0 + CurrentHPDevelopment);
-		CurrentAttack = BasicAttack * (1.0 + CurrentAttackDevelopment+RoundAttackDevelopment);
-		CurrentDefense = BasicDefense * (1.0 + CurrentDefenseDevelopment+RoundDefenseDevelopment);
-		if (CurrentDefense <= 0) CurrentDefense = 0;
-	}
-	//设置当前血量为当前最大血量
-	void SetCurrentHP() {
-		CurrentHP = CurrentMaxHP;
-	}
-	//获取当前数值
-	int GetCurrentHP() {
-		return CurrentHP;
-	}
-	int GetCurrentMaxHP() {
-		return CurrentMaxHP;
-	}
-	int GetCurrentAttack() {
-		return CurrentAttack;
-	}
-	int GetCurrentDefense() {
-		return CurrentDefense;
-	}
-	//获取能量
-	int GetCurrentEnergy() {
-		return CurrentEnergy;
-	}
-	int GetMaxEnergy() {
-		return MaxEnergy;
-	}
-	int GetInitialEnergy() {
-		return InitialEnergy;
-	}
-	//获取暴击率
-	int GetCriticalRate() {
-		return CriticalRate;
-	}
-	double GetCriticalHarm() {
-		return CriticalHarm;
-	}
-	//被攻击函数
-	void BeingAttacked(int damage, vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
-		CalculateMyNum(RoundBuffGroup);
-		int actualDamage = damage - CurrentDefense;
-		if (actualDamage < damage * 0.1) {
-			actualDamage = damage * 0.1;
-		}
-		CurrentHP -= actualDamage;
-		if (CurrentHP <= 0) {
-			CurrentHP = 0;
-			IsAlive = false;
-		}
-	}
-	void BeingAttacked_NoDefense(int damage, vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
-		CalculateMyNum(RoundBuffGroup);
-		CurrentHP -= damage;
-		if (CurrentHP <= 0) {
-			CurrentHP = 0;
-			IsAlive = false;
-		}
-	}
-	//攻击我方函数
-	bool AttackPlayer(MyCharacter& player, vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
-		CalculateMyNum(RoundBuffGroup);
-		int NumforCritical = rm.getnum(1, 100);
-		bool IfCritical = (NumforCritical <= CriticalRate);
-		int damage=0;
-		if (IfCritical) {
-			damage = CurrentAttack*CriticalHarm;
-		}
-		else {
-			damage = CurrentAttack;
-		}
-		
-		player.BeingAttacked(damage,RoundBuffGroup);
-		return IfCritical;
-	}
-	//获取存活状态
-	bool GetIsAlive() {
-		return IsAlive;
-	}
-	bool GetIfSkill() {
-		return (CurrentEnergy == MaxEnergy);
-	}
-	//回复血量
-	void Heal(int heal) {
-		if (CurrentHP + heal <= CurrentMaxHP) {
-			CurrentHP += heal;
-		}
-		else {
-			CurrentHP = CurrentMaxHP;
-		}
-	}
-	void EnergyUp() {
-		if (!GetIfSkill()) {
-			CurrentEnergy++;
-		}
-	}
-	void UsingEnergy() {
-		CurrentEnergy = 0;
-	}
-	void CriticalRateCrease(int num) {
-		CriticalRate += num;
-	}
-	void EnergyIncrease(int num) {
-		if (CurrentEnergy > 0) CurrentEnergy--;
-	}
-	void MustCritical() {
-		CriticalRate_Tem = CriticalRate;
-		CriticalRate += 100;
-		if (CriticalRate > 100) CriticalRate = 100;
-	}
-	void Re_CriticalRate() {
-		CriticalRate = CriticalRate_Tem;
-	}
-private:
-	//初始数值
-	int InitialMaxHP = 0;
-	int InitialAttack = 0;
-	int InitialDefense = 0;
-	//基础数值，为初始数值计算藏品加成与等级加成后的数值
-	int BasicMaxHP = 0;
-	int BasicAttack = 0;
-	int BasicDefense = 0;
-	//当前数值，为基础数值计算其余buff/debuff加成后的数值
-	int CurrentMaxHP = 0;
-	int CurrentAttack = 0;
-	int CurrentDefense = 0;
-	//藏品加成与等级加成的总加成
-	int BasicHPDevelopment = 0;
-	int BasicAttackDevelopment = 0;
-	int BasicDefenseDevelopment = 0;
-	//其余局外buff/debuff加成的总加成
-	int CurrentHPDevelopment = 0;
-	int CurrentAttackDevelopment = 0;
-	int CurrentDefenseDevelopment = 0;
-	//局内buff/debuff加成的总加成
-	double RoundAttackDevelopment = 0;
-	double RoundDefenseDevelopment = 0;
-	//当前血量
-	int CurrentHP = 100;
-	//能量
-	int CurrentEnergy = 0;
-	int InitialEnergy = 0;
-	int MaxEnergy = 6;
-	//暴击率与暴击伤害
-	int CriticalRate = 20;
-	int CriticalRate_Tem = 0;
-	double CriticalHarm = 2;
-	//存活状态
-	bool IsAlive = true;
-};
+//攻击函数的实现
 void MyCharacter::AttackEnemy(shared_ptr<Enemy> enemy, vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
 	CalculateMyNum(RoundBuffGroup);
 	int damage = CurrentAttack;
-	enemy->BeingAttacked(damage,RoundBuffGroup);
+	enemy->BeingAttacked(damage, RoundBuffGroup);
 }
 void MyCharacter::SpecialAttackEnemy(shared_ptr<Enemy> enemy, vector<shared_ptr<RoundBuff>> RoundBuffGroup, bool IfCalDefense, double AttackCrease) {
 	CalculateMyNum(RoundBuffGroup);
-	int damage = CurrentAttack*(1+AttackCrease);
+	int damage = CurrentAttack * (1 + AttackCrease);
 	if (IfCalDefense) {
 		enemy->BeingAttacked(damage, RoundBuffGroup);
 	}
@@ -655,6 +28,22 @@ void MyCharacter::SpecialAttackEnemy(shared_ptr<Enemy> enemy, vector<shared_ptr<
 	}
 
 }
+bool Enemy::AttackPlayer(MyCharacter& player, vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
+	CalculateMyNum(RoundBuffGroup);
+	int NumforCritical = rm.getnum(1, 100);
+	bool IfCritical = (NumforCritical <= CriticalRate);
+	int damage = 0;
+	if (IfCritical) {
+		damage = CurrentAttack * CriticalHarm;
+	}
+	else {
+		damage = CurrentAttack;
+	}
+
+	player.BeingAttacked(damage, RoundBuffGroup);
+	return IfCritical;
+}
+
 class EnemyNumManager {
 public:
 	EnemyNumManager(int hp, int atk, int dfs) :HP(hp), Attack(atk), Defense(dfs) {}
@@ -738,264 +127,9 @@ shared_ptr<SkillManage> ChooseSkill(int ChoiceNum,int floor,bool IsBoss) {
 	}
 	return MySkillManager[0];
 }
-
-void SupplementDigitNumber(string &num,int digit) {
-	while (num.length() < digit) {
-		num = " " + num;
-	}
-}
-int Battlerow = 20;
-int Battlecol = 90;
-bool IfBattleIsOver = false;
-vector<vector<string>> Battlemap(Battlerow, vector<string>(Battlecol, " "));
-void PrintBalttleGround(int *myData, int *enemyData,int round,int turn) {
-	for (int i = 0; i < 20; i++) {
-		for (int j = 0; j < 90; j++) {
-			Battlemap[i][j] = " ";	
-		}
-	}
-	string myhp = to_string(myData[0]);
-	string myHP = to_string(myData[1]);
-	string enemyhp = to_string(enemyData[0]);
-	string enemyHP = to_string(enemyData[1]);
-	SupplementDigitNumber(myhp,4);
-	SupplementDigitNumber(myHP,4);
-	SupplementDigitNumber(enemyhp,4);
-	SupplementDigitNumber(enemyHP,4);
-	auto safe_div = [](int a, int b) -> double { return (b > 0) ? (double)a / b : 0.0; };
-	double MyHpPercent = safe_div(myData[0], myData[1]);
-	double EnemyHpPercent = safe_div(enemyData[0], enemyData[1]);
-	double MyEnergyPercent = safe_div(myData[2], myData[3]);
-	int MyEnergyBarLength = (int)(MyEnergyPercent * 19);
-	double Myhealpercent = safe_div(myData[4], myData[5]);
-	int MyhealBarLength = (int)(Myhealpercent * 19);
-	double EnemyEnergyPercent = safe_div(enemyData[2], enemyData[3]);
-	int EnemyEnergyBarLength = (int)(EnemyEnergyPercent * 19);
-	int MyHpBarLength = (int)(MyHpPercent * 28);
-	int EnemyHpBarLength = (int)(EnemyHpPercent * 28);
-	if (MyEnergyBarLength < 0) MyEnergyBarLength = 0;
-	if (MyEnergyBarLength > 19) MyEnergyBarLength = 19;
-	if (MyhealBarLength < 0) MyhealBarLength = 0;
-	if (MyhealBarLength > 19) MyhealBarLength = 19;
-	if (EnemyEnergyBarLength < 0) EnemyEnergyBarLength = 0;
-	if (EnemyEnergyBarLength > 19) EnemyEnergyBarLength = 19;
-	if (MyHpBarLength < 0) MyHpBarLength = 0;
-	if (MyHpBarLength > 28) MyHpBarLength = 28;
-	if (EnemyHpBarLength < 0) EnemyHpBarLength = 0;
-	if (EnemyHpBarLength > 28) EnemyHpBarLength = 28;
-	if (turn != 2) {
-		Refresh();
-	}
-	for (int i = 0; i < Battlerow; i++) {
-		Battlemap[i][0] = "#";
-		Battlemap[i][Battlecol - 1] = "#";
-	}
-	for (int j = 0; j < Battlecol; j++) {
-		Battlemap[0][j] = "#";
-		Battlemap[Battlerow - 1][j] = "#";
-	}
-	Battlemap[1][40] = "M";
-	Battlemap[1][41] = "y";
-	Battlemap[1][42] = "C";
-	Battlemap[1][43] = "h";
-	Battlemap[1][44] = "a";
-	Battlemap[1][45] = "r";
-	Battlemap[1][46] = "a";
-	Battlemap[1][47] = "c";
-	Battlemap[1][48] = "t";
-	Battlemap[1][49] = "e";
-	Battlemap[1][50] = "r";
-	Battlemap[18][43] = "E";
-	Battlemap[18][44] = "n";
-	Battlemap[18][45] = "e";
-	Battlemap[18][46] = "m";
-	Battlemap[18][47] = "y";
-	//以下为我方血量条位置
-	for (int i = 2;i <= 4;i++) {
-		Battlemap[i][31] = "#";
-		Battlemap[i][60] = "#";
-	}
-	for(int j=32;j<=59;j++) {
-		Battlemap[2][j] = "-";
-		Battlemap[4][j] = "-";
-	}
-	for(int j=32;j<32+MyHpBarLength;j++) {
-		Battlemap[3][j] = "|";
-		if (!IfBattleIsOver) {
-			Battlemap[3][32] = "|";
-		}
-	}
-	Battlemap[5][38] = "H";
-	Battlemap[5][39] = "P";
-	Battlemap[5][40] = ":";
-	Battlemap[5][41] = myhp[0];
-	Battlemap[5][42] = myhp[1];
-	Battlemap[5][43] = myhp[2];
-	Battlemap[5][44] = myhp[3];
-	Battlemap[5][45] = "/";
-	Battlemap[5][46] = myHP[0];
-	Battlemap[5][47] = myHP[1];
-	Battlemap[5][48] = myHP[2];
-	Battlemap[5][49] = myHP[3];
-	//以下为我方能量条位置
-	for (int i = 2;i <= 4;i++) {
-		Battlemap[i][5] = "#";
-		Battlemap[i][25] = "#";
-	}
-	for (int j = 6;j <= 24;j++) {
-		Battlemap[2][j] = "-";
-		Battlemap[4][j] = "-";
-	}
-	Battlemap[5][11] = "E";
-	Battlemap[5][12] = "n";
-	Battlemap[5][13] = "e";
-	Battlemap[5][14] = "r";
-	Battlemap[5][15] = "g";
-	Battlemap[5][16] = "y";
-	Battlemap[5][17] = ":";
-	Battlemap[5][18] = to_string(myData[2]);
-	Battlemap[5][19] = "/";
-	Battlemap[5][20] = to_string(myData[3]);
-	for (int j = 6;j < 6 + MyEnergyBarLength;j++) {
-		Battlemap[3][j] = "|";
-	}
-	//以下为我方治疗条位置
-	for (int i = 2;i <= 4;i++) {
-		Battlemap[i][66] = "#";
-		Battlemap[i][86] = "#";
-	}
-	for (int j = 67;j <= 85;j++) {
-		Battlemap[2][j] = "-";
-		Battlemap[4][j] = "-";
-	}
-	Battlemap[5][73] = "H";
-	Battlemap[5][74] = "e";
-	Battlemap[5][75] = "a";
-	Battlemap[5][76] = "l";
-	Battlemap[5][77] = ":";
-	Battlemap[5][78] = to_string(myData[4]);
-	Battlemap[5][79] = "/";
-	Battlemap[5][80] = to_string(myData[5]);
-	for (int j = 67;j < 67 + MyhealBarLength;j++) {
-		Battlemap[3][j] = "|";
-	}
-	//以下为敌方血量条位置
-	for (int i = 15;i <= 17;i++) {
-		Battlemap[i][31] = "#";
-		Battlemap[i][60] = "#";
-	}
-	for(int j=32;j<=59;j++) {
-		Battlemap[15][j] = "-";
-		Battlemap[17][j] = "-";
-	}
-	for (int j = 32;j < 32 + EnemyHpBarLength;j++) {
-		Battlemap[16][j] = "|";
-		if (!IfBattleIsOver) {
-			Battlemap[16][32] = "|";
-		}
-	}
-	Battlemap[14][38] = "H";
-	Battlemap[14][39] = "P";
-	Battlemap[14][40] = ":";
-	Battlemap[14][41] = enemyhp[0];
-	Battlemap[14][42] = enemyhp[1];
-	Battlemap[14][43] = enemyhp[2];
-	Battlemap[14][44] = enemyhp[3];
-	Battlemap[14][45] = "/";
-	Battlemap[14][46] = enemyHP[0];
-	Battlemap[14][47] = enemyHP[1];
-	Battlemap[14][48] = enemyHP[2];
-	Battlemap[14][49] = enemyHP[3];
-	//以下为敌方能量条位置
-	for (int i = 15;i <= 17;i++) {
-		Battlemap[i][5] = "#";
-		Battlemap[i][25] = "#";
-	}
-	for (int j = 6;j <= 24;j++) {
-		Battlemap[15][j] = "-";
-		Battlemap[17][j] = "-";
-	}
-	Battlemap[14][11] = "E";
-	Battlemap[14][12] = "n";
-	Battlemap[14][13] = "e";
-	Battlemap[14][14] = "r";
-	Battlemap[14][15] = "g";
-	Battlemap[14][16] = "y";
-	Battlemap[14][17] = ":";
-	Battlemap[14][18] = to_string(enemyData[2]);
-	Battlemap[14][19] = "/";
-	Battlemap[14][20] = to_string(enemyData[3]);
-	for (int j = 6;j < 6 + EnemyEnergyBarLength;j++) {
-		Battlemap[16][j] = "|";
-	}
-	Battlemap[16][73] = "R";
-	Battlemap[16][74] = "o";
-	Battlemap[16][75] = "u";
-	Battlemap[16][76] = "n";
-	Battlemap[16][77] = "d";
-	Battlemap[16][78] = to_string(round/10);
-	Battlemap[16][79] = to_string(round%10);
-	if (turn == 1) {
-		// 等待用户输入 - 显示 "Please input..."
-		string prompt = "Please input...";
-		int prow = 9;
-		int pcol = 39; // 从原有位置开始填充
-		for (size_t k = 0; k < prompt.size(); ++k) {
-			if (pcol + (int)k >= 0 && pcol + (int)k < Battlecol)
-				Battlemap[prow][pcol + k] = string(1, prompt[k]);
-		}
-	}
-	else {
-		// 敌方回合 - 在居中位置显示 "Enter"
-		string enter = "Enter";
-		int erow = 9;
-		int ecol = (Battlecol - (int)enter.size()) / 2; // 水平居中起始列
-		for (size_t k = 0; k < enter.size(); ++k) {
-			if (ecol + (int)k >= 0 && ecol + (int)k < Battlecol)
-				Battlemap[erow][ecol + k] = string(1, enter[k]);
-		}
-	}
-	for (int i = 0;i < 20;i++) {
-		cout << " ";
-	}
-	cout << "我方攻击力:【" << myData[6] << "】,我方防御力:【"<< myData[7] << "】,每剂治疗量:【" << myData[8] <<"】" << endl;
-	//打印地图
-	for(int i = 0; i < Battlerow; i++) {
-		for(int j = 0; j < Battlecol; j++) {
-			cout << Battlemap[i][j]<<flush;
-		}
-		cout << endl;
-	}
-	for (int i = 0;i < 20;i++) {
-		cout << " ";
-	}
-	cout << "敌方攻击力:【" << enemyData[4] << "】,敌方防御力:【" << enemyData[5] << "】,敌方暴击率:【" << enemyData[6] << "%】" << endl;
-	cout << endl;
-}
-void PrintEventGround(int Type) {
-	Refresh();
-	for (int i = 0; i < 20; i++) {
-		for (int j = 0; j < 90; j++) {
-			Battlemap[i][j] = " ";
-		}
-	}
-	for (int j = 0; j < Battlecol; j++) {
-		Battlemap[0][j] = "#";
-		Battlemap[Battlerow - 1][j] = "#";
-	}
-	//打印地图
-	for (int i = 0; i < Battlerow; i++) {
-		for (int j = 0; j < Battlecol; j++) {
-			cout << Battlemap[i][j];
-		}
-		cout << endl;
-	}
-}
-int MydataWhenBattle[9] = { 0 };
-int EnemydataWhenBattle[7] = { 0 };
 vector<shared_ptr<RoundBuff>> InitialRoundBuffGroup;//创建时使用的数组
 vector<shared_ptr<RoundBuff>> RoundBuffGroup;//筛选后实际使用的数组
-bool EnemyIfDizzy = false;
+
 //添加局内buff函数
 void AddRoundBuff(string type, double buffnum, int round) {
 	InitialRoundBuffGroup.push_back(make_shared<RoundBuff>(type, buffnum, round));
@@ -1026,6 +160,7 @@ void UpdateData(shared_ptr<Enemy> enemy) {
 }
 shared_ptr<SkillManage> MySkill;
 shared_ptr<SkillManage> EnemySkill;
+bool EnemyIfDizzy = false;
 int UseSkill(shared_ptr<SkillManage> skill) {
 	string name = skill->GetName();
 	if (name == "EA") {
@@ -1088,6 +223,7 @@ void MyDefend(shared_ptr<Enemy> enemy, int round,bool ifskill){
 	}
 	cout << "已使用防御，本回合防御力提升至" << mycharacter.GetDefendingDeveloping() << "倍。" << endl;
 }
+
 //回合开始函数
 int RoundStart(int round, shared_ptr<Enemy> enemy) {
 	EnemyIfDizzy = false;
@@ -1508,6 +644,7 @@ bool BattleStart(int floor,bool isBoss) {
 		return false;
 	}
 }
+
 void PrintMyCharacterStatus() {
 	//清屏
 	Refresh();
@@ -1558,6 +695,25 @@ void PrintMyCharacterStatus() {
 
 	SafeEnter();
 }
+bool MapChoose() {
+	vector<int> MapLegalChoice = { 0,1 };
+	int MapChoice = 0;
+	while (1) {
+		MapChoice = Safecin(MapLegalChoice, true);
+		if (MapChoice != 0) {
+			break;
+		}
+		else {
+			PrintMyCharacterStatus();
+		}
+	}
+	if (MapChoice == 1) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 int main() {
 	while (1) {
 		//程序运行总循环，输了之后会回到这里
@@ -1567,7 +723,18 @@ int main() {
 		int thisfloor = 0;
 		bool Ifwin = true;
 		showTitle();
-		enterbuff();
+		int selectedBuff = enterbuff();
+		switch (selectedBuff) {
+		case 0:
+			mycharacter.InitialAttackDevelopment(0.1);
+			break;
+		case 1:
+			mycharacter.InitialMaxHPDevelopment(0.3);
+			break;
+		case 2:
+			mycharacter.GainCoin(6);
+			break;
+		}
 		while (1) {
 			//一局游戏循环
 			if (thisfloor != floor) {
@@ -1580,27 +747,28 @@ int main() {
 			cout << endl;
 			PrintMaphelp();
 			cout << endl;
-		
+			
+			bool IfSave=false;
 			Ifwin = true;
 			switch (Maptype[step]) {
 			case 1://普通战斗
-				cout << "进入战斗节点，按回车继续..." << endl;
-				SafeEnter();
-				Ifwin=BattleStart(floor, false);
+				cout << "进入战斗节点，按回车继续...（或输入0以查看当前状态，输入1以存档）" << endl;
+				IfSave=MapChoose();
+				Ifwin = BattleStart(floor, false);
 				break;
 			case 4://boss战斗
-				cout << "进入Boss战斗节点，按回车继续..." << endl;
-				SafeEnter();
+				cout << "进入Boss战斗节点，按回车继续...（或输入0以查看当前状态，输入1以存档）" << endl;
+				IfSave = MapChoose();
 				Ifwin=BattleStart(floor, true);
 				break;
 			case 2://非战斗节点
-				cout << "进入未知事件节点，按回车继续..." << endl;
-				SafeEnter();
+				cout << "进入未知事件节点，按回车继续...（或输入0以查看当前状态，输入1以存档）" << endl;
+				IfSave = MapChoose();
 				PrintEventGround(2);
 				break;
 			case 3://商店节点
-				cout << "进入商店节点，按回车继续..." << endl;
-				SafeEnter();
+				cout << "进入商店节点，按回车继续...（或输入0以查看当前状态，输入1以存档）" << endl;
+				IfSave = MapChoose();
 				PrintEventGround(3);
 				break;
 			case 5://双节点

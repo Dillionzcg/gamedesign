@@ -1,184 +1,15 @@
-/*给小组成员：
-*使用Refresh()以全屏刷新
-*使用rm.getnum(min,max)以获得一定范围（闭区间）的随机int
-*使用rm.getSomeNum(min,max,k)以获得一定范围（闭区间）的k个不重复随机int，返回vector<int>
-*使用a=Safecin(legal,ifblank)以获得合法输入，
- legal为合法数字向量(vector<int>)，ifblank为是否允许空输入(bool值)
-*使用WaitForSeconds(second)以等待特定秒数(double)
-*/
-
-#include<iostream>
-#include<random>
-#include<vector>
-#include<memory>
-#include<string>
-#include<numeric>
-#include<algorithm>
-#include<stdexcept>
-#include<thread>
-#include<chrono>
-#include<limits>
+#pragma once
+#include "basis.h"
+#include "ClassObject.h"
 using namespace std;
+class Object;
 
-//藏品类
-class Object {
-public:
-	Object(int rarity, string camp, string type, string describe, int buffnum) :Rarity(rarity), Camp(camp), Type(type), Describe(describe), BuffNum(buffnum) {
-		NeedingCoin = RarityCoin[Rarity - 1];
-	}
-	int GetRarity() {
-		return Rarity;
-	}
-	int GetNeedingCoin() {
-		return NeedingCoin;
-	}
-	string GetDescribe() {
-		return Describe;
-	}
-	double GetBuffNum() {
-		return BuffNum;
-	}
-	bool GetIfGotten() {
-		return IfGotten;
-	}
-	void GainObject() {
-		IfGotten = true;
-	}
-private:
-	int Rarity;//稀有度,1/2/3
-	vector<int> RarityCoin = { 2,4,6 };//稀有度对应金币数
-	int NeedingCoin;//购买所需金币数
-	string Describe;//藏品描述
-	string Camp;//阵营，"M"为我方，"E"为敌方
-	string Type;//类型
-	bool IfGotten = false;//是否已获得
-	double BuffNum;//加成数值
-};
-//藏品池
-vector<shared_ptr<Object>> ObjectPool1 = {//初级藏品
-	make_shared<Object>(1,"M","A","攻击力+10%",0.1),
-	make_shared<Object>(1,"M","D","防御力+20%",0.2),
-	make_shared<Object>(1,"M","H","生命上限+30%",0.3),
-	make_shared<Object>(1,"M","HE","每点治疗能量治疗量+5",5),
-	make_shared<Object>(1,"E","A","敌人攻击力-10%",-0.1),
-	make_shared<Object>(1,"E","D","敌人防御力-10%",-0.1),
-	make_shared<Object>(1,"E","H","敌人生命上限-10%",-0.1),
-	make_shared<Object>(1,"E","CR","敌人暴击率-5%",-5),
-};
-vector<shared_ptr<Object>> ObjectPool2 = {//中级藏品
-	make_shared<Object>(2,"M","A","攻击力+20%",0.2),
-	make_shared<Object>(2,"M","D","防御力+30%",0.3),
-	make_shared<Object>(2,"M","H","生命上限+40%",0.4),
-	make_shared<Object>(2,"M","HE","每点治疗能量治疗量+10",10),
-	make_shared<Object>(2,"E","A","敌人攻击力-15%",-0.15),
-	make_shared<Object>(2,"E","D","敌人防御力-15%",-0.15),
-	make_shared<Object>(2,"E","H","敌人生命上限-15%",-0.15),
-	make_shared<Object>(2,"E","CR","敌人暴击率-10%",-10),
-
-	make_shared<Object>(2,"M","IE","我方初始能量+1",1),
-	make_shared<Object>(2,"M","IHE","我方初始治疗能量+1",1),
-	make_shared<Object>(2,"M","MHE","我方治疗能量上限+2",2),
-	make_shared<Object>(2,"M","SC","可选择技能+1",1),
-};
-vector<shared_ptr<Object>> ObjectPool3 = {//高级藏品
-	make_shared<Object>(3,"M","A","攻击力+30%",0.3),
-	make_shared<Object>(3,"M","D","防御力+40%",0.4),
-	make_shared<Object>(3,"M","H","生命上限+50%",0.5),
-	make_shared<Object>(3,"M","HE","每点治疗能量治疗量+15",15),
-	make_shared<Object>(3,"E","A","敌人攻击力-20%",-0.2),
-	make_shared<Object>(3,"E","D","敌人防御力-20%",-0.2),
-	make_shared<Object>(3,"E","H","敌人生命上限-20%",-0.2),
-	make_shared<Object>(3,"E","CR","敌人暴击率-15%",-15),
-
-	make_shared<Object>(3,"M","IE","我方初始能量+2",2),
-	make_shared<Object>(3,"M","IHE","我方初始治疗能量+2",2),
-	make_shared<Object>(3,"M","EN","我方技能所需能量-1",-1),
-	make_shared<Object>(3,"E","EN","敌方技能所需能量+2",2),
-	make_shared<Object>(2,"M","SC","可选择技能+2",2),
-};
-
-vector<shared_ptr<Object>> MyObjectGroup;//我方藏品组
-
-int TestCoins = 100;
-//刷新屏幕
-void Refresh() {
-	cout << "\033[2J\033[H" << flush;
-}
-//随机数生成
-class RandomManager {
-private:
-	mt19937 rd;
-public:
-	RandomManager() :rd(random_device{}()) {}
-	RandomManager(const RandomManager&) = delete;
-	RandomManager& operator=(const RandomManager&) = delete;
-	int getnum(int min, int max) {
-		uniform_int_distribution<int> dist(min, max);
-		return dist(rd);
-	}
-	vector<int> getSomeNum(int min, int max, int k) {
-		int total = max - min + 1;
-		vector<int> pool(total);
-		iota(pool.begin(), pool.end(), min);
-		shuffle(pool.begin(), pool.end(), rd);
-		return vector<int>(
-			pool.begin(),
-			pool.begin() + k
-		);
-	}
-};
-
-RandomManager rm;
 // 边框颜色
-const string BLUE = "\033[34m";
-const string PURPLE = "\033[35m";
-const string GOLD = "\033[33m";
-const string RESET = "\033[0m";
-//输入检查函数
+const string BLUE_S = "\033[34m";
+const string PURPLE_S = "\033[35m";
+const string GOLD_S = "\033[33m";
+const string RESET_S = "\033[0m";
 
-vector<string> forcheck;
-
-int Safecin(const vector<int>& legal, bool ifblank) {
-	string chose;
-	forcheck.clear();
-	for (auto v : legal) {
-		forcheck.push_back(to_string(v));
-	}
-	while (1) {
-		getline(cin, chose);
-		if (ifblank) {
-			if (chose.empty()) {
-				return -1;
-			}
-		}
-		for (auto& item : forcheck) {
-			if (item == chose) {
-				return stoi(chose);
-			}
-		}
-		cout << "请在";
-		for (auto& item : forcheck) {
-			cout << item << ",";
-		}
-		cout << "中选择一个数字:";
-		if (ifblank) {
-			cout << "(或者回车以继续)";
-		}
-		cout << flush;
-	}
-}
-//安全回车
-void SafeEnter() {
-	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-}
-
-//等待回车
-void WaitForSeconds(double Time) {
-	int second = (int)Time * 1000;
-	this_thread::sleep_for(
-		chrono::milliseconds(second)
-	);
-}
 //商店系统
 // 商店界面的行数
 int Shoprow = 40;
@@ -227,13 +58,13 @@ void DrawShopItem(int startRow, int startCol, string ItemName,
 	string Color;
 
 	if (ItemRarity == 1) {
-		Color = BLUE;
+		Color = BLUE_S;
 	}
 	else if (ItemRarity == 2) {
-		Color = PURPLE;
+		Color = PURPLE_S;
 	}
 	else if (ItemRarity == 3) {
-		Color = GOLD;
+		Color = GOLD_S;
 	}
 
 	int width = 35;
@@ -242,19 +73,19 @@ void DrawShopItem(int startRow, int startCol, string ItemName,
 
 	// 上边框
 	for (int j = startCol; j < startCol + width; j++) {
-		Shopmap[startRow][j] = Color + "#" + RESET;
+		Shopmap[startRow][j] = Color + "#" + RESET_S;
 	}
 
 	// 左右边框
 	for (int i = startRow + 1; i < startRow + nameHeight; i++) {
-		Shopmap[i][startCol] = Color + "#" + RESET;
-		Shopmap[i][startCol + width - 1] = Color + "#" + RESET;
+		Shopmap[i][startCol] = Color + "#" + RESET_S;
+		Shopmap[i][startCol + width - 1] = Color + "#" + RESET_S;
 	}
 
 	// 下边框
 	for (int j = startCol; j < startCol + width; j++) {
 		Shopmap[startRow + nameHeight - 1][j] =
-			Color + "#" + RESET;
+			Color + "#" + RESET_S;
 	}
 
 	// 商品名称
@@ -420,8 +251,9 @@ void DrawShop() {
 		//绘制商品
 		DrawShopItem(startRow, startCol, ItemName[i], ItemPrice[i], i + 1, ItemRarity[i]);
 	}
+	int TestCoin = 10;
 	//显示当前金币
-	string CoinText = "当前金币：" + to_string(TestCoins);
+	string CoinText = "当前金币：" + to_string(TestCoin);
 	PutShopText(37, 1, Shopcol - 2, CoinText);
 
 	//显示操作说明

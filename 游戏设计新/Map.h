@@ -1,5 +1,7 @@
 #pragma once
 #include"basis.h"
+
+
 vector<vector<string>> Themap(8, vector<string>(100, " "));
 void DrawBlock(int blocktype, int line) {
 	if (blocktype != 5 && blocktype != 0) {//blocktype为5为双节点，blocktype为0为已经过节点
@@ -72,7 +74,8 @@ void DrawBlock(int blocktype, int line) {
 	}
 }
 void PrintMaphelp() {
-	cout << PURPLE;
+	cout << HUI;
+	cout << endl;
 	cout << "地图说明：" << endl;
 	cout << " * :战斗节点" << endl;
 	cout << " ? :未知事件节点" << endl;
@@ -152,3 +155,253 @@ void DrawMap(int floor, int step) {
 	}
 	cout << endl;
 }
+
+int Battlerow = 20;
+int Battlecol = 90;
+bool IfBattleIsOver = false;
+vector<vector<string>> Battlemap(Battlerow, vector<string>(Battlecol, " "));
+void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
+	for (int i = 0; i < 20; i++) {
+		for (int j = 0; j < 90; j++) {
+			Battlemap[i][j] = " ";
+		}
+	}
+	string myhp = to_string(myData[0]);
+	string myHP = to_string(myData[1]);
+	string enemyhp = to_string(enemyData[0]);
+	string enemyHP = to_string(enemyData[1]);
+	SupplementDigitNumber(myhp, 4);
+	SupplementDigitNumber(myHP, 4);
+	SupplementDigitNumber(enemyhp, 4);
+	SupplementDigitNumber(enemyHP, 4);
+	auto safe_div = [](int a, int b) -> double { return (b > 0) ? (double)a / b : 0.0; };
+	double MyHpPercent = safe_div(myData[0], myData[1]);
+	double EnemyHpPercent = safe_div(enemyData[0], enemyData[1]);
+	double MyEnergyPercent = safe_div(myData[2], myData[3]);
+	int MyEnergyBarLength = (int)(MyEnergyPercent * 19);
+	double Myhealpercent = safe_div(myData[4], myData[5]);
+	int MyhealBarLength = (int)(Myhealpercent * 19);
+	double EnemyEnergyPercent = safe_div(enemyData[2], enemyData[3]);
+	int EnemyEnergyBarLength = (int)(EnemyEnergyPercent * 19);
+	int MyHpBarLength = (int)(MyHpPercent * 28);
+	int EnemyHpBarLength = (int)(EnemyHpPercent * 28);
+	if (MyEnergyBarLength < 0) MyEnergyBarLength = 0;
+	if (MyEnergyBarLength > 19) MyEnergyBarLength = 19;
+	if (MyhealBarLength < 0) MyhealBarLength = 0;
+	if (MyhealBarLength > 19) MyhealBarLength = 19;
+	if (EnemyEnergyBarLength < 0) EnemyEnergyBarLength = 0;
+	if (EnemyEnergyBarLength > 19) EnemyEnergyBarLength = 19;
+	if (MyHpBarLength < 0) MyHpBarLength = 0;
+	if (MyHpBarLength > 28) MyHpBarLength = 28;
+	if (EnemyHpBarLength < 0) EnemyHpBarLength = 0;
+	if (EnemyHpBarLength > 28) EnemyHpBarLength = 28;
+	if (turn != 2) {
+		Refresh();
+	}
+	for (int i = 0; i < Battlerow; i++) {
+		Battlemap[i][0] = "#";
+		Battlemap[i][Battlecol - 1] = "#";
+	}
+	for (int j = 0; j < Battlecol; j++) {
+		Battlemap[0][j] = "#";
+		Battlemap[Battlerow - 1][j] = "#";
+	}
+	Battlemap[1][40] = "M";
+	Battlemap[1][41] = "y";
+	Battlemap[1][42] = "C";
+	Battlemap[1][43] = "h";
+	Battlemap[1][44] = "a";
+	Battlemap[1][45] = "r";
+	Battlemap[1][46] = "a";
+	Battlemap[1][47] = "c";
+	Battlemap[1][48] = "t";
+	Battlemap[1][49] = "e";
+	Battlemap[1][50] = "r";
+	Battlemap[18][43] = "E";
+	Battlemap[18][44] = "n";
+	Battlemap[18][45] = "e";
+	Battlemap[18][46] = "m";
+	Battlemap[18][47] = "y";
+	//以下为我方血量条位置
+	for (int i = 2;i <= 4;i++) {
+		Battlemap[i][31] = "#";
+		Battlemap[i][60] = "#";
+	}
+	for (int j = 32;j <= 59;j++) {
+		Battlemap[2][j] = "-";
+		Battlemap[4][j] = "-";
+	}
+	for (int j = 32;j < 32 + MyHpBarLength;j++) {
+		Battlemap[3][j] = "|";
+		if (!IfBattleIsOver) {
+			Battlemap[3][32] = "|";
+		}
+	}
+	Battlemap[5][38] = "H";
+	Battlemap[5][39] = "P";
+	Battlemap[5][40] = ":";
+	Battlemap[5][41] = myhp[0];
+	Battlemap[5][42] = myhp[1];
+	Battlemap[5][43] = myhp[2];
+	Battlemap[5][44] = myhp[3];
+	Battlemap[5][45] = "/";
+	Battlemap[5][46] = myHP[0];
+	Battlemap[5][47] = myHP[1];
+	Battlemap[5][48] = myHP[2];
+	Battlemap[5][49] = myHP[3];
+	//以下为我方能量条位置
+	for (int i = 2;i <= 4;i++) {
+		Battlemap[i][5] = "#";
+		Battlemap[i][25] = "#";
+	}
+	for (int j = 6;j <= 24;j++) {
+		Battlemap[2][j] = "-";
+		Battlemap[4][j] = "-";
+	}
+	Battlemap[5][11] = "E";
+	Battlemap[5][12] = "n";
+	Battlemap[5][13] = "e";
+	Battlemap[5][14] = "r";
+	Battlemap[5][15] = "g";
+	Battlemap[5][16] = "y";
+	Battlemap[5][17] = ":";
+	Battlemap[5][18] = to_string(myData[2]);
+	Battlemap[5][19] = "/";
+	Battlemap[5][20] = to_string(myData[3]);
+	for (int j = 6;j < 6 + MyEnergyBarLength;j++) {
+		Battlemap[3][j] = "|";
+	}
+	//以下为我方治疗条位置
+	for (int i = 2;i <= 4;i++) {
+		Battlemap[i][66] = "#";
+		Battlemap[i][86] = "#";
+	}
+	for (int j = 67;j <= 85;j++) {
+		Battlemap[2][j] = "-";
+		Battlemap[4][j] = "-";
+	}
+	Battlemap[5][73] = "H";
+	Battlemap[5][74] = "e";
+	Battlemap[5][75] = "a";
+	Battlemap[5][76] = "l";
+	Battlemap[5][77] = ":";
+	Battlemap[5][78] = to_string(myData[4]);
+	Battlemap[5][79] = "/";
+	Battlemap[5][80] = to_string(myData[5]);
+	for (int j = 67;j < 67 + MyhealBarLength;j++) {
+		Battlemap[3][j] = "|";
+	}
+	//以下为敌方血量条位置
+	for (int i = 15;i <= 17;i++) {
+		Battlemap[i][31] = "#";
+		Battlemap[i][60] = "#";
+	}
+	for (int j = 32;j <= 59;j++) {
+		Battlemap[15][j] = "-";
+		Battlemap[17][j] = "-";
+	}
+	for (int j = 32;j < 32 + EnemyHpBarLength;j++) {
+		Battlemap[16][j] = "|";
+		if (!IfBattleIsOver) {
+			Battlemap[16][32] = "|";
+		}
+	}
+	Battlemap[14][38] = "H";
+	Battlemap[14][39] = "P";
+	Battlemap[14][40] = ":";
+	Battlemap[14][41] = enemyhp[0];
+	Battlemap[14][42] = enemyhp[1];
+	Battlemap[14][43] = enemyhp[2];
+	Battlemap[14][44] = enemyhp[3];
+	Battlemap[14][45] = "/";
+	Battlemap[14][46] = enemyHP[0];
+	Battlemap[14][47] = enemyHP[1];
+	Battlemap[14][48] = enemyHP[2];
+	Battlemap[14][49] = enemyHP[3];
+	//以下为敌方能量条位置
+	for (int i = 15;i <= 17;i++) {
+		Battlemap[i][5] = "#";
+		Battlemap[i][25] = "#";
+	}
+	for (int j = 6;j <= 24;j++) {
+		Battlemap[15][j] = "-";
+		Battlemap[17][j] = "-";
+	}
+	Battlemap[14][11] = "E";
+	Battlemap[14][12] = "n";
+	Battlemap[14][13] = "e";
+	Battlemap[14][14] = "r";
+	Battlemap[14][15] = "g";
+	Battlemap[14][16] = "y";
+	Battlemap[14][17] = ":";
+	Battlemap[14][18] = to_string(enemyData[2]);
+	Battlemap[14][19] = "/";
+	Battlemap[14][20] = to_string(enemyData[3]);
+	for (int j = 6;j < 6 + EnemyEnergyBarLength;j++) {
+		Battlemap[16][j] = "|";
+	}
+	Battlemap[16][73] = "R";
+	Battlemap[16][74] = "o";
+	Battlemap[16][75] = "u";
+	Battlemap[16][76] = "n";
+	Battlemap[16][77] = "d";
+	Battlemap[16][78] = to_string(round / 10);
+	Battlemap[16][79] = to_string(round % 10);
+	if (turn == 1) {
+		// 等待用户输入 - 显示 "Please input..."
+		string prompt = "Please input...";
+		int prow = 9;
+		int pcol = 39; // 从原有位置开始填充
+		for (size_t k = 0; k < prompt.size(); ++k) {
+			if (pcol + (int)k >= 0 && pcol + (int)k < Battlecol)
+				Battlemap[prow][pcol + k] = string(1, prompt[k]);
+		}
+	}
+	else {
+		// 敌方回合 - 在居中位置显示 "Enter"
+		string enter = "Enter";
+		int erow = 9;
+		int ecol = (Battlecol - (int)enter.size()) / 2; // 水平居中起始列
+		for (size_t k = 0; k < enter.size(); ++k) {
+			if (ecol + (int)k >= 0 && ecol + (int)k < Battlecol)
+				Battlemap[erow][ecol + k] = string(1, enter[k]);
+		}
+	}
+	for (int i = 0;i < 20;i++) {
+		cout << " ";
+	}
+	cout << "我方攻击力:【" << myData[6] << "】,我方防御力:【" << myData[7] << "】,每剂治疗量:【" << myData[8] << "】" << endl;
+	//打印地图
+	for (int i = 0; i < Battlerow; i++) {
+		for (int j = 0; j < Battlecol; j++) {
+			cout << Battlemap[i][j] << flush;
+		}
+		cout << endl;
+	}
+	for (int i = 0;i < 20;i++) {
+		cout << " ";
+	}
+	cout << "敌方攻击力:【" << enemyData[4] << "】,敌方防御力:【" << enemyData[5] << "】,敌方暴击率:【" << enemyData[6] << "%】" << endl;
+	cout << endl;
+}
+void PrintEventGround(int Type) {
+	Refresh();
+	for (int i = 0; i < 20; i++) {
+		for (int j = 0; j < 90; j++) {
+			Battlemap[i][j] = " ";
+		}
+	}
+	for (int j = 0; j < Battlecol; j++) {
+		Battlemap[0][j] = "#";
+		Battlemap[Battlerow - 1][j] = "#";
+	}
+	//打印地图
+	for (int i = 0; i < Battlerow; i++) {
+		for (int j = 0; j < Battlecol; j++) {
+			cout << Battlemap[i][j];
+		}
+		cout << endl;
+	}
+}
+int MydataWhenBattle[9] = { 0 };
+int EnemydataWhenBattle[7] = { 0 };

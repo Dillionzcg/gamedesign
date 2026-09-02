@@ -57,15 +57,15 @@ int ChooseInitialBuff() {
     cout << BG_BLACK;
 
     PrintCentered("    符文秘境 · 初始抉择    ", YELLOW);
-    PrintCentered("-- 在远古遗迹中唤醒你的力量 --", PURPLE);
+    PrintCentered("-- 你选择带入 --", PURPLE);
     PrintRuneDivider(70);
     cout << endl;
 
     struct Opt { string icon, name, desc; };
     vector<Opt> opts = {
-        {"", "好战", "攻击力 +30%"},
-        {"", "惜生", "生命上限 +50%"},
-        {"", "贪财", "金币 +50"}
+        {"", "一把小刀", "基础攻击力 +10%"},
+        {"", "一瓶药水", "基础生命上限 +30%"},
+        {"", "一袋金币", "金币 +6"}
     };
 
     int indent = (80 - 40) / 2;
@@ -74,7 +74,7 @@ int ChooseInitialBuff() {
         cout << endl;
     }
     PrintRuneDivider(70);
-    PrintCentered("请输入编号选择你的初始之力 (1/2/3) : ", WHITE);
+    PrintCentered("请输入编号选择 (1/2/3) : ", WHITE);
     cout << endl;
 
     cout << CREAM_WHITE << "> " << RESET;
@@ -86,15 +86,8 @@ int ChooseInitialBuff() {
     cout << RESET;
     return choice - 1;
 }
-void enterbuff() {
+int enterbuff() {
     int buff = ChooseInitialBuff();
     cout << RESET;
-    cout << "\n" << CREAM_WHITE_BOLD << "你选择了：";
-    switch (buff) {
-    case 0: cout << "好战（攻击力 +30%）" << RESET << endl; break;
-    case 1: cout << "惜生（生命上限 +50%）" << RESET << endl; break;
-    case 2: cout << "贪财（金币 +50）" << RESET << endl; break;
-    }
-    cout << "按回车继续..." << WHITE << endl;
-    SafeEnter();
+    return buff;
 }
