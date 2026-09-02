@@ -2,7 +2,6 @@
 #include "basis.h"
 #include "ClassObject.h"
 using namespace std;
-class Object;
 
 // ±ß¿òÑÕÉ«
 const string BLUE_S = "\033[34m";

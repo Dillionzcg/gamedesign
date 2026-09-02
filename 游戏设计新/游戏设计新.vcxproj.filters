@@ -24,6 +24,15 @@
     <ClCompile Include="UnknownEvent.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ClassMyCharacter_Enemy.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassRuneManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassObject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartBuff.h">
@@ -36,12 +45,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ClassEnemy.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ClassMycharacter.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ClassRuneManager.h">
@@ -57,6 +60,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="UnknownEvent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassMycharacter_Enemy.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

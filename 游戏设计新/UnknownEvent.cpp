@@ -1,7 +1,7 @@
-﻿
-#pragma once
-#include"UnknownEvent.h"
-
+﻿#include"UnknownEvent.h"
+#include"ClassSkill_RoundBuff.h"
+#include"ClassMycharacter_Enemy.h"
+#include"ClassRuneManager.h"
 using namespace std;
 
 // 在文件内添加一个小工具函数用于居中打印标题
@@ -38,6 +38,7 @@ static inline int GetDisplayWidth(const string& str) {
 }
 
 static inline void PrintCenteredHeader(const string& title) {
+    cout << PURPLE_DARK;
     const string sep = "════════════════════════════════════════════════════";
     string display = "【" + title + "】";
 
@@ -85,41 +86,55 @@ bool EventBattleStart(bool isBoss) {
 bool Event_BossChallenge(int floor) {
     Refresh();
     PrintCenteredHeader("试炼之影 · 挑战");
-    cout << "\n" << endl;
+    cout << RED_DARK;
     cout << "断壁残垣间横亘着一口倒悬的石棺，棺盖上剥落的咒文正向外渗出猩红的微光。" << endl;
     cout << "当你靠近时，古老的机括声撕裂了死寂，战甲在风中发出濒死的哀鸣。" << endl;
-    cout << "无形的气流在残破的石雕间盘旋剥离，每一寸空气都弥漫着被放逐千百年的古老死寂。" << endl;
-    cout << "那是被虚空裂隙遗忘的禁忌之地，地面上纵横交错的裂纹仿佛在无声地向外诉说着某种不为人知的灾厄。" << endl;
+    cout << "石壁上凿刻着一行斑驳的符文箴言：" << endl;
+    cout << RED_BOLD;
+    cout << endl;
+    cout << "Wer sich dem Schatten im Sarkophag stellt, fordert das Verderben heraus," << endl;
+    cout << "denn hier ruht der Richter der Vergessenen." << endl;
+    cout << RED_DARK;
+    cout << endl;
+    cout << "(直面石棺中阴影之人即是向毁灭发起挑战，因为被遗忘者的审判者正长眠于此。)" << endl;
+    cout << endl;
     cout << "石棺的表面覆盖着厚重的黑霜，每一次极微弱的脉动都让周遭悬浮的符文碎片剧烈战栗。" << endl;
-    cout << "你每向前迈出一步，脚下的尘埃便如同受到某种无形意志的驱使般向两侧退避。" << endl;
     cout << "在这片早已被时间抛弃的废墟深处，这口石棺像是一双冷漠注视着世间万物的眼睛。" << endl;
     cout << "当你的目光与棺盖上残缺的刻痕相触时，脑海中竟莫名回荡起远征者陨落前的最后一声悲鸣。" << endl;
     cout << endl;
-    cout << "1. 迎战" << endl;
+    cout <<HUI<< "(将迎接一场高难度战斗，胜利可获取双倍升级经验，金币与藏品)" << endl;
+    cout <<HUI<< "1. 迎战" << endl;
     cout << "2. 离开" << endl;
 
     int choice = Safecin({ 1,2 }, false);
     Refresh();
     if (choice == 1) {
-        cout << "\n腐朽的护甲中隐现着虚无的悸动，仿佛某种被世界遗忘的灾厄正在苏醒。" << endl;
+        cout << RED_BOLD;
+        cout << "\n\"Der eiserne Waechter erwacht aus dem ewigen Schlaf und fordert den Blutzoll.\"" << endl;
+        cout << RED_DARK;
+        cout << endl;
+        cout << "（铁面卫士自永恒的沉睡中苏醒，索取着鲜血的贡税。）" << endl;
+        cout << endl;
+        cout << "腐朽的护甲中隐现着虚无的悸动，仿佛某种被世界遗忘的灾厄正在苏醒。" << endl;
         cout << "它拖着残破的阔步走入阴影，脚下的裂纹深处回荡着远古的呜咽。" << endl;
-        cout << "\n嘶哑的声音穿透虚空，如锈蚀的刀刃在残破的灵魂上刮擦：" << endl;
-        cout << "\n『很久……没有人向深渊叩门了。』\n『那就……化作归途的骨骸吧。』\n" << endl;
         cout << "它扬起焦黑的断刃，周遭的符文瞬间被剥离成虚无的死寂。" << endl;
-        cout << "\n 战斗开始！" << endl;
-        WaitForSeconds(1);
-        cout << "\n按回车继续..." << endl;
+        cout <<HUI<< "\n按回车继续..." << endl;
         SafeEnter();
         Refresh();
         return EventBattleStart(true);
     }
     else {
-        cout << "\n你向后退去，靴底踩碎了一地枯萎的符文。" << endl;
-        cout << "阴影中的身影微不可查地一顿，缓缓垂下了蓄势待发的双臂。" << endl;
+        cout << RED_BOLD;
+        cout << "\n\"Wer den Kampf vermeidet, wahrt das Leben, aber verliert den Pfad.\"" << endl;
+        cout << RED_DARK;
+        cout << endl;
+        cout << "（回避战斗者保全了生命，却也失去了道途。）" << endl;
+        cout << endl;
+        cout << "你向后退去，靴底踩碎了一地枯萎的符文。" << endl;
         cout << "石棺在无声中轰然阖上，将所有的窥探隔绝于虚空之外。\n" << endl;
         cout << "残垣间的微光逐渐黯淡，唯有深渊的冷风在低声呜咽。\n" << endl;
         cout << "你转过身，将那抹古老的杀意留在了黑暗中。" << endl;
-        cout << "\n按回车继续..." << endl;
+        cout <<HUI<< "\n按回车继续..." << endl;
         SafeEnter();
         return true;
     }
@@ -129,31 +144,49 @@ bool Event_BossChallenge(int floor) {
 bool Event_ChooseLoot() {
     Refresh();
     PrintCenteredHeader("英雄遗物");
-    cout << "你踏入一座半塌的塔楼，残破的穹顶漏下惨淡的月光，地面散落着碎裂的符文石板与风干的骸骨。" << endl;
-    cout << "在中央由黑曜石堆砌而成的古老石台上，三件尘封的器物正散发着各自深邃而孤寂的微光——" << endl;
-    cout << "它们都曾是某位在虚空裂隙中陨落的英雄之遗物，历经岁月洗礼，如今静静等待着新的主人。" << endl;
-    cout << "四周的空气中隐隐回荡着历代持有者的悲怆低语，每一寸光尘都诉说着未竟的执念。" << endl;
+    cout << RED_DARK;
+    cout << "你踏入一座半塌的修道院唱诗班大厅，残破的哥特穹顶漏下惨淡的月光，地面散落着碎裂的石雕与风干的骸骨。" << endl;
+    cout << "在中央由黑色玄武岩堆砌而成的祭台上，三件尘封的器物正散发着各自深邃而孤寂的微光。" << endl;
+    cout << "石壁上用古老的符文凿刻着一行醒目的箴言：" << endl;
+    cout << RED_BOLD;
+    cout << endl;
+    cout << "Waehle weise, denn jede Reliquie birgt das Gewicht einer verlorenen Seele." << endl;
+    cout << RED_DARK;
+    cout << endl;
+    cout << "(明智地选择，因为每一件圣物都承载着失落灵魂的重量。)" << endl;
+    cout << endl;
     cout << "你只能带走其中一件，其余的注定随风消散。在此驻足的抉择，即是宿命的分岔口。" << endl;
-    cout << "虚空之风自塔窗呼啸而过，像是在催促你做出那个无法回头的决定。" << endl;
-
+    cout << "窗外的寒风自高耸的拱窗呼啸而过，拍打着悬挂的铁链，发出沉闷的低鸣。" << endl;
+    cout << HUI;
     vector<string> loots = {
-        "【断罪之刃】——古老的符文短剑，剑刃上刻着“审判”二字",
-        "【霜狼之契】——一枚冰蓝色的狼首徽章，触手冰冷",
-        "【时砂罗盘】——一只漏沙永不停歇的青铜罗盘"
-    };//此处添加符文名称
+        "【断罪之刃】——镌刻着审判符文的古老重剑，剑身残存着洗刷罪孽的铁血寒光",
+        "【苦修士之契】——一枚沾染着干涸血迹的银色苦修徽章，触手如冰",
+        "【夜航罗盘】——指针永远指向迷雾深处的黄铜罗盘，周身缠绕着微弱的哀鸣"
+    };
     cout << "\n1. " << loots[0] << endl;
     cout << "2. " << loots[1] << endl;
     cout << "3. " << loots[2] << endl;
-    cout << "4. 不选，离开" << endl;
-
+    cout << HUI;
+    cout << endl;
+    cout << "(选择一个3级藏品获得)" << endl;
     int choice = Safecin({ 1,2,3 }, false);
     Refresh();
-    cout << "\n" << endl;
-    cout << "被你选中的器物缓缓脱离石台，带着冰凉或温热的触感，沉甸甸地落入你的掌心之中——" << endl;
-    cout << "它的上一任主人早已在漫长的岁月中化作黄土，唯有残存的意志在此刻与你共鸣。" << endl;
-    cout << "从此刻起，这道跨越时空的因果因你而延续，它将成为你对抗虚空唯一的凭仗。" << endl;
-    cout << "\n 获得高级藏品 x1" << endl;
-    cout << "\n按回车继续..." << endl;
+
+
+
+    cout << RED_BOLD;
+    cout << "\n\"Der Bund ist geschlossen; die Last der Vergangenheit ruht nun auf deinen Schultern.\"" << endl;
+    cout << RED_DARK;
+    cout << endl;
+    cout << "（契约已然达成，过去的沉重负累如今落在了你的双肩之上。）" << endl;
+    cout << endl;
+    cout << "被你选中的器物缓缓脱离石台，带着冰凉而凝重的触感，沉甸甸地落入你的掌心之中。" << endl;
+    cout << "它的上一任主人早已在漫长的岁月中化作尘土，唯有残存的誓言在此刻与你遥遥共鸣。" << endl;
+    cout << "从这一刻起，跨越时空的因果因你而延续，它将成为你穿行于秘境唯一的凭借。" << endl;
+    cout <<QING << "\n 获得高级藏品 x1" << endl;
+
+
+    cout <<HUI<< "\n按回车继续..." << endl;
     SafeEnter();
     return true;
 }
@@ -165,11 +198,11 @@ bool Event_Sacrifice() {
 
     // 检查是否三次都已献祭完
     if (done[0] && done[1] && done[2]) {
-        PrintCenteredHeader("告解圣堂");
+        cout << RED_DARK;
         cout << "\n告解室的百叶格栅后已经空无一人，木制靠背椅上落满了陈旧的灰尘。" << endl;
         cout << "三次符文契约的额度已经见底，沉重的隔板在机械卡榫的咬合声中彻底封死。" << endl;
         cout << "你没有再作逗留，推开沉重的包铁木门离开了这间昏暗的小隔间。" << endl;
-        cout << "\n按回车继续..." << endl;
+        cout <<HUI<< "\n按回车继续..." << endl;
         SafeEnter();
         return true;
     }
@@ -192,17 +225,22 @@ bool Event_Sacrifice() {
         else ordinal = "最终阶段";
 
         Refresh();
+        cout << RED_DARK;
         PrintCenteredHeader("告解圣堂");
+        cout << RED_DARK;
         cout << "狭小的石砌室内仅有一张长椅，正前方挂着一块厚重的黑色呢绒隔离帘。" << endl;
         cout << "昏暗的蜡烛在黄铜壁灯里闪烁，空气中弥漫着老旧纸张和干枯熏香的气味。" << endl;
-        cout << "木质台面上刻着一行清晰的德语标语：" << endl;
+        cout << "木质台面上刻着一行清晰的符文：" << endl;
         cout << RED_BOLD;
+        cout << endl;
         cout << "Opfere deine Lebenskraft, um die Reliquien" << endl;
-        cout << "der Runen - Katakakomben zu erlangen." << endl;
-        cout << "(用你的生命残余，兑换符文秘境的遗物。)" << endl;
+        cout << "der Runen - Katakomben zu erlangen." << endl;
         cout << RED_DARK;
-        cout << "\n【" << ordinal << "交易】" << endl;
-        cout << "\n1. 同意交易（永久降低 " << hpCost << "% 血量上限）" << endl;
+        cout << endl;
+        cout << "(用你的生命残余，兑换符文秘境的遗物。)\n" << endl;
+        cout << HUI << "【" << ordinal << "交易】\n" << endl;
+        cout <<HUI<< "(将消耗生命上限换取藏品)" << endl;
+        cout << "\n1. 同意交易（降低 " << hpCost << "% 血量上限）" << endl;
         cout << "2. 拒绝并离开" << endl;
 
         int choice = Safecin({ 1, 2 }, false);
@@ -213,41 +251,58 @@ bool Event_Sacrifice() {
             done[current] = true;
 
             Refresh();
-            PrintCenteredHeader("告解圣堂");
+
 
             // 根据第几次献祭输出不同的动作描写
             if (current == 0) {
+                cout << RED_BOLD;
                 cout << "\n\"Der erste Bund ist geschlossen und im kalten Stein versiegelt.\"" << endl;
                 cout << "\"Ein unumkehrbarer Teil deiner Lebensessenz ist leise gewichen.\"" << endl;
+                cout << RED_DARK;
+                cout << endl;
                 cout << "（第一道契约已然达成并在冰冷的石头上封印。）" << endl;
                 cout << "（你生命本源中不可逆转的一部分，正在无声地消散。）" << endl;
             }
             else if (current == 1) {
+                cout << RED_BOLD;
                 cout << "\n\"Der zweite Preis ist entrichtet und fordert seinen Tribut vom Fleisch.\"" << endl;
-                cout << "\"Die lastende Schwere im inneren Kern deines Seins wächst weiter an.\"" << endl;
+                cout << "\"Die lastende Schwere im inneren Kern deines Seins waechst weiter an.\"" << endl;
+                cout << RED_DARK;
+                cout << endl;
                 cout << "（第二份代价已然付清并向肉体索取着它的贡品。）" << endl;
                 cout << "（你生命核心内部所承载的沉重负累正在不断加剧。）" << endl;
             }
             else {
+                cout << RED_BOLD;
                 cout << "\n\"Der letzte Handel ist vollendet und das Buch der Opfer geschlossen.\"" << endl;
-                cout << "\"Es verbleibt kein Funke mehr, der als Währung dienen könnte.\"" << endl;
+                cout << "\"Es verbleibt kein Funke mehr, der als Waehrung dienen koennte.\"" << endl;
+                cout << RED_DARK;
+                cout << endl;
                 cout << "（最后的交易已然终结，献祭的簿册也已合拢。）" << endl;
                 cout << "（再也没有哪怕一丝火星，能够当作货币继续支付了。）" << endl;
             }
-            cout << "\n 血量上限永久降低 " << hpCost << "%" << endl;
-            cout << " 获得 " << level << " 藏品 x1" << endl;
+            cout << endl;
+            cout <<PURPLE_DARK<< "血量上限降低 " << hpCost << "%" << endl;
+            cout <<QING_GRAY<< "获得 " << level << " 藏品 x1" << endl;
 
             if (done[0] && done[1] && done[2]) {
+                cout << RED_DARK;
                 cout << "\n隔离帘后传出了落锁的咔哒声，透出的微落烛光彻底熄灭。" << endl;
-                cout << "『三次契约已满。此房间不再开放。』" << endl;
-                cout << "\n按回车继续..." << endl;
+                cout << RED_BOLD;
+                cout << endl;
+                cout << "Du hast Glueck" << endl;
+                cout << RED_DARK;
+                cout << endl;
+                cout << " (你很幸运)" << endl;
+                cout <<HUI<< "\n按回车继续..." << endl;
                 SafeEnter();
                 return true;   // 三次完成，结束事件
             }
             else {
+                cout << RED_DARK;
                 cout << "\n隔离帘后响起了翻阅账本的纸张声。" << endl;
                 cout << "对方没有再多说什么，留出空间让你自行决定接下来的行动。" << endl;
-                cout << "\n按回车继续..." << endl;
+                cout <<HUI<< "\n按回车继续..." << endl;
                 SafeEnter();
                 // 继续循环，进行下一次献祭
             }
@@ -256,11 +311,16 @@ bool Event_Sacrifice() {
         else {
             // ---- 选择离开 ----
             Refresh();
-            PrintCenteredHeader("告解圣堂");
+            cout << RED_BOLD;
+            cout << "\n\"Wer den Pfad der Opfer verlaesst, laesst die Vergangenheit ungesehen zurueck.\"" << endl;
+            cout << RED_DARK;
+            cout << endl;
+            cout << "（离开献祭之道者，将过往的痕迹无声地留在了身后。）" << endl;
+            cout << endl;
             cout << "\n你摇了摇头，放弃了这次物资交换。" << endl;
             cout << "黑色呢绒帘静静地垂在原位，里面没有任何挽留的意思。" << endl;
             cout << "你推开侧门，回到了修道院昏暗长明的走廊里。" << endl;
-            cout << "\n按回车继续..." << endl;
+            cout <<HUI<< "\n按回车继续..." << endl;
             SafeEnter();
             return true;   // 玩家主动离开，结束事件
         }
@@ -271,17 +331,23 @@ bool Event_Sacrifice() {
 }
 
 // ---------- 事件4：改变该层符文 ----------
-//输入参数，currentRune
-bool Event_ChangeRune(int& currentRune) {
+bool Event_ChangeRune() {
     Refresh();
     PrintCenteredHeader("命运晶石");
-    cout << "你站在一座巨大的符文法阵中央，法阵的一半刻着太阳纹，一半刻着月蚀纹。" << endl;
-    cout << "阵眼处悬浮着一颗暗淡的晶石——它需要有人为它注入意志。" << endl;
-    cout << "\n两道声音在你脑海中交织：" << endl;
-    cout << "左：『点亮它。让此层之人皆受庇护。』" << endl;
-    cout << "右：『熄灭它。让此层之物皆为猎物。』" << endl;
-    cout << "\n1. 注入意志，改变此层符文" << endl;
-    cout << "2. 离开，不做改变" << endl;
+    cout << RED_DARK;
+    cout << "你站在一座巨大的符文法阵中央，石质地面上交错刻印着日轮与蚀月交替的古老图腾。" << endl;
+    cout << "阵眼中央悬浮着一块半透明的晶石，内部正流转着明暗不定的幽光。" << endl;
+    cout << "石壁上凿刻着一行斑驳的符文：" << endl;
+    cout << RED_BOLD;
+    cout << endl;
+    cout << "Gestalte das Schicksal dieser Ebene nach deinem Willen," << endl;
+    cout << "denn das Licht und die Finsternis gehorchen nur dem Opfer." << endl;
+    cout << RED_DARK;
+    cout << endl;
+    cout << "(依据你的意志塑造此层的命运，因为光明与黑暗只听从牺牲者。)" << endl;
+    cout <<HUI<< "\n1. 触碰晶石，改写当前层的符文" << endl;
+    cout << "(有70%概率变为\"希望\"，有30概率变为\"绝望\")" << endl;
+    cout << "2. 保持原状，转身离开" << endl;
 
     int choice = Safecin({ 1,2 }, false);
 
@@ -289,28 +355,45 @@ bool Event_ChangeRune(int& currentRune) {
     if (choice == 1) {
         int roll = rm.getnum(1, 100);
         if (roll <= 70) {
-            cout << "\n你的意志注入晶石。" << endl;
-            cout << "晶石内部的暗色骤然破碎，暖金色的光芒从裂隙中汹涌而出——" << endl;
-            cout << "太阳纹骤然亮起，将月蚀纹完全覆盖。" << endl;
-            cout << "\n整层楼的符文法阵同时共振，脚下的地面泛起一层淡淡的金色波纹。" << endl;
-            cout << "\n 本层符文已变更为：希望（纯增益效果）" << endl;
-            currentRune = 10; // 此处参数变为希望
+            cout << RED_DARK;
+            cout << "\n石碑表面的日轮图腾骤然亮起，将蚀月的光辉尽数掩盖。" << endl;
+            cout << "温热的金芒如潮水般洗净了空气中的腐臭，枯萎的石墙上竟隐约绽放出新生的藤蔓刻痕。" << endl;
+            cout << "整座大厅的符文同时产生共鸣，脚下的石砖泛起一层驱散寒意的金色微光。" << endl;
+            cout << RED_BOLD;
+            cout << endl;
+            cout << "\n\"Hoffnung\"" << endl;
+            cout << "（希望）" << endl;
+            cout << endl;
+            RuneManager::ChangetoHope();
+            cout <<HUI<< "\n本层符文已变更为：" << endl;
+            cout << RED_BOLD << RuneNow->GetDescribe() << endl;
         }
         else {
-            cout << "\n你的意志注入晶石。" << endl;
-            cout << "晶石内部的金色光芒在一瞬间被黑暗吞噬——" << endl;
-            cout << "月蚀紋骤然亮起，将太阳纹彻底压碎。" << endl;
-            cout << "\n整层楼的温度骤降，符文法阵发出低沉的嗡鸣。" << endl;
-            cout << "\n 本层符文已变更为：绝望（纯减益效果）" << endl;
-            currentRune = 11; // 此处参数变为绝望
+            cout << RED_DARK;
+            cout << "\n石碑表面的蚀月图腾骤然扩张，将日轮的纹路彻底碾碎。" << endl;
+            cout << "刺骨的寒霜瞬间冻结了墙壁上的每一道缝隙，连残存的烛火也在无声中被彻底剥夺。" << endl;
+            cout << "大厅内的温度骤降至冰点，符文法阵发出令人窒息的低沉金属嗡鸣。" << endl;
+            cout << RED_BOLD;
+            cout << endl;
+            cout << "\n\"Verzweiflung\"" << endl;
+            cout << "（绝望）" << endl;
+            cout << endl;
+            RuneManager::ChangetoDesperation();
+            cout <<HUI<< "\n 本层符文已变更为：" << endl;
+            cout << RED_BOLD << RuneNow->GetDescribe() << endl;
         }
     }
     else {
-        cout << "\n你从晶石上收回了手。" << endl;
-        cout << "太阳纹与月蚀纹同时暗淡下去，晶石恢复了之前那种半明半暗的状态。" << endl;
-        cout << "你没有改变这一层的命运。你只是路过了它。" << endl;
+        cout << RED_BOLD;
+        cout << "\n\"Keine Aenderung wird erzwungen; der Lauf der Dinge bleibt ungebrochen.\"" << endl;
+        cout << RED_DARK;
+        cout << endl;
+        cout << "（未曾强行施加改变；事物的运转轨迹依然完好无损。）" << endl;
+        cout << endl;
+        cout << "你继续前行，未曾触碰此地的命运。" << endl;
+        cout << "日轮与蚀月同时黯淡下去，晶石恢复了最初半明半暗的死寂状态。" << endl;
     }
-    cout << "\n按回车继续..." << endl;
+    cout <<HUI<< "\n按回车继续..." << endl;
     SafeEnter();
     return true;
 }
@@ -319,98 +402,178 @@ bool Event_ChangeRune(int& currentRune) {
 bool Event_ChooseBoon() {
     Refresh();
     PrintCenteredHeader("抉择契约");
-    cout << "圣殿的偏厅里有一张残破的石桌，桌上放着两份契约。" << endl;
-    cout << "『以此血契，延汝命途三成。』" << endl;
-    cout << "『以此金契，赠汝六枚古金。』" << endl;
-    cout << "二者皆可签。但签其一，另一即焚。" << endl;
-    cout << "\n1. 签下血契——获得 30% 血量上限提升" << endl;
+    cout << RED_DARK;
+    cout << "圣殿的偏厅里四壁空空，唯有一张残破的石桌立于正中，桌面上摆放着两份以厚重羊皮纸制成的契约。" << endl;
+    cout << "烛影在壁角剧烈摇晃，将冷冽的微光投射在斑驳的石面上，上面凿刻着一行刺目的规诫：" << endl;
+    cout << RED_BOLD;
+    cout << endl;
+    cout << "Waehle das Leben oder das Gold, denn der Pakt duldet keinen Aufschub," << endl;
+    cout << "und wer den Bund bricht, wird von der Finsternis verschlungen." << endl;
+    cout << RED_DARK;
+    cout << endl;
+    cout << "（抉择生命或财富，契约不容迁延，背盟之徒终将为深渊所噬。）" << endl;
+    cout << endl;
+    cout <<HUI<< "\n1. 签下血契——获得 30% 血量上限提升" << endl;
     cout << "2. 签下金契——获得 6 枚金币" << endl;
 
     int choice = Safecin({ 1,2 }, false);
     Refresh();
     if (choice == 1) {
-        cout << "\n你拿起第一份契约，指尖在『血契』二字上划过。" << endl;
-        cout << "纸张自行燃烧，火焰是温热的白色——" << endl;
-        cout << "一股暖流顺着你的指尖涌入体内。" << endl;
-        cout << "你的骨骼微微作响，肌肉深处传来一种被重新编织的饱胀感。" << endl;
-        cout << "第二份契约在桌上无声自燃，化为灰烬。" << endl;
+        cout << RED_BOLD;
+        cout << "\n\"Der Bund des Blutes staerkt deine Lebenskraft und dehnt deinen Pfad aus,\"" << endl;
+        cout << "\"waehrend die ungenutzte Gunst in hellen Flammen vergeht.\"" << endl;
+        cout << RED_DARK;
+        cout << endl;
+        cout << "（血之契约增强了你的生命力并延伸了你的道途，而那未被选择的恩惠则在明亮的火焰中消逝。）" << endl;
+        cout << endl;
+        cout << "\n你没有犹豫，将手指按在第一份契约的边缘。" << endl;
+        cout << "纯净而温热的白色火焰瞬间将羊皮纸吞没，一股磅礴的暖流顺着掌心狂暴地涌入四肢百骸。" << endl;
+        cout << "你的骨骼发出沉闷而悠长的脆响，肌肉深处传来一种生命被强行撑开、重新编织的饱胀感。" << endl;
+        cout << "与此同时，桌上那份未被触碰的金之契约在无声无息中自行燃尽，化作一滩冰冷的黑灰。" << endl;
         //此处添加角色血量变化
-        cout << "\n“血契已签。汝命途延三成。”" << endl;
-        cout << "\n 血量上限永久提升 30%" << endl;
+        cout <<QING<< "\n 血量上限提升 30%" << endl;
     }
     else {
-        cout << "\n你拿起第二份契约，指尖触碰到『金契』二字的墨迹。" << endl;
-        cout << "纸张化为一枚枚发烫的古金币，叮当落入你的掌心——" << endl;
-        cout << "六枚，一枚不少。" << endl;
-        cout << "第一份契约在桌上无声自燃。" << endl;
+        cout << RED_BOLD;
+        cout << "\n\"Der Bund des Goldes fuellt deine Haende und besiegelt das Schicksal,\"" << endl;
+        cout << "\"waehrend das unberuehrte Leben im Schatten stumm verbrannt wird.\"" << endl;
+        cout << RED_DARK;
+        cout << endl;
+        cout << "（金之契约充盈了你的双手并封印了命运，而那未被选择的生命则在阴影中默默焚毁。）" << endl;
+        cout << endl;
+        cout << "\n你迎着烛光，将手掌覆在了第二份契约之上。" << endl;
+        cout << "厚重的羊皮纸转瞬化作六枚沉甸甸的发烫古金币，叮当清脆地落入你的掌心之中。" << endl;
+        cout << "金属碰撞的回响在空旷寂静的偏厅里久久回荡，空气中弥漫着一股陈旧的熔金气味。" << endl;
+        cout << "与此同时，桌上那份关于血肉的契约在无声中腾起一团灰烬，彻底归于虚无。" << endl;
         //此处添加金币变化
-        cout << "\n“金契已签。六枚古金已入汝手。”" << endl;
-        cout << "\n 获得 6 金币" << endl;
+        cout <<YELLOW<< "\n 获得 6 金币" << endl;
     }
-    cout << "\n按回车继续..." << endl;
+    cout <<HUI<< "\n按回车继续..." << endl;
     SafeEnter();
     return true;
 }
-
 // ---------- 事件6：交换商店和战斗节点 ----------
 bool Event_SwapNodes() {
     Refresh();
-    PrintCenteredHeader("疯子的恶作剧");
-    cout << "你踢到一块松动的石板，石板下方露出一只铁皮包裹的暗格。" << endl;
-    cout << "暗格里没有宝物，没有陷阱——只有三枚尚有余温的金币，" << endl;
-    cout << "和一张被反复折叠过无数次的兽皮地图。" << endl;
-    cout << "你将地图展开，上面绘着这一层的完整路线。" << endl;
-    cout << "\n『曾可购物之地，如今需以命搏。』" << endl;
-    cout << "『曾需搏命之地，如今可换器物。』" << endl;
-    cout << "\n兽皮背面有一行用炭笔写下的潦草字迹：" << endl;
-    cout << "『我已改此路。送三币，当赔罪。』" << endl;
-    cout << "\n三枚金币在你的掌心微微发烫。" << endl;
-    cout << "这条路已经变了。" << endl;
-    cout << "\n1. 接受改变（获得3金币，交换本层商店与战斗节点）" << endl;
-    cout << "2. 拒绝改变，保持原样" << endl;
+    PrintCenteredHeader("幽暗商贾");
+    cout << RED_DARK;
+    cout << "斑驳的石柱后隐匿着一处狭小的凹室，堆满了沉重的货箱与成捆的羊皮纸。" << endl;
+    cout << "一个身着华贵但沾满污渍的商人正蹲在阴影中，用一把小刀仔细地刮擦着一枚金币上的铜锈。" << endl;
+    cout << "察觉到你的脚步声，他猛地抬起头，露出一张堆满意外与狂喜的面孔，却死死紧闭着双唇，不发一言。" << endl;
+    cout << "他颤抖着将三枚沉甸甸的发烫金币推到你面前，双手疯狂地比划着，眼中闪烁着狂热而贪婪的光芒。" << endl;
+    cout << "石壁上用沾血的炭笔草草勾勒出一行冰冷的符文：" << endl;
+    cout << RED_BOLD;
+    cout << endl;
+    cout << "Der Handel findet den Weg, selbst dort, wo nur das Schwert regiert." << endl;
+    cout << RED_DARK;
+    cout << endl;
+    cout << "(交易总能找到出路，哪怕是在唯有长剑统治的地方。)" << endl;
+    cout << endl;
+    cout <<HUI<< "1. 获得3枚金币，该节点改为商店节点，但会触发某种效果" << endl;
+    cout << "2. 拒绝交易，转身离去" << endl;
 
     int choice = Safecin({ 1,2 }, false);
     Refresh();
     if (choice == 1) {
-        cout << "\n你握紧那三枚金币，金币的温度骤然升高，" << endl;
-        cout << "烫得你几乎松手，却在下一瞬冷却为金属的沉实触感。" << endl;
-        cout << "你手中的兽皮地图无声地燃起青灰色的火焰——" << endl;
-        cout << "纸面卷曲、焦黑、碎裂，火焰却不灼人。" << endl;
-        cout << "\n一阵沉闷的震动从脚下传来，从地底深处升起，" << endl;
-        cout << "像是有巨大的齿轮在你感知不到的地方转动了一圈。" << endl;
-        cout << "\n你隐约感觉到，这一层的空间结构正在悄然重组——" << endl;
-        cout << "一处本该摆着货物的角落，正在变成染血的角斗场；" << endl;
-        cout << "一处本该弥漫血腥气的地方，开始透出流转的微光。" << endl;
+        cout << RED_BOLD;
+        cout << "\n\"Ein Bund in der Wildnis bringt Segen und ungesehene Wende.\"" << endl;
+        cout << RED_DARK;
+        cout << endl;
+        cout << "（荒野中的契约带来祝福，与不为人知的转机。）" << endl;
+        cout << endl;
+        cout << "你收下了那三枚发烫的金币，商人见状，嘴角咧开一个异样森冷而诡异的笑容。" << endl;
+        cout << "他依然没有发出半点声音，只是飞快地将桌上那张错综复杂的地图合拢，身体因极度的兴奋而剧烈颤抖。" << endl;
         //此处获得三个金币并更换战斗节点
-        cout << "\n 获得 3 金币" << endl;
-        cout << " 本层商店节点 <-> 战斗节点 已互换" << endl;
-        cout << "\n最后的灰烬在空中凝成一行字：" << endl;
-        cout << "『路已改。别谢我。』" << endl;
+        cout <<YELLOW<< "\n 获得 3 金币" << endl;
     }
     else {
-        cout << "你犹豫片刻，将那三枚金币放回暗格。\n金币接触暗格底部的瞬间，温度骤失，像是某种邀请被正式收回。\n兽皮地图上的标记停止了移动。" << endl;
-        cout << "石板自行合拢，暗格沉入地面，缝隙严丝合缝，仿佛从未存在过。" << endl;
-        cout << "这一层的路线维持原样。" << endl;
+        cout << RED_BOLD;
+        cout << "\n\"Wer des Handels finsteren Pakt ausschlaegt, bewahrt den eignen Schritt im Nebel.\"" << endl;
+        cout << RED_DARK;
+        cout << endl;
+        cout << "（回绝这桩晦暗交易之人，方能在迷雾中守住自己的脚步。）" << endl;
+        cout << endl;
+        cout << "你冷冷地看了一眼桌上的金币，向后退开半步。" << endl;
+        cout << "商人见状身体一僵，面露痛苦与失望之色，枯瘦的手指一挥，将金币尽数收回袖中，全程依旧死寂无声。" << endl;
+        cout << "凹室内的烛火骤然黯淡，对方无声无息地隐匿于黑暗深处。" << endl;
+        cout << "你独自转过身，继续沿着原本的道途向前行去。" << endl;
     }
-    cout << "\n按回车继续..." << endl;
+    cout <<HUI<< "\n按回车继续..." << endl;
     SafeEnter();
     Refresh();
     return true;
 }
 
+vector<int> EventType_NotRepeat={1,2,3,4,5,6};
+vector<int> EventType_Experience = {0,0,0,0};
+class EventType;
+vector<shared_ptr<EventType>> EventList = {
+    make_shared<EventType>(1),
+    make_shared<EventType>(2),
+    make_shared<EventType>(3),
+    make_shared<EventType>(4),
+    make_shared<EventType>(5),
+    make_shared<EventType>(6)
+};
+class EventType {
+public:
+    EventType(int type) :type(type) {}
+    static void Experiencing(int num) {
+        EventList[num - 1]->Experienced();
+    }
+    void Experienced() {
+        IfExperienced = true;
+    }
+    void reset() {
+        IfExperienced = false;
+    }
+    int getnum() {
+        return type;
+    }
+    static bool Reset() {
+        for (auto& item : EventList) {
+            if (!item->getifused()) {
+                return false;
+            }
+        }
+        for (auto& item : EventList) {
+            item->reset();
+        }
+        return true;
+    }
+    bool getifused() {
+        return IfExperienced;
+    }
+private:
+    int type = 0;
+    bool IfExperienced = false;
+
+};
+
 // ---------- 未知节点主入口 ----------
-bool EnterUnknownEvent(int floor, int& currentRune) {
+bool EnterUnknownEvent(int floor) {
     cout << RED_DARK;
     Refresh();
     // 随机决定事件类型 (1~6)
-    int eventType = rm.getnum(1, 6);
-
+    int eventType = EventType_Experience.back();
+    EventType::Reset();
+    while (eventType == EventType_Experience.back() || eventType == EventType_Experience[EventType_Experience.size() - 2]) {
+        EventType_NotRepeat.clear();
+        for (auto& item : EventList) {
+            if (!item->getifused()) {
+                EventType_NotRepeat.push_back(item->getnum());
+            }
+        }
+        eventType = EventType_NotRepeat[rm.getnum(0, EventType_NotRepeat.size() - 1)];
+    }
+    EventType::Experiencing(eventType);
+    EventType_Experience.push_back(eventType);
     bool result = true;
     switch (eventType) {
     case 1: result = Event_BossChallenge(floor); break;//传入层数
     case 2: result = Event_ChooseLoot(); break;
     case 3: result = Event_Sacrifice(); break;
-    case 4: result = Event_ChangeRune(currentRune); break;//传入buff
+    case 4: result = Event_ChangeRune(); break;//传入buff
     case 5: result = Event_ChooseBoon(); break;
     case 6: result = Event_SwapNodes(); break;
     default: result = true;

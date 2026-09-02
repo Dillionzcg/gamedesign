@@ -67,70 +67,70 @@
 void showTitle() {
     // ==================== 标题 ====================
 
-    cout << GOLD_BOLD;
+    cout << QING;
     cout << "\n ===================================================================================================" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "         #         #              #                  ##                                  #         ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << QING << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "       ###       ###              ##                ##                                   ##        ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << QING << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "      ##        ##                  #             #  #         #      #              #########     ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << QING << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "   #     ##   #    ##     ##################         #         ##     #               #     #      ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << QING << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "                              #         #        ########  #    #    #        #     ###########    ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << QING << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "      #           #            #       #            ##      #       #       #####    #########     ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << QING << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "    ##       ########           #    #             # ##     #      #          #      # ##### #     ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << QING << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "  ##  #           #               ##              #  #  #    #    #           #      #########     ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << QING << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "      #     ##    #                #             #   #     #  #  #  #      #######    #    #       ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << QING << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "      #      #    #              #  #           #    #   ##    ##   ##                #    #       ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << QING << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "      #           #            #      #              #   #    #  #     #             #      #   #  ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << QING << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "      #          ##         ##          ###          #     ##     ######          ###        ###   ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << QING << "|" << endl;
 
-    cout << GOLD_BOLD;
+    cout << QING;
     cout << " ===================================================================================================" << endl;
 
 
@@ -158,13 +158,16 @@ void showTitle() {
     cout << "                       \"当裂隙在虚空中闭合，符文便成了世界唯一的遗言。\"" <<endl;
     cout << "                   浮空秘境的残垣断壁间，失控的符文正无声地剥离着万物的生息。" << endl;
     cout << "                  无人知晓深渊之下还沉睡着什么，唯有石碑上的血迹在无声地延伸。" <<endl;
-	cout << "				       你进入了这里。" << endl;
+
 
 
     // ==================== 输入 ====================
 
     cout << endl;
-    cout << GOLD_BOLD;
+    cout << endl;
+    cout << endl;
+    cout << endl;
+    cout << HUI;
     cout << "  请选择游戏模式：";
     cout << WHITE;
 

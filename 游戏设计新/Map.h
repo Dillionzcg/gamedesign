@@ -84,7 +84,8 @@ void PrintMaphelp() {
 	cout << " ^ :当前位置" << endl;
 }
 vector<int> Maptype;
-int Map1[5] = { 2,2,5,3,4 };
+int Map1[5] = { 1,2,5,3,4 };
+//int Map1[5] = { 2,2,2,2,2 };
 int Map2[6] = { 2,1,1,5,3,4 };
 int Map3[7] = { 2,2,1,1,5,3,4 };
 void UpdateMap(int floor, int step) {
@@ -129,21 +130,22 @@ void DrawMap(int floor, int step) {
 	else {
 		Themap[7][step * 9 + 2] = "^";
 	}
+	cout << QING;
 	switch (floor) {
 	case 1:
-		cout << PURPLE;
+		
 		cout << "第一层 初始遗迹" << endl;
 		cout << endl;
 		cout << "远古石碑流转着晦暗的微光，斑驳的苔藓下封印着破碎的咒文。\n唯有踏入这片禁忌废墟，试炼的钟声方才悄然敲响。" << endl;
 		break;
 	case 2:
-		cout << PURPLE;
+
 		cout << "第二层 迷失回廊" << endl;
 		cout << endl;
 		cout << "虚无的迷雾中回荡着失落的低语，错综的符文法阵真假难辨。\n唯有堪破内心深处的恐惧，才能寻得通往核心的唯一生路。" << endl;
 		break;
 	case 3:
-		cout << PURPLE;
+
 		cout << "第三层 终焉圣殿" << endl;
 		cout << endl;
 		cout << "狂暴的魔力风暴撕裂苍穹，远古神祇的虚影在血色符文中苏醒。\n唯有直面神明的终极审判，方能揭开秘境尘封的真相。" << endl;
@@ -374,10 +376,21 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	for (int i = 0;i < 20;i++) {
 		cout << " ";
 	}
+	cout << GREEN_BRIGHT;
 	cout << "我方攻击力:【" << myData[6] << "】,我方防御力:【" << myData[7] << "】,每剂治疗量:【" << myData[8] << "】" << endl;
 	//打印地图
+	cout << QING;
 	for (int i = 0; i < Battlerow; i++) {
 		for (int j = 0; j < Battlecol; j++) {
+			if (Battlemap[i][j] == "#"|| Battlemap[i][j] == "-") {
+				cout << HUI;
+			}
+			else if (Battlemap[i][j] == "|") {
+				cout << WHITE;
+			}
+			else {
+				cout << WHITE;
+			}
 			cout << Battlemap[i][j] << flush;
 		}
 		cout << endl;
@@ -385,8 +398,10 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	for (int i = 0;i < 20;i++) {
 		cout << " ";
 	}
+	cout << RED_DARK;
 	cout << "敌方攻击力:【" << enemyData[4] << "】,敌方防御力:【" << enemyData[5] << "】,敌方暴击率:【" << enemyData[6] << "%】" << endl;
 	cout << endl;
+	cout << HUI;
 }
 void PrintEventGround(int Type) {
 	Refresh();

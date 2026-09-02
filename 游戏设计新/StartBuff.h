@@ -57,7 +57,7 @@ int ChooseInitialBuff() {
     cout << BG_BLACK;
 
     PrintCentered("    符文秘境 · 初始抉择    ", YELLOW);
-    PrintCentered("-- 你选择带入 --", PURPLE);
+    PrintCentered("-- 你选择带入 --", QING);
     PrintRuneDivider(70);
     cout << endl;
 

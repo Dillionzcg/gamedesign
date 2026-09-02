@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -139,6 +139,9 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ClassMyCharacter_Enemy.cpp" />
+    <ClCompile Include="ClassObject.cpp" />
+    <ClCompile Include="ClassRuneManager.cpp" />
     <ClCompile Include="UnknownEvent.cpp" />
     <ClCompile Include="测试用.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -147,8 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basis.h" />
-    <ClInclude Include="ClassEnemy.h" />
-    <ClInclude Include="ClassMycharacter.h" />
+    <ClInclude Include="ClassMycharacter_Enemy.h" />
     <ClInclude Include="ClassRuneManager.h" />
     <ClInclude Include="ClassSkill_RoundBuff.h" />
     <ClInclude Include="FirstEnter.h" />

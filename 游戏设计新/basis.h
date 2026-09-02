@@ -24,13 +24,17 @@ inline const string CREAM_WHITE = "\033[38;5;230m";
 inline const string CREAM_WHITE_BOLD = "\033[1;38;5;230m";
 inline const string CREAM_WHITE_ITALIC = "\033[3;38;5;230m";//高白
 inline const string RED_BOLD = "\033[38;5;196m";    // 亮红加粗
-inline const string RED_DARK = "\033[38;5;203m"; // 暗红
+inline const string RED_DARK = "\033[38;5;131m"; // 暗红
 inline const string GOLD_BOLD = "\033[38;5;220m";  // 金色加粗
 inline const string DARK_GOLD = "\033[38;5;136m";//暗金
 inline const string PURPLE = "\033[38;5;141m";//紫色
+inline const string PURPLE_DARK = "\033[38;5;95m";//暗紫色
 inline const string YELLOW = "\033[38;5;226m";//亮黄色
 inline const string QING = "\033[38;5;37m";//青色
+inline const string QING_GRAY = "\033[38;5;66m";//灰青色
+inline const string GREEN_BRIGHT = "\033[38;5;46m";
 inline const string HUI = "\033[38;5;245m";
+inline const string BLUE = "\033[34m";
 
 
 inline void Refresh() {

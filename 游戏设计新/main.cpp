@@ -3,48 +3,17 @@
 #include"Map.h"
 #include"ClassObject.h"
 #include"ClassRuneManager.h"
-#include"ClassMycharacter.h"
+#include"ClassMycharacter_Enemy.h"
 #include"Shop.h"
 #include"ClassSkill_RoundBuff.h"
-#include"ClassEnemy.h"
 #include"UnknownEvent.h"
 
 using namespace std;
 vector<string> forcheck;
 RandomManager rm;
 
-//攻击函数的实现
-void MyCharacter::AttackEnemy(shared_ptr<Enemy> enemy, vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
-	CalculateMyNum(RoundBuffGroup);
-	int damage = CurrentAttack;
-	enemy->BeingAttacked(damage, RoundBuffGroup);
-}
-void MyCharacter::SpecialAttackEnemy(shared_ptr<Enemy> enemy, vector<shared_ptr<RoundBuff>> RoundBuffGroup, bool IfCalDefense, double AttackCrease) {
-	CalculateMyNum(RoundBuffGroup);
-	int damage = CurrentAttack * (1 + AttackCrease);
-	if (IfCalDefense) {
-		enemy->BeingAttacked(damage, RoundBuffGroup);
-	}
-	else {
-		enemy->BeingAttacked_NoDefense(damage, RoundBuffGroup);
-	}
+MyCharacter mycharacter;
 
-}
-bool Enemy::AttackPlayer(MyCharacter& player, vector<shared_ptr<RoundBuff>> RoundBuffGroup) {
-	CalculateMyNum(RoundBuffGroup);
-	int NumforCritical = rm.getnum(1, 100);
-	bool IfCritical = (NumforCritical <= CriticalRate);
-	int damage = 0;
-	if (IfCritical) {
-		damage = CurrentAttack * CriticalHarm;
-	}
-	else {
-		damage = CurrentAttack;
-	}
-
-	player.BeingAttacked(damage, RoundBuffGroup);
-	return IfCritical;
-}
 
 class EnemyNumManager {
 public:
@@ -91,12 +60,14 @@ void ChooseEnemy(int floor, bool IsBoss) {
 		}
 		break;
 	}
+	cout << RED_BOLD;
 	if (!IsBoss) {
 		cout << "该次战斗的敌人【" << EnemyType[Choice] << "】,请选择合适的技能以应对。" << endl;
 	}
 	else {
 		cout << "以下是该次战斗的Boss的各项数值，请选择合适的技能以应对。" << endl;
 	}
+	cout << RED_DARK;
 	cout << "敌人的各项数值为：" << endl;
 	cout << "攻击力：" << EnemyNum_ThisBattle->getAttack()<<endl;
 	cout << "防御力：" << EnemyNum_ThisBattle->getDefense() << endl;
@@ -113,6 +84,7 @@ shared_ptr<SkillManage> ChooseSkill(int ChoiceNum,int floor,bool IsBoss) {
 		MySkillManager.push_back(make_shared<SkillManage>(item));
 	}
 	ChooseEnemy(floor, IsBoss);
+	cout << HUI;
 	cout << "请在下列技能中选择一个,技能在技能条满时可以释放："<<endl;
 	cout << endl;
 	int i = 0;
@@ -211,9 +183,9 @@ void MyAttack(shared_ptr<Enemy> enemy,int round,bool ifskill) {
 	PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 	int Harm = EnemyHP0 - enemy->GetCurrentHP();
 	if (ifskill) {
-		cout << "已使用技能" << MySkill->GetDescribe() << endl;
+		cout <<RESET<< "已使用技能" << MySkill->GetDescribe() << endl;
 	}
-	cout << "敌方受到了 " << Harm << " 点伤害！" << endl;
+	cout << RED_BOLD << "敌方受到了 " << Harm << " 点伤害！" << endl;
 }
 void MyDefend(shared_ptr<Enemy> enemy, int round,bool ifskill){
 	mycharacter.CalculateMyNum(RoundBuffGroup);
@@ -221,9 +193,9 @@ void MyDefend(shared_ptr<Enemy> enemy, int round,bool ifskill){
 	UpdateData(enemy);
 	PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 	if (ifskill) {
-		cout << "已使用技能" << MySkill->GetDescribe() << endl;
+		cout << RESET << "已使用技能" << MySkill->GetDescribe() << endl;
 	}
-	cout << "已使用防御，本回合防御力提升至" << mycharacter.GetDefendingDeveloping() << "倍。" << endl;
+	cout << RED_BOLD << "已使用防御，本回合防御力提升至" << mycharacter.GetDefendingDeveloping() << "倍。" << endl;
 }
 
 //回合开始函数
@@ -249,20 +221,34 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 	while (1) {
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
 		if (enemy->GetCurrentAttack() - mycharacter.GetCurrentDefense() >= mycharacter.GetCurrentHP()) {
-			cout << "(本回合敌方普通攻击将致我方血量归零，请谨慎选择行动)" << endl;
+			cout <<RED_BOLD<< "(本回合敌方普通攻击将致我方血量归零，请谨慎选择行动)" << endl;
 		}
 		else if (enemy->GetCriticalRate() != 0 && enemy->GetCurrentAttack() * enemy->GetCriticalHarm() - mycharacter.GetCurrentDefense() >= mycharacter.GetCurrentHP()) {
-			cout << "(本回合敌方若暴击将致我方血量归零，请谨慎选择行动)" << endl;
+			cout << RED_BOLD << "(本回合敌方若暴击将致我方血量归零，请谨慎选择行动)" << endl;
 		}
 		if (enemy->GetIfSkill()) {
-			cout << "(请注意，敌方技能能量已满，本回合必定暴击)" << endl;
+			cout << RED_BOLD << "(请注意，敌方技能能量已满，本回合必定暴击)" << endl;
 		}
+		cout << RESET;
 		cout << "请选择本回合的行动：" << endl;
 		cout << "1.攻击" << endl;
 		cout << "2.防御(不攻击且防御力提升至" << mycharacter.GetDefendingDeveloping() << "倍)" << endl;
+		if (mycharacter.GetIfSkill()) {
+			cout << RESET;
+		}
+		else {
+			cout << HUI;
+		}
 		cout << "3.释放技能";
 		cout << "(我方技能为：" << MySkill->GetDescribe() << ")"<<endl;
-		cout << "4.治疗(治疗条能量不低于2时将额外进行一次防御)";
+		if (mycharacter.GetIfHeal()) {
+			cout << RESET;
+		}
+		else {
+			cout << HUI;
+		}
+		cout << "4.治疗";
+		cout << "(治疗条能量不低于2时将额外进行一次防御)";
 		cout << "(将消耗所有治疗条进行治疗，每点治疗条回复" << mycharacter.GetHealHP() << "点生命值)";
 		cout << endl;
 		RoundChoice = Safecin(LegalRoundChoice, false);
@@ -274,6 +260,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 				break;
 			}
 			else {
+				cout << RED_BOLD;
 				cout << "技能未充能满，无法释放!" << endl;
 				cout << "请重新选择行动。" << endl;
 				cout << "2秒后刷新界面...";
@@ -287,6 +274,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 				break;
 			}
 			else {
+				cout << RED_BOLD;
 				cout << "治疗条为空，无法治疗!" << endl;
 				cout << "请重新选择行动。"<<endl;
 				cout << "2秒后刷新界面...";
@@ -306,6 +294,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 				}
 				else {
 					mycharacter.EnergyUp();
+					cout << RED_BOLD;
 					cout << "治疗条已满，已自动为能量条充能。(2秒后继续)";
 					WaitForSeconds(2);
 				}
@@ -317,6 +306,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 				}
 				else {
 					mycharacter.HealUp();
+					cout << RED_BOLD;
 					cout << "能量条已满，已自动为治疗条充能。(2秒后继续)";
 					WaitForSeconds(2);
 				}
@@ -324,6 +314,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			else {
 				if (RoundChoice == 1 || RoundChoice == 2) {
 					PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 1);
+					cout << RESET;
 					cout << "请选择充能方向：" << endl;
 					cout << "1.为能量条充能" << endl;
 					cout << "2.为治疗条充能" << endl;
@@ -348,6 +339,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			}
 		}
 		else {
+			cout << RED_BOLD;
 			cout << "治疗条与能量条均已满，无法充能。(2秒后继续)";
 			WaitForSeconds(2);
 		}
@@ -377,9 +369,9 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			UpdateData(enemy);
 			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 			int Harm = EnemyHP0 - enemy->GetCurrentHP();
-			cout << "已使用技能" << MySkill->GetDescribe() << endl;
-			cout << "敌方受到了 " << Harm << " 点伤害！" << endl;
-			cout << "已回复" << SkillHeal_14 << "点血量。" << endl;
+			cout <<RESET<< "已使用技能" << MySkill->GetDescribe() << endl;
+			cout <<RED_BOLD<< "敌方受到了 " << Harm << " 点伤害！" << endl;
+			cout <<BLUE_S<< "已回复" << SkillHeal_14 << "点血量。" << endl;
 		}
 		else if (AttachingAction == 13) {
 			int EnemyHP0 = enemy->GetCurrentHP();
@@ -389,9 +381,9 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			UpdateData(enemy);
 			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 			int Harm = EnemyHP0 - enemy->GetCurrentHP();
-			cout << "已使用技能" << MySkill->GetDescribe() << endl;
-			cout << "敌方受到了 " << Harm << " 点伤害！" << endl;
-			cout << "敌方能量-1" << endl;
+			cout <<RESET<< "已使用技能" << MySkill->GetDescribe() << endl;
+			cout <<RED_BOLD<< "敌方受到了 " << Harm << " 点伤害！" << endl;
+			cout <<RED_DARK<< "敌方能量-1" << endl;
 		}
 		else if (AttachingAction == -1) {
 			int EnemyHP0 = enemy->GetCurrentHP();
@@ -400,8 +392,8 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			UpdateData(enemy);
 			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 			int Harm = EnemyHP0 - enemy->GetCurrentHP();
-			cout << "已使用技能" << MySkill->GetDescribe() << endl;
-			cout << "敌方受到了 " << Harm << " 点伤害！" << endl;
+			cout << RESET << "已使用技能" << MySkill->GetDescribe() << endl;
+			cout << RED_BOLD << "敌方受到了 " << Harm << " 点伤害！" << endl;
 		}
 		else if (AttachingAction == 77) {
 			int EnemyHP0 = enemy->GetCurrentHP();
@@ -410,8 +402,8 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			UpdateData(enemy);
 			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 			int Harm = EnemyHP0 - enemy->GetCurrentHP();
-			cout << "已使用技能" << MySkill->GetDescribe() << endl;
-			cout << "敌方受到了 " << Harm << " 点伤害！" << endl;
+			cout << RESET << "已使用技能" << MySkill->GetDescribe() << endl;
+			cout << RED_BOLD << "敌方受到了 " << Harm << " 点伤害！" << endl;
 		}
 		
 	}
@@ -426,18 +418,18 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		UpdateData(enemy);
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 		if (IfUsingDefense) {
-			cout << "治疗条能量不低于2，已进行一次防御。" << endl;
+			cout <<YELLOW<< "治疗条能量不低于2，已进行一次防御。" << endl;
 		}
-		cout << "已消耗所有治疗条回复" << mycharacter.GetCurrentHP() - MyHP0 << "点血量。" << endl;
+		cout <<BLUE_S<< "已消耗所有治疗条回复" << mycharacter.GetCurrentHP() - MyHP0 << "点血量。" << endl;
 	}
 	if (!enemy->GetIsAlive()) {
 		IfBattleIsOver = true;
-		cout << "战斗胜利。" << endl;
+		cout <<YELLOW<< "战斗胜利。" << endl;
 		cout << "按回车以继续。" << endl;
 		SafeEnter();
 		return 1;
 	}
-	cout << "按回车以进入敌方回合...";
+	cout <<HUI<< "按回车以进入敌方回合...";
 	SafeEnter();
 	//敌方回合
 	Refresh();
@@ -455,13 +447,13 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			UpdateData(enemy);
 			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 2);
 
-			cout << "敌方发动了普通攻击！" << endl;
+			cout <<RESET<< "敌方发动了普通攻击！" << endl;
 			if (IfCritical) {
-				cout << "敌方造成了暴击伤害！攻击力提升至" << enemy->GetCriticalHarm() << "倍!" << endl;
+				cout <<RED_BOLD<< "敌方造成了暴击伤害！攻击力提升至" << enemy->GetCriticalHarm() << "倍!" << endl;
 			}
-			cout << "我方受到了 " << Harm << " 点伤害！" << endl;
+			cout <<RED_DARK<< "我方受到了 " << Harm << " 点伤害！" << endl;
 			if (mycharacter.GetIsAlive() && mycharacter.GetHealAfterHarm() != 0) {
-				cout << "我方回复了 " << mycharacter.GetHealAfterHarm() << " 点血量。" << endl;
+				cout <<BLUE_S<< "我方回复了 " << mycharacter.GetHealAfterHarm() << " 点血量。" << endl;
 			}
 
 		}
@@ -478,27 +470,27 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			UpdateData(enemy);
 			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 2);
 			int Harm = MyHP0 - mycharacter.GetCurrentHP();
-			cout << "敌方发动了技能！" << endl;
+			cout <<RED_BOLD<< "敌方发动了技能！" << endl;
 			if (IfCritical) {
-				cout << "敌方造成了暴击伤害！攻击力提升至" << enemy->GetCriticalHarm() << "倍!" << endl;
+				cout <<RED_BOLD<< "敌方造成了暴击伤害！攻击力提升至" << enemy->GetCriticalHarm() << "倍!" << endl;
 			}
 			enemy->EnergyUp();
-			cout << "我方受到了 " << Harm << " 点伤害！" << endl;
+			cout <<RED_DARK<< "我方受到了 " << Harm << " 点伤害！" << endl;
 			enemy->Re_CriticalRate();
 			if (mycharacter.GetIsAlive() && mycharacter.GetHealAfterHarm() != 0) {
-				cout << "我方回复了 " << mycharacter.GetHealAfterHarm() << " 点血量。" << endl;
+				cout <<BLUE_S<< "我方回复了 " << mycharacter.GetHealAfterHarm() << " 点血量。" << endl;
 			}
 		}
 		UpdateData(enemy);
 		if (mycharacter.GetIsAlive()) {
-			cout << "按回车以进入我方回合..." << endl;
+			cout <<HUI<< "按回车以进入我方回合..." << endl;
 			return -1;
 		}
 		else {
 			IfBattleIsOver = true;
-			cout << "生命值归零。" << endl;
+			cout <<PURPLE<< "生命值归零。" << endl;
 			cout << "你迷失在符文秘境。" << endl;
-			cout << "按回车以返回标题界面..." << endl;
+			cout <<HUI<< "按回车以返回标题界面..." << endl;
 			RoundBuffGroup.clear();
 			MyObjectGroup.clear();
 			SafeEnter();
@@ -507,7 +499,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 	}
 	else {
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 2);
-		cout << "敌方被晕眩，按回车进入我方回合..." << endl;
+		cout <<YELLOW<< "敌方被晕眩，按回车进入我方回合..." << endl;
 		return -1;
 	}
 	
@@ -515,20 +507,23 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 void PostWarSettleMent(bool IfBoss) {
 	Refresh();
 	string separator = string(55, '=');
-	cout << separator << endl;
-	cout << "战斗结束，你汲取了战场上的生命能量！" << endl;
+	cout <<HUI<< separator << endl;
+	cout << WHITE;
+	cout << "战斗结束，你汲取了战场上的符文能量！" << endl;
 	int levelUp = IfBoss ? 2 : 1;
+	cout << YELLOW;
 	cout << "等级提升：Lv." << mycharacter.GetLevel();
 	mycharacter.Levelup(levelUp);
 	cout << " → Lv." << mycharacter.GetLevel() << endl;
-	cout << separator << endl << endl;
+	cout << endl;
 	struct Artifact {
 		string name;
 		string effect;
 		string rarity;
 	};
 
-	cout << separator << endl;
+
+	cout << WHITE;
 	cout << "你从秘境中获得了藏品！" << endl;
 	int RandomNumForObject = rm.getnum(1, 100);
 	vector<shared_ptr<Object>> ObjectPoolForRandom;
@@ -557,7 +552,9 @@ void PostWarSettleMent(bool IfBoss) {
 	int ObjectNum = rm.getnum(0, (int)ObjectPoolForRandom.size() - 1);
 	shared_ptr<Object> RandomObject = ObjectPoolForRandom[ObjectNum];
 	MyObjectGroup.push_back(RandomObject);
+	cout << QING;
 	cout << RandomObject->GetRarity() << " 级藏品:" << endl;
+	cout << GREEN_BRIGHT;
 	cout << RandomObject->GetDescribe()<<endl;
 	if (IfBoss) {//如果是boss战斗，额外获得一个藏品
 		int RandomNumForObject_2 = rm.getnum(1, 100);
@@ -587,37 +584,39 @@ void PostWarSettleMent(bool IfBoss) {
 		int ObjectNum_2 = rm.getnum(0, (int)ObjectPoolForRandom_2.size() - 1);
 		shared_ptr<Object> RandomObject_2 = ObjectPoolForRandom_2[ObjectNum_2];
 		MyObjectGroup.push_back(RandomObject_2);
+		cout << QING;
 		cout << RandomObject_2->GetRarity() << " 级藏品:" << endl;
+		cout << GREEN_BRIGHT;
 		cout << RandomObject_2->GetDescribe() << endl;
 	}
-	cout << separator << endl << endl;
-
+	cout << endl;
 	int coinGain = IfBoss ? 6 : 3;
 	vector<string> bossCoinStories = {
-		"你搜索 Boss 的遗物箱，找到了 6 枚刻有神秘符文的古金币。",
-		"你在 Boss 的巢穴深处发现了一个隐藏的金库，里面整齐码放着 6 枚金币。"
+		"你破开试炼之影的残骸，在厚重的黑霜下搜出了 6 枚刻有禁忌符文的古金币。",
+		"石棺的底座在震颤中裂开，里面整齐码放着 6 枚沉甸甸的殉葬金币。"
 	};
+
 	vector<string> normalCoinStories = {
-		"你在敌人残骸中翻找，摸到了 3 枚带着余温的金币。",
-		"你掀开一块松动的石板，下面赫然藏着 3 枚金币。",
-		"破旧的宝箱里发出叮当声，你打开后获得 3 枚金币。",
-		"你从敌人褴褛的衣袋里搜出 3 枚金币，看来是搜刮来的战利品。",
-		"一只乌鸦叼来一个钱袋，里面恰好有 3 枚金币——算是友好的馈赠。"
+		"你在冰冷的尸骸中翻找，从凝固的血迹下摸出了 3 枚犹带余温的金币。",
+		"你掀开一块布满青苔的石板，狭窄的暗格内静静躺着 3 枚古旧金币。",
+		"你自敌人的褴褛行囊中剥离出 3 枚金属货币，上面还沾染着未干的尘土。",
+		"穿堂风卷过空旷的回廊，吹落了一只悬挂的钱袋，落地时散落出恰好 3 枚金币。"
 	};
 	vector<string>& stories = IfBoss ? bossCoinStories : normalCoinStories;
 	int storyIdx = rm.getnum(0, (int)stories.size() - 1);
 
-	cout << separator << endl;
-	cout << stories[storyIdx] << endl;
-	cout << "你获得了 " << coinGain << " 枚金币！" << endl;
+	cout <<WHITE<< stories[storyIdx] << endl;
+	cout <<YELLOW<< "你获得了 " << coinGain << " 枚金币！" << endl;
 	mycharacter.GainCoin(coinGain);
-	cout << "当前金币总数：" << mycharacter.GetCoins() << endl;
-	cout << separator << endl << endl;
+	cout << HUI;
+	cout <<GOLD_BOLD<< "当前金币总数：" << mycharacter.GetCoins() << endl;
+;
 	//当前等级加成
-	cout << separator << endl;
-	cout << "当前等级加成：基础生命/攻击/防御 +" << (mycharacter.GetLevel() - 1) * 10 << "%" << endl;
-	cout << separator << endl;
+	cout << endl;
+	cout <<RED_BOLD<< "当前等级加成：基础生命/攻击/防御 +" << (mycharacter.GetLevel() - 1) * 10 << "%" << endl;
+	cout << HUI << separator << endl;
 	cout << "\n按回车继续...";
+	SafeEnter();
 }
 //战斗开始函数
 bool BattleStart(int floor,bool isBoss) {
@@ -708,7 +707,7 @@ int MapChoose(int floor,int step,int type) {
 	int MapChoice = 0;
 	while (1) {
 		DrawMap(floor, step);
-		cout << PURPLE << "当前符文为：" << endl;
+		cout <<QING << "当前符文为：" << endl;
 		cout << RuneNow->GetDescribe() << endl;
 		cout << endl;
 		PrintMaphelp();
@@ -787,7 +786,7 @@ int main() {
 				break;
 			case 2://非战斗节点
 				IfSave = MapChoose(floor, step,2);
-				EnterUnknownEvent(floor, step);
+				EnterUnknownEvent(floor);
 				break;
 			case 3://商店节点
 				IfSave = MapChoose(floor, step,3);
@@ -799,14 +798,13 @@ int main() {
 					Ifwin = BattleStart(floor, false);
 				}
 				else if (IfSave == 2) {
-					PrintEventGround(2);
+					EnterUnknownEvent(floor);
 				}
 				break;
 			}
 			if (!Ifwin) {
 				break;
 			}
-			SafeEnter();
 			step++;
 			if (step >= Maptype.size() && floor < 3) {
 				step = 0;
