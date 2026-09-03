@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -139,6 +139,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ClassEnemyNum.cpp" />
     <ClCompile Include="ClassMyCharacter_Enemy.cpp" />
     <ClCompile Include="ClassObject.cpp" />
     <ClCompile Include="ClassRuneManager.cpp" />
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basis.h" />
+    <ClInclude Include="ClassEnemyNum.h" />
     <ClInclude Include="ClassMycharacter_Enemy.h" />
     <ClInclude Include="ClassRuneManager.h" />
     <ClInclude Include="ClassSkill_RoundBuff.h" />

@@ -7,6 +7,7 @@
 #include"Shop.h"
 #include"ClassSkill_RoundBuff.h"
 #include"UnknownEvent.h"
+#include"ClassEnemyNum.h"
 
 using namespace std;
 vector<string> forcheck;
@@ -14,77 +15,6 @@ RandomManager rm;
 
 MyCharacter mycharacter;
 
-
-class EnemyNumManager {
-public:
-	EnemyNumManager(int hp, int atk, int dfs) :HP(hp), Attack(atk), Defense(dfs) {}
-	EnemyNumManager() = default;
-	int getHP() {
-		return HP;
-	}
-	int getAttack() {
-		return Attack;
-	}
-	int getDefense() {
-		return Defense;
-	}
-private:
-	int HP=0;
-	int Attack=0;
-	int Defense=0;
-};
-shared_ptr<EnemyNumManager> Floor1A_S = make_shared<EnemyNumManager>(200, 100, 20);//第一层攻击特化普通模式敌人
-shared_ptr<EnemyNumManager> Floor1D_S = make_shared<EnemyNumManager>(200, 80, 50);//第一层防御特化普通模式敌人
-shared_ptr<EnemyNumManager> Floor1H_S = make_shared<EnemyNumManager>(300, 80, 20);//第一层生命上限特化普通模式敌人
-vector<shared_ptr<EnemyNumManager>> Floor1_S = { Floor1A_S ,Floor1D_S ,Floor1H_S };
-shared_ptr<EnemyNumManager> Boss1_S = make_shared<EnemyNumManager>(600, 100, 40);//第一层普通模式Boss
-
-shared_ptr<EnemyNumManager> Floor1A_H = make_shared<EnemyNumManager>(500, 100, 20);//第一层攻击特化困难模式敌人
-shared_ptr<EnemyNumManager> Floor1D_H = make_shared<EnemyNumManager>(500, 80, 50);//第一层防御特化困难模式敌人
-shared_ptr<EnemyNumManager> Floor1H_H = make_shared<EnemyNumManager>(600, 80, 20);//第一层生命上限特化困难模式敌人
-vector<shared_ptr<EnemyNumManager>> Floor1_H = { Floor1A_H ,Floor1D_H ,Floor1H_H };
-shared_ptr<EnemyNumManager> Boss1_H = make_shared<EnemyNumManager>(1000, 100, 40);//第一层困难模式Boss
-
-shared_ptr<EnemyNumManager> EnemyNum_ThisBattle;//本次战斗敌人数据
-vector<string> EnemyType = { "攻击力较高","防御力较高","生命值较高" };
-void ChooseEnemy(int floor, bool IsBoss,bool IfHard) {
-	int Choice = -1;
-	switch (floor) {
-	case 1:
-		if (IsBoss) {
-			if (IfHard) {
-				EnemyNum_ThisBattle = Boss1_H;
-
-			}
-			else {
-				EnemyNum_ThisBattle = Boss1_S;
-			}
-		}
-		else {
-			Choice= rm.getnum(0, 2);
-			if(IfHard){
-				EnemyNum_ThisBattle = Floor1_H[Choice];
-			}
-			else{
-				EnemyNum_ThisBattle = Floor1_S[Choice];
-			}
-		}
-		break;
-	}
-	cout << RED_BOLD;
-	if (!IsBoss) {
-		cout << "该次战斗的敌人【" << EnemyType[Choice] << "】,请选择合适的技能以应对。" << endl;
-	}
-	else {
-		cout << "以下是该次战斗的Boss的各项数值，请选择合适的技能以应对。" << endl;
-	}
-	cout << RED_DARK;
-	cout << "敌人的各项数值为：" << endl;
-	cout << "攻击力：" << EnemyNum_ThisBattle->getAttack()<<endl;
-	cout << "防御力：" << EnemyNum_ThisBattle->getDefense() << endl;
-	cout << "生命上限：" << EnemyNum_ThisBattle->getHP() << endl;
-	cout << endl;
-}
 vector<shared_ptr<SkillManage>> MySkillManager;
 shared_ptr<SkillManage> ChooseSkill(int ChoiceNum,int floor,bool IsBoss,bool IfHard) {
 	Refresh();
@@ -541,8 +471,6 @@ void PostWarSettleMent(bool IfBoss) {
 		string effect;
 		string rarity;
 	};
-
-
 	cout << WHITE;
 	cout << "你从秘境中获得了藏品！" << endl;
 	int RandomNumForObject = rm.getnum(1, 100);
@@ -772,6 +700,7 @@ int main() {
 		mycharacter.ReSetNum();
 		RoundBuffGroup.clear();
 		InitialRoundBuffGroup.clear();
+		MyObjectGroup.clear();
 		int floor = 1;
 		int	step = 0;
 		int thisfloor = 0;
