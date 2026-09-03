@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"basis.h"
 #include "ClassSkill_RoundBuff.h"
 

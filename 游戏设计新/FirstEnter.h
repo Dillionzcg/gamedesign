@@ -64,7 +64,7 @@
 //    cout << "请选择游戏模式:";
 //    Safecin({ 1, 2, 3 }, false);
 //}
-void showTitle() {
+int showTitle() {
     // ==================== 标题 ====================
 
     cout << QING;
@@ -170,9 +170,9 @@ void showTitle() {
     cout << HUI;
     cout << "  请选择游戏模式：";
     cout << WHITE;
-
-    Safecin({ 1, 2, 3 }, false);
-
+    int TitleChoice;
+    TitleChoice=Safecin({ 1, 2, 3 }, false);
+    return TitleChoice;
 
 }
 

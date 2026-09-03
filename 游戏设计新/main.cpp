@@ -47,16 +47,27 @@ shared_ptr<EnemyNumManager> Boss1_H = make_shared<EnemyNumManager>(1000, 100, 40
 
 shared_ptr<EnemyNumManager> EnemyNum_ThisBattle;//本次战斗敌人数据
 vector<string> EnemyType = { "攻击力较高","防御力较高","生命值较高" };
-void ChooseEnemy(int floor, bool IsBoss) {
+void ChooseEnemy(int floor, bool IsBoss,bool IfHard) {
 	int Choice = -1;
 	switch (floor) {
 	case 1:
 		if (IsBoss) {
-			EnemyNum_ThisBattle = Boss1_S;
+			if (IfHard) {
+				EnemyNum_ThisBattle = Boss1_H;
+
+			}
+			else {
+				EnemyNum_ThisBattle = Boss1_S;
+			}
 		}
 		else {
 			Choice= rm.getnum(0, 2);
-			EnemyNum_ThisBattle = Floor1_S[Choice];
+			if(IfHard){
+				EnemyNum_ThisBattle = Floor1_H[Choice];
+			}
+			else{
+				EnemyNum_ThisBattle = Floor1_S[Choice];
+			}
 		}
 		break;
 	}
@@ -75,7 +86,7 @@ void ChooseEnemy(int floor, bool IsBoss) {
 	cout << endl;
 }
 vector<shared_ptr<SkillManage>> MySkillManager;
-shared_ptr<SkillManage> ChooseSkill(int ChoiceNum,int floor,bool IsBoss) {
+shared_ptr<SkillManage> ChooseSkill(int ChoiceNum,int floor,bool IsBoss,bool IfHard) {
 	Refresh();
 	cout << WHITE;
 	vector<int> Choice=rm.getSomeNum(0, 9, ChoiceNum);
@@ -83,13 +94,22 @@ shared_ptr<SkillManage> ChooseSkill(int ChoiceNum,int floor,bool IsBoss) {
 	for (auto& item:Choice) {
 		MySkillManager.push_back(make_shared<SkillManage>(item));
 	}
-	ChooseEnemy(floor, IsBoss);
-	cout << HUI;
+	ChooseEnemy(floor, IsBoss,IfHard);
+	cout << WHITE;
 	cout << "请在下列技能中选择一个,技能在技能条满时可以释放："<<endl;
 	cout << endl;
 	int i = 0;
 	for (auto& item : MySkillManager) {
 		i++;
+		if (item->GetID() < 3) {
+			cout << RED_WINE;
+		}
+		else if (item->GetID() < 6) {
+			cout << YELLOW;
+		}
+		else {
+			cout << PURPLE;
+		}
 		cout << i << "." << item->GetDescribe()<<endl;
 		cout << endl;
 	}
@@ -183,7 +203,7 @@ void MyAttack(shared_ptr<Enemy> enemy,int round,bool ifskill) {
 	PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 	int Harm = EnemyHP0 - enemy->GetCurrentHP();
 	if (ifskill) {
-		cout <<RESET<< "已使用技能" << MySkill->GetDescribe() << endl;
+		cout << BOLD << "已使用技能" << GREEN_BRIGHT << MySkill->GetDescribe() << endl;
 	}
 	cout << RED_BOLD << "敌方受到了 " << Harm << " 点伤害！" << endl;
 }
@@ -193,9 +213,9 @@ void MyDefend(shared_ptr<Enemy> enemy, int round,bool ifskill){
 	UpdateData(enemy);
 	PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 	if (ifskill) {
-		cout << RESET << "已使用技能" << MySkill->GetDescribe() << endl;
+		cout << BOLD << "已使用技能" << GREEN_BRIGHT << MySkill->GetDescribe() << endl;
 	}
-	cout << RED_BOLD << "已使用防御，本回合防御力提升至" << mycharacter.GetDefendingDeveloping() << "倍。" << endl;
+	cout << YELLOW << "已使用防御，本回合防御力提升至" << mycharacter.GetDefendingDeveloping() << "倍。" << endl;
 }
 
 //回合开始函数
@@ -234,7 +254,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		cout << "1.攻击" << endl;
 		cout << "2.防御(不攻击且防御力提升至" << mycharacter.GetDefendingDeveloping() << "倍)" << endl;
 		if (mycharacter.GetIfSkill()) {
-			cout << RESET;
+			cout << YELLOW;
 		}
 		else {
 			cout << HUI;
@@ -242,7 +262,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		cout << "3.释放技能";
 		cout << "(我方技能为：" << MySkill->GetDescribe() << ")"<<endl;
 		if (mycharacter.GetIfHeal()) {
-			cout << RESET;
+			cout << BLUE;
 		}
 		else {
 			cout << HUI;
@@ -260,7 +280,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 				break;
 			}
 			else {
-				cout << RED_BOLD;
+				cout << RED_DARK;
 				cout << "技能未充能满，无法释放!" << endl;
 				cout << "请重新选择行动。" << endl;
 				cout << "2秒后刷新界面...";
@@ -274,7 +294,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 				break;
 			}
 			else {
-				cout << RED_BOLD;
+				cout << RED_DARK;
 				cout << "治疗条为空，无法治疗!" << endl;
 				cout << "请重新选择行动。"<<endl;
 				cout << "2秒后刷新界面...";
@@ -294,7 +314,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 				}
 				else {
 					mycharacter.EnergyUp();
-					cout << RED_BOLD;
+					cout << RED_DARK;
 					cout << "治疗条已满，已自动为能量条充能。(2秒后继续)";
 					WaitForSeconds(2);
 				}
@@ -306,7 +326,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 				}
 				else {
 					mycharacter.HealUp();
-					cout << RED_BOLD;
+					cout << RED_DARK;
 					cout << "能量条已满，已自动为治疗条充能。(2秒后继续)";
 					WaitForSeconds(2);
 				}
@@ -369,9 +389,9 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			UpdateData(enemy);
 			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 			int Harm = EnemyHP0 - enemy->GetCurrentHP();
-			cout <<RESET<< "已使用技能" << MySkill->GetDescribe() << endl;
+			cout <<BOLD<< "已使用技能" <<GREEN_BRIGHT<< MySkill->GetDescribe() << endl;
 			cout <<RED_BOLD<< "敌方受到了 " << Harm << " 点伤害！" << endl;
-			cout <<BLUE_S<< "已回复" << SkillHeal_14 << "点血量。" << endl;
+			cout <<BLUE<< "已回复" << SkillHeal_14 << "点血量。" << endl;
 		}
 		else if (AttachingAction == 13) {
 			int EnemyHP0 = enemy->GetCurrentHP();
@@ -381,7 +401,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			UpdateData(enemy);
 			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 			int Harm = EnemyHP0 - enemy->GetCurrentHP();
-			cout <<RESET<< "已使用技能" << MySkill->GetDescribe() << endl;
+			cout <<BOLD<< "已使用技能" <<GREEN_BRIGHT<< MySkill->GetDescribe() << endl;
 			cout <<RED_BOLD<< "敌方受到了 " << Harm << " 点伤害！" << endl;
 			cout <<RED_DARK<< "敌方能量-1" << endl;
 		}
@@ -392,7 +412,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			UpdateData(enemy);
 			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 			int Harm = EnemyHP0 - enemy->GetCurrentHP();
-			cout << RESET << "已使用技能" << MySkill->GetDescribe() << endl;
+			cout << BOLD << "已使用技能" << GREEN_BRIGHT << MySkill->GetDescribe() << endl;
 			cout << RED_BOLD << "敌方受到了 " << Harm << " 点伤害！" << endl;
 		}
 		else if (AttachingAction == 77) {
@@ -402,7 +422,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			UpdateData(enemy);
 			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
 			int Harm = EnemyHP0 - enemy->GetCurrentHP();
-			cout << RESET << "已使用技能" << MySkill->GetDescribe() << endl;
+			cout << BOLD << "已使用技能" << GREEN_BRIGHT << MySkill->GetDescribe() << endl;
 			cout << RED_BOLD << "敌方受到了 " << Harm << " 点伤害！" << endl;
 		}
 		
@@ -420,7 +440,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		if (IfUsingDefense) {
 			cout <<YELLOW<< "治疗条能量不低于2，已进行一次防御。" << endl;
 		}
-		cout <<BLUE_S<< "已消耗所有治疗条回复" << mycharacter.GetCurrentHP() - MyHP0 << "点血量。" << endl;
+		cout <<BLUE<< "已消耗所有治疗条回复" << mycharacter.GetCurrentHP() - MyHP0 << "点血量。" << endl;
 	}
 	if (!enemy->GetIsAlive()) {
 		IfBattleIsOver = true;
@@ -453,7 +473,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			}
 			cout <<RED_DARK<< "我方受到了 " << Harm << " 点伤害！" << endl;
 			if (mycharacter.GetIsAlive() && mycharacter.GetHealAfterHarm() != 0) {
-				cout <<BLUE_S<< "我方回复了 " << mycharacter.GetHealAfterHarm() << " 点血量。" << endl;
+				cout <<BLUE<< "我方回复了 " << mycharacter.GetHealAfterHarm() << " 点血量。" << endl;
 			}
 
 		}
@@ -478,7 +498,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			cout <<RED_DARK<< "我方受到了 " << Harm << " 点伤害！" << endl;
 			enemy->Re_CriticalRate();
 			if (mycharacter.GetIsAlive() && mycharacter.GetHealAfterHarm() != 0) {
-				cout <<BLUE_S<< "我方回复了 " << mycharacter.GetHealAfterHarm() << " 点血量。" << endl;
+				cout <<BLUE<< "我方回复了 " << mycharacter.GetHealAfterHarm() << " 点血量。" << endl;
 			}
 		}
 		UpdateData(enemy);
@@ -619,13 +639,14 @@ void PostWarSettleMent(bool IfBoss) {
 	SafeEnter();
 }
 //战斗开始函数
-bool BattleStart(int floor,bool isBoss) {
+bool BattleStart(int floor,bool isBoss,bool IfHard) {
+	ResetLastBarLength();
 	RoundBuffGroup.clear();
 	InitialRoundBuffGroup.clear();
 	IfBattleIsOver = false;
 	int round = 1;
 	shared_ptr<Enemy> enemy = make_shared<Enemy>();
-	MySkill=ChooseSkill(mycharacter.GetChoiceNum(),floor,isBoss);
+	MySkill=ChooseSkill(mycharacter.GetChoiceNum(),floor,isBoss,IfHard);
 	enemy= make_shared<Enemy>(EnemyNum_ThisBattle->getHP(), EnemyNum_ThisBattle->getAttack(), EnemyNum_ThisBattle->getDefense(), RoundBuffGroup);
 	int IfWin = -1;
 	while (1) {
@@ -749,11 +770,21 @@ int main() {
 	while (1) {
 		//程序运行总循环，输了之后会回到这里
 		mycharacter.ReSetNum();
+		RoundBuffGroup.clear();
+		InitialRoundBuffGroup.clear();
 		int floor = 1;
 		int	step = 0;
 		int thisfloor = 0;
 		bool Ifwin = true;
-		showTitle();
+		int ModeChoice=0;
+		bool IfHard=false;
+		ModeChoice=showTitle();
+		if (ModeChoice == 1) {
+			IfHard = false;
+		}
+		else if (ModeChoice == 2) {
+			IfHard = true;
+		}
 		int selectedBuff = enterbuff();
 		switch (selectedBuff) {
 		case 0:
@@ -778,11 +809,11 @@ int main() {
 			switch (Maptype[step]) {
 			case 1://普通战斗
 				IfSave=MapChoose(floor,step,1);
-				Ifwin = BattleStart(floor, false);
+				Ifwin = BattleStart(floor, false, IfHard);
 				break;
 			case 4://boss战斗
 				IfSave = MapChoose(floor,step,4);
-				Ifwin=BattleStart(floor, true);
+				Ifwin=BattleStart(floor, true, IfHard);
 				break;
 			case 2://非战斗节点
 				IfSave = MapChoose(floor, step,2);
@@ -795,7 +826,7 @@ int main() {
 			case 5://双节点
 				IfSave = MapChoose(floor, step, 5);
 				if (IfSave == 1) {
-					Ifwin = BattleStart(floor, false);
+					Ifwin = BattleStart(floor, false, IfHard);
 				}
 				else if (IfSave == 2) {
 					EnterUnknownEvent(floor);

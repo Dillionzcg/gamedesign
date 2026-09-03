@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include"basis.h"
 
 
 vector<vector<string>> Themap(8, vector<string>(100, " "));
 void DrawBlock(int blocktype, int line) {
-	if (blocktype != 5 && blocktype != 0) {//blocktypeÎª5ÎªË«½Úµã£¬blocktypeÎª0ÎªÒÑ¾­¹ı½Úµã
+	if (blocktype != 5 && blocktype != 0) {//blocktypeä¸º5ä¸ºåŒèŠ‚ç‚¹ï¼Œblocktypeä¸º0ä¸ºå·²ç»è¿‡èŠ‚ç‚¹
 		for (int j = line; j < line + 5; j++) {
 			Themap[2][j] = "#";
 			Themap[4][j] = "#";
@@ -13,16 +13,16 @@ void DrawBlock(int blocktype, int line) {
 		}
 		switch (blocktype) {
 		case 1:
-			Themap[3][line + 2] = "*";//ÆÕÍ¨Õ½¶·
+			Themap[3][line + 2] = "*";//æ™®é€šæˆ˜æ–—
 			break;
 		case 2:
-			Themap[3][line + 2] = "?";//·ÇÕ½¶·½Úµã
+			Themap[3][line + 2] = "?";//éæˆ˜æ–—èŠ‚ç‚¹
 			break;
 		case 3:
-			Themap[3][line + 2] = "$";//ÉÌµê½Úµã
+			Themap[3][line + 2] = "$";//å•†åº—èŠ‚ç‚¹
 			break;
 		case 4:
-			Themap[3][line + 2] = "B";//boss½Úµã
+			Themap[3][line + 2] = "B";//bossèŠ‚ç‚¹
 			break;
 		}
 	}
@@ -33,7 +33,7 @@ void DrawBlock(int blocktype, int line) {
 			Themap[4][j] = "#";
 		}
 	}
-	else {//Ë«½Úµã
+	else {//åŒèŠ‚ç‚¹
 		for (int i = 1; i < 4; i++) {
 			Themap[3][line - i] = " ";
 		}
@@ -66,7 +66,7 @@ void DrawBlock(int blocktype, int line) {
 		Themap[1][line + 2] = "*";
 		Themap[5][line + 2] = "?";
 	}
-	if (blocktype != 5 && blocktype != 4) {//boss½Úµã²»ĞèÒª¼ıÍ·,´Ë´¦Îªµ¥½ÚµãµÄ¼ıÍ·ÉèÖÃ
+	if (blocktype != 5 && blocktype != 4) {//bossèŠ‚ç‚¹ä¸éœ€è¦ç®­å¤´,æ­¤å¤„ä¸ºå•èŠ‚ç‚¹çš„ç®­å¤´è®¾ç½®
 		Themap[3][line + 5] = "-";
 		Themap[3][line + 6] = "-";
 		Themap[3][line + 7] = "-";
@@ -76,12 +76,12 @@ void DrawBlock(int blocktype, int line) {
 void PrintMaphelp() {
 	cout << HUI;
 	cout << endl;
-	cout << "µØÍ¼ËµÃ÷£º" << endl;
-	cout << " * :Õ½¶·½Úµã" << endl;
-	cout << " ? :Î´ÖªÊÂ¼ş½Úµã" << endl;
-	cout << " $ :ÉÌµê½Úµã" << endl;
-	cout << " B :Boss½Úµã" << endl;
-	cout << " ^ :µ±Ç°Î»ÖÃ" << endl;
+	cout << "åœ°å›¾è¯´æ˜ï¼š" << endl;
+	cout << " * :æˆ˜æ–—èŠ‚ç‚¹" << endl;
+	cout << " ? :æœªçŸ¥äº‹ä»¶èŠ‚ç‚¹" << endl;
+	cout << " $ :å•†åº—èŠ‚ç‚¹" << endl;
+	cout << " B :BossèŠ‚ç‚¹" << endl;
+	cout << " ^ :å½“å‰ä½ç½®" << endl;
 }
 vector<int> Maptype;
 int Map1[5] = { 1,2,5,3,4 };
@@ -134,21 +134,21 @@ void DrawMap(int floor, int step) {
 	switch (floor) {
 	case 1:
 		
-		cout << "µÚÒ»²ã ³õÊ¼ÒÅ¼£" << endl;
+		cout << "ç¬¬ä¸€å±‚ åˆå§‹é—è¿¹" << endl;
 		cout << endl;
-		cout << "Ô¶¹ÅÊ¯±®Á÷×ª×Å»Ş°µµÄÎ¢¹â£¬°ß²µµÄÌ¦ŞºÏÂ·âÓ¡×ÅÆÆËéµÄÖäÎÄ¡£\nÎ¨ÓĞÌ¤ÈëÕâÆ¬½û¼É·ÏĞæ£¬ÊÔÁ¶µÄÖÓÉù·½²ÅÇÄÈ»ÇÃÏì¡£" << endl;
+		cout << "è¿œå¤çŸ³ç¢‘æµè½¬ç€æ™¦æš—çš„å¾®å…‰ï¼Œæ–‘é©³çš„è‹”è—“ä¸‹å°å°ç€ç ´ç¢çš„å’’æ–‡ã€‚\nå”¯æœ‰è¸å…¥è¿™ç‰‡ç¦å¿ŒåºŸå¢Ÿï¼Œè¯•ç‚¼çš„é’Ÿå£°æ–¹æ‰æ‚„ç„¶æ•²å“ã€‚" << endl;
 		break;
 	case 2:
 
-		cout << "µÚ¶ş²ã ÃÔÊ§»ØÀÈ" << endl;
+		cout << "ç¬¬äºŒå±‚ è¿·å¤±å›å»Š" << endl;
 		cout << endl;
-		cout << "ĞéÎŞµÄÃÔÎíÖĞ»Øµ´×ÅÊ§ÂäµÄµÍÓï£¬´í×ÛµÄ·ûÎÄ·¨ÕóÕæ¼ÙÄÑ±æ¡£\nÎ¨ÓĞ¿°ÆÆÄÚĞÄÉî´¦µÄ¿Ö¾å£¬²ÅÄÜÑ°µÃÍ¨ÍùºËĞÄµÄÎ¨Ò»ÉúÂ·¡£" << endl;
+		cout << "è™šæ— çš„è¿·é›¾ä¸­å›è¡ç€å¤±è½çš„ä½è¯­ï¼Œé”™ç»¼çš„ç¬¦æ–‡æ³•é˜µçœŸå‡éš¾è¾¨ã€‚\nå”¯æœ‰å ªç ´å†…å¿ƒæ·±å¤„çš„ææƒ§ï¼Œæ‰èƒ½å¯»å¾—é€šå¾€æ ¸å¿ƒçš„å”¯ä¸€ç”Ÿè·¯ã€‚" << endl;
 		break;
 	case 3:
 
-		cout << "µÚÈı²ã ÖÕÑÉÊ¥µî" << endl;
+		cout << "ç¬¬ä¸‰å±‚ ç»ˆç„‰åœ£æ®¿" << endl;
 		cout << endl;
-		cout << "¿ñ±©µÄÄ§Á¦·ç±©ËºÁÑ²Ôñ·£¬Ô¶¹ÅÉñµoµÄĞéÓ°ÔÚÑªÉ«·ûÎÄÖĞËÕĞÑ¡£\nÎ¨ÓĞÖ±ÃæÉñÃ÷µÄÖÕ¼«ÉóÅĞ£¬·½ÄÜ½Ò¿ªÃØ¾³³¾·âµÄÕæÏà¡£" << endl;
+		cout << "ç‹‚æš´çš„é­”åŠ›é£æš´æ’•è£‚è‹ç©¹ï¼Œè¿œå¤ç¥ç¥‡çš„è™šå½±åœ¨è¡€è‰²ç¬¦æ–‡ä¸­è‹é†’ã€‚\nå”¯æœ‰ç›´é¢ç¥æ˜çš„ç»ˆæå®¡åˆ¤ï¼Œæ–¹èƒ½æ­å¼€ç§˜å¢ƒå°˜å°çš„çœŸç›¸ã€‚" << endl;
 		break;
 	}
 	cout << endl;
@@ -166,6 +166,18 @@ int Battlerow = 20;
 int Battlecol = 90;
 bool IfBattleIsOver = false;
 vector<vector<string>> Battlemap(Battlerow, vector<string>(Battlecol, " "));
+int MyLastHpBarLength=28;
+int EnemyLastHpBarLength=28;
+int MyLastEnergyBarLength=0;
+int EnemyLastEnergyBarLength=0;
+int MyLasthealBarLength=0;
+void ResetLastBarLength() {
+	MyLastHpBarLength = 28;
+	EnemyLastHpBarLength = 28;
+	MyLastEnergyBarLength = 0;
+	EnemyLastEnergyBarLength = 0;
+	MyLasthealBarLength = 0;
+}
 void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 90; j++) {
@@ -204,6 +216,13 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	if (turn != 2) {
 		Refresh();
 	}
+	if (round == 1 && turn == 1) {
+		MyLastHpBarLength = MyHpBarLength;
+		EnemyLastHpBarLength = EnemyHpBarLength;
+		MyLastEnergyBarLength = MyEnergyBarLength;
+		EnemyLastEnergyBarLength = EnemyEnergyBarLength;
+		MyLasthealBarLength = MyhealBarLength;
+	}
 	for (int i = 0; i < Battlerow; i++) {
 		Battlemap[i][0] = "#";
 		Battlemap[i][Battlecol - 1] = "#";
@@ -228,7 +247,7 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	Battlemap[18][45] = "e";
 	Battlemap[18][46] = "m";
 	Battlemap[18][47] = "y";
-	//ÒÔÏÂÎªÎÒ·½ÑªÁ¿ÌõÎ»ÖÃ
+	//ä»¥ä¸‹ä¸ºæˆ‘æ–¹è¡€é‡æ¡ä½ç½®
 	for (int i = 2;i <= 4;i++) {
 		Battlemap[i][31] = "#";
 		Battlemap[i][60] = "#";
@@ -236,6 +255,10 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	for (int j = 32;j <= 59;j++) {
 		Battlemap[2][j] = "-";
 		Battlemap[4][j] = "-";
+	}
+	for (int j = 32;j < 32 + MyLastHpBarLength;j++) {
+		Battlemap[3][j] = "âˆ£";
+		Battlemap[3][32] = "âˆ£";
 	}
 	for (int j = 32;j < 32 + MyHpBarLength;j++) {
 		Battlemap[3][j] = "|";
@@ -255,7 +278,7 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	Battlemap[5][47] = myHP[1];
 	Battlemap[5][48] = myHP[2];
 	Battlemap[5][49] = myHP[3];
-	//ÒÔÏÂÎªÎÒ·½ÄÜÁ¿ÌõÎ»ÖÃ
+	//ä»¥ä¸‹ä¸ºæˆ‘æ–¹èƒ½é‡æ¡ä½ç½®
 	for (int i = 2;i <= 4;i++) {
 		Battlemap[i][5] = "#";
 		Battlemap[i][25] = "#";
@@ -274,10 +297,13 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	Battlemap[5][18] = to_string(myData[2]);
 	Battlemap[5][19] = "/";
 	Battlemap[5][20] = to_string(myData[3]);
+	for (int j = 6;j < 6 + MyLastEnergyBarLength;j++) {
+		Battlemap[3][j] = "âˆ£";
+	}
 	for (int j = 6;j < 6 + MyEnergyBarLength;j++) {
 		Battlemap[3][j] = "|";
 	}
-	//ÒÔÏÂÎªÎÒ·½ÖÎÁÆÌõÎ»ÖÃ
+	//ä»¥ä¸‹ä¸ºæˆ‘æ–¹æ²»ç–—æ¡ä½ç½®
 	for (int i = 2;i <= 4;i++) {
 		Battlemap[i][66] = "#";
 		Battlemap[i][86] = "#";
@@ -294,10 +320,13 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	Battlemap[5][78] = to_string(myData[4]);
 	Battlemap[5][79] = "/";
 	Battlemap[5][80] = to_string(myData[5]);
+	for (int j = 67;j < 67 + MyLasthealBarLength;j++) {
+		Battlemap[3][j] = "âˆ£";
+	}
 	for (int j = 67;j < 67 + MyhealBarLength;j++) {
 		Battlemap[3][j] = "|";
 	}
-	//ÒÔÏÂÎªµĞ·½ÑªÁ¿ÌõÎ»ÖÃ
+	//ä»¥ä¸‹ä¸ºæ•Œæ–¹è¡€é‡æ¡ä½ç½®
 	for (int i = 15;i <= 17;i++) {
 		Battlemap[i][31] = "#";
 		Battlemap[i][60] = "#";
@@ -305,6 +334,10 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	for (int j = 32;j <= 59;j++) {
 		Battlemap[15][j] = "-";
 		Battlemap[17][j] = "-";
+	}
+	for (int j = 32;j < 32 + EnemyLastHpBarLength;j++) {
+		Battlemap[16][j] = "âˆ£";
+		Battlemap[16][32] = "âˆ£";
 	}
 	for (int j = 32;j < 32 + EnemyHpBarLength;j++) {
 		Battlemap[16][j] = "|";
@@ -324,7 +357,7 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	Battlemap[14][47] = enemyHP[1];
 	Battlemap[14][48] = enemyHP[2];
 	Battlemap[14][49] = enemyHP[3];
-	//ÒÔÏÂÎªµĞ·½ÄÜÁ¿ÌõÎ»ÖÃ
+	//ä»¥ä¸‹ä¸ºæ•Œæ–¹èƒ½é‡æ¡ä½ç½®
 	for (int i = 15;i <= 17;i++) {
 		Battlemap[i][5] = "#";
 		Battlemap[i][25] = "#";
@@ -343,6 +376,9 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	Battlemap[14][18] = to_string(enemyData[2]);
 	Battlemap[14][19] = "/";
 	Battlemap[14][20] = to_string(enemyData[3]);
+	for (int j = 6;j < 6 + EnemyLastEnergyBarLength;j++) {
+		Battlemap[16][j] = "âˆ£";
+	}
 	for (int j = 6;j < 6 + EnemyEnergyBarLength;j++) {
 		Battlemap[16][j] = "|";
 	}
@@ -354,20 +390,20 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	Battlemap[16][78] = to_string(round / 10);
 	Battlemap[16][79] = to_string(round % 10);
 	if (turn == 1) {
-		// µÈ´ıÓÃ»§ÊäÈë - ÏÔÊ¾ "Please input..."
+		// ç­‰å¾…ç”¨æˆ·è¾“å…¥ - æ˜¾ç¤º "Please input..."
 		string prompt = "Please input...";
 		int prow = 9;
-		int pcol = 39; // ´ÓÔ­ÓĞÎ»ÖÃ¿ªÊ¼Ìî³ä
+		int pcol = 39; // ä»åŸæœ‰ä½ç½®å¼€å§‹å¡«å……
 		for (size_t k = 0; k < prompt.size(); ++k) {
 			if (pcol + (int)k >= 0 && pcol + (int)k < Battlecol)
 				Battlemap[prow][pcol + k] = string(1, prompt[k]);
 		}
 	}
 	else {
-		// µĞ·½»ØºÏ - ÔÚ¾ÓÖĞÎ»ÖÃÏÔÊ¾ "Enter"
+		// æ•Œæ–¹å›åˆ - åœ¨å±…ä¸­ä½ç½®æ˜¾ç¤º "Enter"
 		string enter = "Enter";
 		int erow = 9;
-		int ecol = (Battlecol - (int)enter.size()) / 2; // Ë®Æ½¾ÓÖĞÆğÊ¼ÁĞ
+		int ecol = (Battlecol - (int)enter.size()) / 2; // æ°´å¹³å±…ä¸­èµ·å§‹åˆ—
 		for (size_t k = 0; k < enter.size(); ++k) {
 			if (ecol + (int)k >= 0 && ecol + (int)k < Battlecol)
 				Battlemap[erow][ecol + k] = string(1, enter[k]);
@@ -377,16 +413,18 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 		cout << " ";
 	}
 	cout << GREEN_BRIGHT;
-	cout << "ÎÒ·½¹¥»÷Á¦:¡¾" << myData[6] << "¡¿,ÎÒ·½·ÀÓùÁ¦:¡¾" << myData[7] << "¡¿,Ã¿¼ÁÖÎÁÆÁ¿:¡¾" << myData[8] << "¡¿" << endl;
-	//´òÓ¡µØÍ¼
-	cout << QING;
+	cout << "æˆ‘æ–¹æ”»å‡»åŠ›:ã€" << myData[6] << "ã€‘,æˆ‘æ–¹é˜²å¾¡åŠ›:ã€" << myData[7] << "ã€‘,æ¯å‰‚æ²»ç–—é‡:ã€" << myData[8] << "ã€‘" << endl;
+	//æ‰“å°åœ°å›¾
 	for (int i = 0; i < Battlerow; i++) {
 		for (int j = 0; j < Battlecol; j++) {
 			if (Battlemap[i][j] == "#"|| Battlemap[i][j] == "-") {
-				cout << HUI;
+				cout << RED_WINE;
 			}
 			else if (Battlemap[i][j] == "|") {
-				cout << WHITE;
+				cout << BLUE;
+			}
+			else if (Battlemap[i][j] == "âˆ£") {
+				cout << RED_LIGHT;
 			}
 			else {
 				cout << WHITE;
@@ -398,10 +436,15 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 	for (int i = 0;i < 20;i++) {
 		cout << " ";
 	}
-	cout << RED_DARK;
-	cout << "µĞ·½¹¥»÷Á¦:¡¾" << enemyData[4] << "¡¿,µĞ·½·ÀÓùÁ¦:¡¾" << enemyData[5] << "¡¿,µĞ·½±©»÷ÂÊ:¡¾" << enemyData[6] << "%¡¿" << endl;
+	cout << PURPLE;
+	cout << "æ•Œæ–¹æ”»å‡»åŠ›:ã€" << enemyData[4] << "ã€‘,æ•Œæ–¹é˜²å¾¡åŠ›:ã€" << enemyData[5] << "ã€‘,æ•Œæ–¹æš´å‡»ç‡:ã€" << enemyData[6] << "%ã€‘" << endl;
 	cout << endl;
 	cout << HUI;
+	MyLastHpBarLength = MyHpBarLength;
+	EnemyLastHpBarLength = EnemyHpBarLength;
+	MyLastEnergyBarLength = MyEnergyBarLength;
+	EnemyLastEnergyBarLength = EnemyEnergyBarLength;
+	MyLasthealBarLength = MyhealBarLength;
 }
 void PrintEventGround(int Type) {
 	Refresh();
@@ -414,7 +457,7 @@ void PrintEventGround(int Type) {
 		Battlemap[0][j] = "#";
 		Battlemap[Battlerow - 1][j] = "#";
 	}
-	//´òÓ¡µØÍ¼
+	//æ‰“å°åœ°å›¾
 	for (int i = 0; i < Battlerow; i++) {
 		for (int j = 0; j < Battlecol; j++) {
 			cout << Battlemap[i][j];

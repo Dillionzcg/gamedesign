@@ -23,6 +23,9 @@ public:
 	string GetDescribethroughNum(int num) {
 		return SkillList[num];
 	}
+	int GetID() {
+		return ID;
+	}
 private:
 	int ID;
 	vector<string> SkillList = {

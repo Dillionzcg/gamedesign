@@ -4,7 +4,7 @@
 using namespace std;
 
 // ±ß¿òÑÕÉ«
-const string BLUE_S = "\033[34m";
+const string BLUE_S = "\033[38;5;39m";
 const string PURPLE_S = "\033[35m";
 const string GOLD_S = "\033[33m";
 const string RESET_S = "\033[0m";
