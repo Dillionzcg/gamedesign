@@ -18,9 +18,6 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="测试用.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="UnknownEvent.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

@@ -454,6 +454,7 @@ void PostWarSettleMent(bool IfBoss) {
 	int ObjectNum = rm.getnum(0, (int)ObjectPoolForRandom.size() - 1);
 	shared_ptr<Object> RandomObject = ObjectPoolForRandom[ObjectNum];
 	MyObjectGroup.push_back(RandomObject);
+	MyObjectGroup.push_back(ObjectPool3[0]);
 	cout << QING;
 	cout << RandomObject->GetRarity() << " 级藏品:" << endl;
 	cout << GREEN_BRIGHT;

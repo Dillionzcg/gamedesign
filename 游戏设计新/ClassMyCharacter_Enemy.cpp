@@ -1,16 +1,77 @@
 ﻿#include "ClassMycharacter_Enemy.h"
 
+void MyCharacter::CalculateMyObject() {
+	BasicHPDevelopment = 0;
+	BasicAttackDevelopment = 0;
+	BasicDefenseDevelopment = 0;
+	BasicHEdevelopment = 0;
+    BasicIEdevelopment = 0;
+    BasicIHEdevelopment = 0;
+    BasicMHEdevelopment = 0;
+    BasicSCdevelopment = 0;
+    BasicENdevelopment = 0;
 
+    for (auto& item : MyObjectGroup) {
+        if (item->GetCamp() == "M") {
+            string ObjectType=item->GetType();
+            double Num = item->GetBuffNum();
+            if (ObjectType == "A") {
+                BasicAttackDevelopment += Num;
+            }
+            else if(ObjectType=="D") {
+				BasicDefendingDeveloping += Num;
+            }
+			else if (ObjectType == "H") {
+				BasicHPDevelopment += Num;
+			}
+			else if (ObjectType == "HE") {
+				BasicHEdevelopment += Num;
+			}
+			else if (ObjectType == "IE") {
+				BasicIEdevelopment += Num;
+			}
+			else if (ObjectType == "IHE") {
+				BasicIHEdevelopment += Num;
+			}
+			else if (ObjectType == "MHE") {
+				BasicMHEdevelopment += Num;
+			}
+			else if (ObjectType == "SC") {
+				BasicSCdevelopment += Num;
+			}
+            else if (ObjectType == "EN") {
+                BasicENdevelopment += Num;
+            }
+        }
+    }
+}
 void MyCharacter::CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup) {
     CalculateMyRoundBuff(RoundBuffGroup);
     CalculateMyLevelBuff();
+    CalculateMyObject();
     BasicMaxHP = InitialMaxHP * (1.0 + BasicHPDevelopment + LevelHPDevelopment);
     BasicAttack = InitialAttack * (1.0 + BasicAttackDevelopment + LevelAttackDevelopment);
     BasicDefense = InitialDefense * (1.0 + BasicDefenseDevelopment + LevelDefenseDevelopment);
-    CurrentMaxHP = BasicMaxHP * (1.0 + CurrentHPDevelopment);
-    CurrentAttack = BasicAttack * (1.0 + CurrentAttackDevelopment + RoundAttackDevelopment);
-    CurrentDefense = BasicDefense * (1.0 + CurrentDefenseDevelopment + RoundDefenseDevelopment);
+    CurrentMaxHP = BasicMaxHP;
+    CurrentAttack = BasicAttack * (1.0 + RoundAttackDevelopment);
+    CurrentDefense = BasicDefense * (1.0 + RoundDefenseDevelopment);
     DefendingDeveloping = BasicDefendingDeveloping + RoundDefendingBuff;
+
+	HealHP = 30 + BasicHEdevelopment;
+	InitialEnergy = 0 + BasicIEdevelopment;
+	InitialHeal = 0 + BasicIHEdevelopment;
+	MaxEnergy = 3 + BasicENdevelopment;
+	SkillChoiceNum = 3 + BasicSCdevelopment;
+	MaxHeal = 3 + BasicMHEdevelopment;
+    if(InitialHeal>MaxHeal) {
+        InitialHeal = MaxHeal;
+    }
+    if(InitialEnergy>MaxEnergy) {
+        InitialEnergy = MaxEnergy;
+    }
+    if (MaxEnergy < 1) {
+		MaxEnergy = 1;
+    }
 }
 
 void MyCharacter::CalculateMyLevelBuff() {
@@ -146,16 +207,50 @@ void Enemy::CalculateMyRoundBuff(std::vector<std::shared_ptr<RoundBuff>> RoundBu
         }
     }
 }
-
+void Enemy::CalculateMyObject() {
+	BasicHPDevelopment = 0;
+    BasicAttackDevelopment = 0;
+    BasicDefenseDevelopment = 0;
+	BasicCRdevelopment = 0;
+	BasicENdevelopment = 0;
+	for (auto& item : MyObjectGroup) {
+		if (item->GetCamp() == "E") {
+			string ObjectType = item->GetType();
+			double Num = item->GetBuffNum();
+			if (ObjectType == "A") {
+				BasicAttackDevelopment += Num;
+			}
+			else if (ObjectType == "D") {
+				BasicDefenseDevelopment += Num;
+			}
+			else if (ObjectType == "H") {
+				BasicHPDevelopment += Num;
+			}
+			else if (ObjectType == "EN") {
+				BasicENdevelopment += Num;
+			}
+            else if (ObjectType == "CR") {
+                BasicCRdevelopment += Num;
+            }
+		}
+	}
+}
 void Enemy::CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup) {
     CalculateMyRoundBuff(RoundBuffGroup);
+	CalculateMyObject();
     BasicMaxHP = InitialMaxHP * (1.0 + BasicHPDevelopment);
     BasicAttack = InitialAttack * (1.0 + BasicAttackDevelopment);
     BasicDefense = InitialDefense * (1.0 + BasicDefenseDevelopment);
-    CurrentMaxHP = BasicMaxHP * (1.0 + CurrentHPDevelopment);
-    CurrentAttack = BasicAttack * (1.0 + CurrentAttackDevelopment + RoundAttackDevelopment);
-    CurrentDefense = BasicDefense * (1.0 + CurrentDefenseDevelopment + RoundDefenseDevelopment);
+    CurrentMaxHP = BasicMaxHP;
+    CurrentAttack = BasicAttack * (1.0 + RoundAttackDevelopment);
+    CurrentDefense = BasicDefense * (1.0 + RoundDefenseDevelopment);
     if (CurrentDefense <= 0) CurrentDefense = 0;
+
+	MaxEnergy = 6 + BasicENdevelopment;
+	CriticalRate = 20 + BasicCRdevelopment;
+    if(CriticalRate<0) {
+        CriticalRate = 0;
+    }
 }
 
 void Enemy::SetCurrentHP() { CurrentHP = CurrentMaxHP; }

@@ -1,7 +1,7 @@
 ﻿#include "ClassObject.h"
 
 // Object 类成员函数实现
-Object::Object(int rarity, string camp, string type, string describe, int buffnum)
+Object::Object(int rarity, string camp, string type, string describe, double buffnum)
     : Rarity(rarity), Camp(camp), Type(type), Describe(describe), BuffNum(buffnum) {
     NeedingCoin = RarityCoin[Rarity - 1];
 }
@@ -43,7 +43,12 @@ void Object::ResetObjectGroup() {
         item->ResetGaining();
     }
 }
-
+string Object::GetCamp() {
+    return Camp;
+}
+string Object::GetType() {
+    return Type;
+}
 // 定义并初始化全局藏品池与玩家藏品组
 vector<shared_ptr<Object>> ObjectPool1 = { // 初级藏品
     make_shared<Object>(1, "M", "A", "【Kraft】攻击力+10%", 0.1),
@@ -53,7 +58,7 @@ vector<shared_ptr<Object>> ObjectPool1 = { // 初级藏品
     make_shared<Object>(1, "E", "A", "【Schwaechung】敌人攻击力-10%", -0.1),
     make_shared<Object>(1, "E", "D", "【Bruch】敌人防御力-10%", -0.1),
     make_shared<Object>(1, "E", "H", "【Verfall】敌人生命上限-10%", -0.1),
-    make_shared<Object>(1, "E", "CR", "【Block】敌人暴击率-5%", -5),
+    make_shared<Object>(1, "E", "CR", "【Block】敌人暴击率-3%", -3),
 };
 
 vector<shared_ptr<Object>> ObjectPool2 = { // 中级藏品
@@ -64,7 +69,7 @@ vector<shared_ptr<Object>> ObjectPool2 = { // 中级藏品
     make_shared<Object>(2, "E", "A", "【Laehmung】敌人攻击力-15%", -0.15),
     make_shared<Object>(2, "E", "D", "【Riss】敌人防御力-15%", -0.15),
     make_shared<Object>(2, "E", "H", "【Schwund】敌人生命上限-15%", -0.15),
-    make_shared<Object>(2, "E", "CR", "【Hemmung】敌人暴击率-10%", -10),
+    make_shared<Object>(2, "E", "CR", "【Hemmung】敌人暴击率-5%", -5),
     make_shared<Object>(2, "M", "IE", "【Antritt】我方初始能量+1", 1),
     make_shared<Object>(2, "M", "IHE", "【Auftakt】我方初始治疗能量+1", 1),
     make_shared<Object>(2, "M", "MHE", "【Gefaess】我方治疗能量上限+2", 2),
@@ -79,7 +84,7 @@ vector<shared_ptr<Object>> ObjectPool3 = { // 高级藏品
     make_shared<Object>(3, "E", "A", "【Ermattung】敌人攻击力-20%", -0.2),
     make_shared<Object>(3, "E", "D", "【Zerfall】敌人防御力-20%", -0.2),
     make_shared<Object>(3, "E", "H", "【Siechtum】敌人生命上限-20%", -0.2),
-    make_shared<Object>(3, "E", "CR", "【Stoerung】敌人暴击率-15%", -15),
+    make_shared<Object>(3, "E", "CR", "【Stoerung】敌人暴击率-10%", -10),
     make_shared<Object>(3, "M", "IE", "【Antrieb】我方初始能量+2", 2),
     make_shared<Object>(3, "M", "IHE", "【Ursprung】我方初始治疗能量+2", 2),
     make_shared<Object>(3, "M", "EN", "【Effizienz】我方技能所需能量-1", -1),
@@ -88,6 +93,7 @@ vector<shared_ptr<Object>> ObjectPool3 = { // 高级藏品
 };
 
 vector<shared_ptr<Object>> MyObjectGroup; // 我方藏品组初始化为空
+
 
 /*藏品名字释义：（均为德语）
 

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include"basis.h"
 #include "ClassSkill_RoundBuff.h"
+#include"ClassObject.h"
 
 // 前向声明
 class Enemy;
@@ -13,6 +14,7 @@ public:
     void CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup);
     void CalculateMyLevelBuff();
     void CalculateMyRoundBuff(std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup);
+    void CalculateMyObject();
 
     void SetCurrentNum();
 
@@ -74,15 +76,21 @@ private:
     int CurrentMaxHP = 0;
     int CurrentAttack = 0;
     int CurrentDefense = 0;
+    //藏品加成
     double BasicHPDevelopment = 0;
     double BasicAttackDevelopment = 0;
     double BasicDefenseDevelopment = 0;
+    int BasicHEdevelopment = 0;
+    int BasicIEdevelopment = 0;
+    int BasicIHEdevelopment = 0;
+    int BasicMHEdevelopment = 0;
+    int BasicSCdevelopment = 0;
+    int BasicENdevelopment = 0;
+
     double LevelHPDevelopment = 0;
     double LevelAttackDevelopment = 0;
     double LevelDefenseDevelopment = 0;
-    double CurrentHPDevelopment = 0;
-    double CurrentAttackDevelopment = 0;
-    double CurrentDefenseDevelopment = 0;
+
     double RoundAttackDevelopment = 0;
     double RoundDefenseDevelopment = 0;
     double RoundDefendingBuff = 0;
@@ -113,6 +121,7 @@ public:
 
     void CalculateMyRoundBuff(std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup);
     void CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup);
+    void CalculateMyObject();
 
     void SetCurrentHP();
 
@@ -154,12 +163,13 @@ private:
     int CurrentMaxHP = 0;
     int CurrentAttack = 0;
     int CurrentDefense = 0;
-    int BasicHPDevelopment = 0;
-    int BasicAttackDevelopment = 0;
-    int BasicDefenseDevelopment = 0;
-    int CurrentHPDevelopment = 0;
-    int CurrentAttackDevelopment = 0;
-    int CurrentDefenseDevelopment = 0;
+
+    double BasicHPDevelopment = 0;
+    double BasicAttackDevelopment = 0;
+    double BasicDefenseDevelopment = 0;
+	double BasicCRdevelopment = 0;
+    int BasicENdevelopment = 0;
+
     double RoundAttackDevelopment = 0;
     double RoundDefenseDevelopment = 0;
     int CurrentHP = 100;

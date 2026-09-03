@@ -6,7 +6,7 @@ using namespace std;
 // 藏品类
 class Object {
 public:
-    Object(int rarity, string camp, string type, string describe, int buffnum);
+    Object(int rarity, string camp, string type, string describe, double buffnum);
     static void ResetObjectGroup();
     int GetRarity();
     int GetNeedingCoin();
@@ -15,6 +15,8 @@ public:
     bool GetIfGotten();
     void GainObject();
     void ResetGaining();
+    string GetType();
+    string GetCamp();
     
 private:
     int Rarity;                 // 稀有度,1/2/3
