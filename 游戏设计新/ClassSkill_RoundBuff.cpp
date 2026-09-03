@@ -1,5 +1,5 @@
 #include"ClassSkill_RoundBuff.h"
-#include"ClassEnemyNum.h"
+
 const vector<string> SkillManage::SkillList = {
     //若干回合内生效
     "//使对方攻击力在3回合内下降30%，并攻击一次//",//EA

@@ -39,6 +39,21 @@
     <ClCompile Include="ClassSkill_RoundBuff.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MainProcess.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Shop.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StartBuff.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FirstEnter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartBuff.h">
@@ -72,6 +87,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ClassEnemyNum.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MainProcess.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

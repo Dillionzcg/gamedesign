@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "basis.h"
+#include"ClassEnemyNum.h"
 
 
 using namespace std;

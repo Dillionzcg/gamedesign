@@ -144,6 +144,11 @@
     <ClCompile Include="ClassObject.cpp" />
     <ClCompile Include="ClassRuneManager.cpp" />
     <ClCompile Include="ClassSkill_RoundBuff.cpp" />
+    <ClCompile Include="FirstEnter.cpp" />
+    <ClCompile Include="MainProcess.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Shop.cpp" />
+    <ClCompile Include="StartBuff.cpp" />
     <ClCompile Include="UnknownEvent.cpp" />
     <ClCompile Include="测试用.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -157,6 +162,7 @@
     <ClInclude Include="ClassRuneManager.h" />
     <ClInclude Include="ClassSkill_RoundBuff.h" />
     <ClInclude Include="FirstEnter.h" />
+    <ClInclude Include="MainProcess.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="ClassObject.h" />
     <ClInclude Include="Shop.h" />
