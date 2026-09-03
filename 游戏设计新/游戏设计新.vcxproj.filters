@@ -36,6 +36,9 @@
     <ClCompile Include="ClassEnemyNum.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ClassSkill_RoundBuff.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartBuff.h">

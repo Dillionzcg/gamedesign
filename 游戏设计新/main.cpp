@@ -15,42 +15,6 @@ RandomManager rm;
 
 MyCharacter mycharacter;
 
-vector<shared_ptr<SkillManage>> MySkillManager;
-shared_ptr<SkillManage> ChooseSkill(int ChoiceNum,int floor,bool IsBoss,bool IfHard) {
-	Refresh();
-	cout << WHITE;
-	vector<int> Choice=rm.getSomeNum(0, 9, ChoiceNum);
-	MySkillManager.clear();
-	for (auto& item:Choice) {
-		MySkillManager.push_back(make_shared<SkillManage>(item));
-	}
-	ChooseEnemy(floor, IsBoss,IfHard);
-	cout << WHITE;
-	cout << "请在下列技能中选择一个,技能在技能条满时可以释放："<<endl;
-	cout << endl;
-	int i = 0;
-	for (auto& item : MySkillManager) {
-		i++;
-		if (item->GetID() < 3) {
-			cout << RED_WINE;
-		}
-		else if (item->GetID() < 6) {
-			cout << YELLOW;
-		}
-		else {
-			cout << PURPLE;
-		}
-		cout << i << "." << item->GetDescribe()<<endl;
-		cout << endl;
-	}
-	vector<int> legal;
-	for (int idx = 1; idx <= ChoiceNum; ++idx) legal.push_back(idx);
-	int pick = Safecin(legal, false);
-	if (pick >= 1 && pick <= (int)MySkillManager.size()) {
-		return MySkillManager[pick - 1];
-	}
-	return MySkillManager[0];
-}
 vector<shared_ptr<RoundBuff>> InitialRoundBuffGroup;//创建时使用的数组
 vector<shared_ptr<RoundBuff>> RoundBuffGroup;//筛选后实际使用的数组
 
@@ -694,7 +658,7 @@ int MapChoose(int floor,int step,int type) {
 	}
 	return MapChoice;
 }
-int main() {
+void MainProgress() {
 	while (1) {
 		//程序运行总循环，输了之后会回到这里
 		mycharacter.ReSetNum();
@@ -705,9 +669,9 @@ int main() {
 		int	step = 0;
 		int thisfloor = 0;
 		bool Ifwin = true;
-		int ModeChoice=0;
-		bool IfHard=false;
-		ModeChoice=showTitle();
+		int ModeChoice = 0;
+		bool IfHard = false;
+		ModeChoice = showTitle();
 		if (ModeChoice == 1) {
 			IfHard = false;
 		}
@@ -734,22 +698,22 @@ int main() {
 			thisfloor = floor;
 			int IfSave = 0;
 			Ifwin = true;
-			UpdateMap(floor,step);
+			UpdateMap(floor, step);
 			switch (Maptype[step]) {
 			case 1://普通战斗
-				IfSave=MapChoose(floor,step,1);
+				IfSave = MapChoose(floor, step, 1);
 				Ifwin = BattleStart(floor, false, IfHard);
 				break;
 			case 4://boss战斗
-				IfSave = MapChoose(floor,step,4);
-				Ifwin=BattleStart(floor, true, IfHard);
+				IfSave = MapChoose(floor, step, 4);
+				Ifwin = BattleStart(floor, true, IfHard);
 				break;
 			case 2://非战斗节点
-				IfSave = MapChoose(floor, step,2);
-				EnterUnknownEvent(floor);
+				IfSave = MapChoose(floor, step, 2);
+				Ifwin = EnterUnknownEvent(floor);
 				break;
 			case 3://商店节点
-				IfSave = MapChoose(floor, step,3);
+				IfSave = MapChoose(floor, step, 3);
 				PrintEventGround(3);
 				break;
 			case 5://双节点
@@ -758,7 +722,7 @@ int main() {
 					Ifwin = BattleStart(floor, false, IfHard);
 				}
 				else if (IfSave == 2) {
-					EnterUnknownEvent(floor);
+					Ifwin = EnterUnknownEvent(floor);
 				}
 				break;
 			}
@@ -774,7 +738,10 @@ int main() {
 				break;
 			}
 		}
-		
+
 	}
+}
+int main() {
+	MainProgress();
 	return 0;
 }

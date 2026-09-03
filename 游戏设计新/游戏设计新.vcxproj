@@ -143,6 +143,7 @@
     <ClCompile Include="ClassMyCharacter_Enemy.cpp" />
     <ClCompile Include="ClassObject.cpp" />
     <ClCompile Include="ClassRuneManager.cpp" />
+    <ClCompile Include="ClassSkill_RoundBuff.cpp" />
     <ClCompile Include="UnknownEvent.cpp" />
     <ClCompile Include="测试用.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
