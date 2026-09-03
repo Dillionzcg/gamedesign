@@ -34,10 +34,23 @@ inline const string YELLOW = "\033[38;5;226m";//亮黄色
 inline const string QING = "\033[38;5;37m";//青色
 inline const string QING_GRAY = "\033[38;5;66m";//灰青色
 inline const string GREEN_BRIGHT = "\033[38;5;46m";
+inline const string GREEN_DEEP = "\033[38;5;82m";
 inline const string HUI = "\033[38;5;245m";
 inline const string BLUE = "\033[38;5;39m";
 inline const string BLUE_DARK = "\033[38;5;25m";
 inline const string RED_LIGHT = "\033[38;5;132m";
+inline const string ROW_ALT_1 = "\033[38;5;250m";          // 柔和亮灰（奇数行基础色）
+inline const string ROW_ALT_2 = "\033[38;5;240m";          // 稍暗的灰青（偶数行基础色）
+inline const string ACCENT_ORANGE = "\033[38;5;208m";      // 琥珀橙（用于点缀特定数值）
+inline const string ACCENT_CYAN = "\033[38;5;73m";         // 浅青蓝（用于交替数值）
+inline const string STAT_HP = "\033[38;5;203m";      // 亮珊瑚红 (生命上限)
+inline const string STAT_ATK = "\033[38;5;214m";     // 炽热橙金 (攻击力)
+inline const string STAT_DEF = "\033[38;5;75m";      // 冰晶天蓝 (防御力)
+inline const string STAT_ENERGY = "\033[38;5;111m";  // 电光蓝紫 (能量上限 - 更通透)
+inline const string STAT_HEAL_MAX = "\033[38;5;46m";  // 经典亮绿 (治疗能量上限)
+inline const string STAT_HEAL_VAL = "\033[38;5;211m";// 柔和桃粉 (每点治疗恢复 - 告别双绿)
+inline const string STAT_LEVEL = "\033[38;5;183m";   // 淡紫罗兰 (等级)
+inline const string STAT_COIN = "\033[38;5;220m";    // 纯正金币黄 (金币)
 
 inline void Refresh() {
     cout << "\033[2J\033[H" << flush;

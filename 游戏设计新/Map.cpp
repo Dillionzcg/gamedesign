@@ -474,45 +474,45 @@ void PrintMyCharacterStatus() {
 	mycharacter.CalculateMyNum(RoundBuffGroup);
 
 	cout << endl;
-	cout << "==================================================" << endl;
-	cout << "                  【角色状态】" << endl;
-	cout << "==================================================" << endl;
+	cout <<QING << "==================================================" << RESET << endl;
+	cout << QING << "                  【角色状态】" << RESET << endl;
+	cout << QING << "==================================================" << RESET << endl;
 	cout << endl;
 
-	cout << "  【基础属性】" << endl;
-	cout << "  ────────────────────────────────────────────────" << endl;
-
-	cout << "    生命上限          :  " << mycharacter.GetCurrentMaxHP() << endl;
-	cout << "    攻击力            :  " << mycharacter.GetCurrentAttack() << endl;
-	cout << "    防御力            :  " << mycharacter.GetCurrentDefense() << endl;
-
-	cout << endl;
-
-	cout << "  【能量】" << endl;
-	cout << "  ────────────────────────────────────────────────" << endl;
-
-	cout << "    能量上限          :  " << mycharacter.GetMaxEnergy() << endl;
+	// 【基础属性栏】统一使用亮红/暗红系
+	cout << QING << "  【基础属性】" << RESET << endl;
+	cout << QING_GRAY << "  ────────────────────────────────────────────────" << RESET << endl;
+	cout << STAT_HP << "    生命上限          :  " << mycharacter.GetCurrentMaxHP() << RESET << endl;
+	cout << STAT_ATK << "    攻击力            :  " << mycharacter.GetCurrentAttack() << RESET << endl;
+	cout << GREEN_BRIGHT << "    防御力            :  " << mycharacter.GetCurrentDefense() << RESET << endl;
 
 	cout << endl;
 
-	cout << "  【治疗】" << endl;
-	cout << "  ────────────────────────────────────────────────" << endl;
+	// 【能量栏】统一使用亮黄系
+	cout << QING << "  【能量】" << RESET << endl;
+	cout << QING_GRAY << "  ────────────────────────────────────────────────" << RESET << endl;
+	cout << PURPLE << "    能量上限          :  " << mycharacter.GetMaxEnergy() << RESET << endl;
 
-	cout << "    治疗能量上限      :  " << mycharacter.GetMaxHeal() << endl;
-	cout << "    每点治疗能量恢复  :  " << mycharacter.GetHealHP() << " 点生命" << endl;
+	cout << endl;
+
+	// 【治疗栏】统一使用亮绿系
+	cout << QING << "  【治疗】" << RESET << endl;
+	cout << QING_GRAY << "  ────────────────────────────────────────────────" << RESET << endl;
+	cout << STAT_DEF << "    治疗能量上限      :  " << mycharacter.GetMaxHeal() << RESET << endl;
+	cout <<BLUE_DARK << "    每点治疗能量恢复  :  " << mycharacter.GetHealHP() << " 点生命" << RESET << endl;
 
 	cout << endl;
 
-	cout << "  【探险信息】" << endl;
-	cout << "  ────────────────────────────────────────────────" << endl;
-
-	cout << "    等级              :  " << "Lv." << mycharacter.GetLevel() << endl;
-	cout << "    金币              :  " << mycharacter.GetCoins() << endl;
+	// 【探险信息栏】统一使用金/紫系（这里用 GOLD_BOLD 凸显财富与等级）
+	cout << QING << "  【探险信息】" << RESET << endl;
+	cout << QING_GRAY << "  ────────────────────────────────────────────────" << RESET << endl;
+	cout << RED_BOLD << "    等级              :  Lv." << mycharacter.GetLevel() << RESET << endl;
+	cout << GOLD_BOLD << "    金币              :  " << mycharacter.GetCoins() << RESET << endl;
 
 	cout << endl;
-	cout << "==================================================" << endl;
-	cout << "                    按回车键返回" << endl;
-	cout << "==================================================" << endl;
+	cout << QING << "==================================================" << RESET << endl;
+	cout << QING << "                    按回车键返回" << RESET << endl;
+	cout << QING << "==================================================" << RESET << endl;
 
 	SafeEnter();
 }
