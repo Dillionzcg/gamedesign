@@ -63,9 +63,9 @@ int ChooseInitialBuff() {
 
     struct Opt { string icon, name, desc; };
     vector<Opt> opts = {
-        {"", "【Messer】", "基础攻击力 +10%"},
-        {"", "【Trank】", "基础生命上限 +30%"},
-        {"", "【Muenzbeutel】", "金币 +6"}
+        {"", "【Messer】(一把小刀)", "基础攻击力 +10%"},
+        {"", "【Trank】(一瓶药水)", "基础生命上限 +30%"},
+        {"", "【Muenzbeutel】(一袋金币)", "金币 +6"}
     };
 
     int indent = (80 - 40) / 2;
@@ -83,19 +83,21 @@ int ChooseInitialBuff() {
     int choice = Safecin(legal, false);
 
     cout << RED_BOLD;
-    Refresh();
     cout << endl;
     switch (choice) {
     case 1:
         cout << " Das scharfe Metall schneidet durch den dichten Nebel der Runen,\n und die alten Waende beginnen zu bluten." << endl;
+        cout<<RED_DARK << " \n(锋利的金属切割着符文浓密的迷雾，古老的墙壁开始渗出鲜血。)" << endl;
         //锋利的金属切割着符文浓密的迷雾，古老的墙壁开始渗出鲜血。
         break;
     case 2:
         cout << " Der suesse Geruch des Lebens laesst die vertrockneten Ranken \n im Steinboden leise erzittern und wachsen." << endl;
+        cout << RED_DARK << " \n(生命甜美的香气让石缝中枯萎的藤蔓开始无声地战栗与生长。)" << endl;
         //生命甜美的香气让石缝中枯萎的藤蔓开始无声地战栗与生长。
         break;
     case 3:
         cout << " Das helle Klimpern von Muenzen weckt den schlafenden Schutt der Ruinen;\n der Boden gierig gedenkt der naechsten Opfer." << endl;
+        cout << RED_DARK << " \n(清脆的金币碰撞声唤醒了废墟沉睡的残骸，地面正贪婪地注视着下一个祭品。)" << endl;
         //清脆的金币碰撞声唤醒了废墟沉睡的残骸，地面正贪婪地注视着下一个祭品。
         break;
     }

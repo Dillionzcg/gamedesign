@@ -146,10 +146,14 @@ bool Event_ChooseLoot() {
     }
     vector<int> RandomNumEventObject;
     RandomNumEventObject = rm.getSomeNum(0, (int)ObjectForEventGaining.size()-1, 3);
+    vector<shared_ptr<Object>> ObjectForChoosing;
+    ObjectForChoosing.push_back(ObjectForEventGaining[RandomNumEventObject[0]]);
+    ObjectForChoosing.push_back(ObjectForEventGaining[RandomNumEventObject[1]]);
+    ObjectForChoosing.push_back(ObjectForEventGaining[RandomNumEventObject[2]]);
     vector<string> loots = {
-        ObjectForEventGaining[RandomNumEventObject[0]]->GetDescribe(),
-        ObjectForEventGaining[RandomNumEventObject[1]]->GetDescribe(),
-        ObjectForEventGaining[RandomNumEventObject[2]]->GetDescribe(),
+        ObjectForChoosing[0]->GetDescribe(),
+        ObjectForChoosing[1]->GetDescribe(),
+        ObjectForChoosing[2]->GetDescribe(),
     };
     cout << "\n1. " << loots[0] << endl;
     cout << "2. " << loots[1] << endl;
@@ -158,7 +162,7 @@ bool Event_ChooseLoot() {
     cout << endl;
     cout << "(选择一个3级藏品获得)" << endl;
     int choice = Safecin({ 1,2,3 }, false);
-    MyObjectGroup.push_back(ObjectForEventGaining[RandomNumEventObject[choice]]);
+    MyObjectGroup.push_back(ObjectForChoosing[choice-1]);
     Refresh();
 
 
@@ -173,7 +177,7 @@ bool Event_ChooseLoot() {
     cout << "它的上一任主人早已在漫长的岁月中化作尘土，唯有残存的誓言在此刻与你遥遥共鸣。" << endl;
     cout << "从这一刻起，跨越时空的因果因你而延续，它将成为你穿行于秘境唯一的凭借。" << endl;
     cout <<QING << "\n 获得3级藏品 x1" << endl;
-    cout << GREEN_BRIGHT << ObjectForEventGaining[RandomNumEventObject[choice]]->GetDescribe() << endl;
+    cout << GREEN_BRIGHT << ObjectForChoosing[choice-1]->GetDescribe() << endl;
 
     cout <<HUI<< "\n按回车继续..." << endl;
     SafeEnter();

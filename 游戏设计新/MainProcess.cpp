@@ -454,7 +454,6 @@ void PostWarSettleMent(bool IfBoss) {
 	int ObjectNum = rm.getnum(0, (int)ObjectPoolForRandom.size() - 1);
 	shared_ptr<Object> RandomObject = ObjectPoolForRandom[ObjectNum];
 	MyObjectGroup.push_back(RandomObject);
-	MyObjectGroup.push_back(ObjectPool3[0]);
 	cout << QING;
 	cout << RandomObject->GetRarity() << " 级藏品:" << endl;
 	cout << GREEN_BRIGHT;
@@ -567,7 +566,7 @@ int MapChoose(int floor, int step, int type) {
 		case 2:cout << YELLOW;break;
 		case 3:cout << RED_WINE;break;
 		}
-		cout << QING << "当前符文为：" << endl;
+		cout << "当前符文为：" << endl;
 		cout << RuneNow->GetDescribe() << endl;
 		cout << endl;
 		PrintMaphelp();

@@ -83,8 +83,8 @@ void PrintMaphelp() {
 	cout << " ^ :当前位置" << endl;
 }
 vector<int> Maptype;
-int Map1[5] = { 1,2,5,3,4 };
-//int Map1[5] = { 2,2,2,2,2 };
+//int Map1[5] = { 1,2,5,3,4 };
+int Map1[5] = { 2,2,2,2,2 };
 int Map2[6] = { 2,1,1,5,3,4 };
 int Map3[7] = { 2,2,1,1,5,3,4 };
 void UpdateMap(int floor, int step) {
@@ -506,7 +506,7 @@ void PrintMyCharacterStatus() {
 	// 【探险信息栏】统一使用金/紫系（这里用 GOLD_BOLD 凸显财富与等级）
 	cout << QING << "  【探险信息】" << RESET << endl;
 	cout << QING << "  ────────────────────────────────────────────────" << RESET << endl;
-	cout << RED_WINE << "    等级              :  Lv." << mycharacter.GetLevel() << RESET << endl;
+	cout << RED_DARK << "    等级              :  Lv." << mycharacter.GetLevel() << RESET << endl;
 	cout << GOLD_BOLD << "    金币              :  " << mycharacter.GetCoins() << RESET << endl;
 
 	cout << endl;

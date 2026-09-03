@@ -1,6 +1,7 @@
 #include "FirstEnter.h"
 
 int showTitle() {
+    Refresh();
     // ==================== БъЬт ====================
 
     cout << QING;
