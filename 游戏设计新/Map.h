@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include "basis.h"
+#include"ClassMycharacter_Enemy.h"
+#include"ClassSkill_RoundBuff.h"
 
 
 void DrawBlock(int blocktype, int line);
@@ -10,7 +12,7 @@ void DrawMap(int floor, int step);
 void ResetLastBarLength();
 void PrintBalttleGround(int* myData, int* enemyData, int round, int turn);
 void PrintEventGround(int Type);
-
+void PrintMyCharacterStatus();
 
 extern vector<vector<string>> Themap;
 extern vector<int> Maptype;

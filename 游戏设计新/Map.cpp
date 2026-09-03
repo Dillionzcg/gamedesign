@@ -466,3 +466,53 @@ void PrintEventGround(int Type) {
 }
 int MydataWhenBattle[9] = { 0 };
 int EnemydataWhenBattle[7] = { 0 };
+void PrintMyCharacterStatus() {
+	//清屏
+	Refresh();
+
+	//重新计算当前属性
+	mycharacter.CalculateMyNum(RoundBuffGroup);
+
+	cout << endl;
+	cout << "==================================================" << endl;
+	cout << "                  【角色状态】" << endl;
+	cout << "==================================================" << endl;
+	cout << endl;
+
+	cout << "  【基础属性】" << endl;
+	cout << "  ────────────────────────────────────────────────" << endl;
+
+	cout << "    生命上限          :  " << mycharacter.GetCurrentMaxHP() << endl;
+	cout << "    攻击力            :  " << mycharacter.GetCurrentAttack() << endl;
+	cout << "    防御力            :  " << mycharacter.GetCurrentDefense() << endl;
+
+	cout << endl;
+
+	cout << "  【能量】" << endl;
+	cout << "  ────────────────────────────────────────────────" << endl;
+
+	cout << "    能量上限          :  " << mycharacter.GetMaxEnergy() << endl;
+
+	cout << endl;
+
+	cout << "  【治疗】" << endl;
+	cout << "  ────────────────────────────────────────────────" << endl;
+
+	cout << "    治疗能量上限      :  " << mycharacter.GetMaxHeal() << endl;
+	cout << "    每点治疗能量恢复  :  " << mycharacter.GetHealHP() << " 点生命" << endl;
+
+	cout << endl;
+
+	cout << "  【探险信息】" << endl;
+	cout << "  ────────────────────────────────────────────────" << endl;
+
+	cout << "    等级              :  " << "Lv." << mycharacter.GetLevel() << endl;
+	cout << "    金币              :  " << mycharacter.GetCoins() << endl;
+
+	cout << endl;
+	cout << "==================================================" << endl;
+	cout << "                    按回车键返回" << endl;
+	cout << "==================================================" << endl;
+
+	SafeEnter();
+}

@@ -104,7 +104,7 @@ private:
     int HealAfterHarm = 0;
 };
 
-
+extern MyCharacter mycharacter;
 class Enemy {
 public:
     // 构造函数可以保留简单实现，或者也移到 cpp 中
