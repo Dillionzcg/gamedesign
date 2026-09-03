@@ -90,17 +90,17 @@ int showTitle() {
 
     cout << endl;
     cout << RED_BOLD;
-
-    cout << "                       \"当裂隙在虚空中闭合，符文便成了世界唯一的遗言。\"" << endl;
-    cout << "                   浮空秘境的残垣断壁间，失控的符文正无声地剥离着万物的生息。" << endl;
-    cout << "                  无人知晓深渊之下还沉睡着什么，唯有石碑上的血迹在无声地延伸。" << endl;
+    cout << "    \"Als sich der Riss im Nichts schloss, wurden die Runen zum einzigen letzten Wort der Welt.\"" << endl;
+    cout << "                       (当裂隙在虚空中闭合，符文便成了世界唯一的遗言。)" << endl;
+    cout << endl;
+    cout << "                  浮空秘境的残垣断壁间，失控的符文正无声地剥离着万物的生息。" << endl;
+    cout << "                 无人知晓深渊之下还沉睡着什么，唯有石碑上的血迹在无声地延伸。" << endl;
 
 
 
     // ==================== 输入 ====================
 
-    cout << endl;
-    cout << endl;
+
     cout << endl;
     cout << endl;
     cout << HUI;

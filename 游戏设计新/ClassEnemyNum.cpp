@@ -22,7 +22,7 @@ shared_ptr<EnemyNumManager> Floor1D_S = make_shared<EnemyNumManager>(200, 80, 50
 shared_ptr<EnemyNumManager> Floor1H_S = make_shared<EnemyNumManager>(300, 80, 20);
 vector<shared_ptr<EnemyNumManager>> Floor1_S = { Floor1A_S, Floor1D_S, Floor1H_S };
 shared_ptr<EnemyNumManager> Boss1_S = make_shared<EnemyNumManager>(600, 100, 40);
-shared_ptr<EnemyNumManager> Floor1_Event_S = make_shared<EnemyNumManager>(400, 150, 20);
+shared_ptr<EnemyNumManager> Floor1_Event_S = make_shared<EnemyNumManager>(250, 150, 20);
 
 shared_ptr<EnemyNumManager> Floor1A_H = make_shared<EnemyNumManager>(500, 100, 20);
 shared_ptr<EnemyNumManager> Floor1D_H = make_shared<EnemyNumManager>(500, 80, 50);
@@ -108,7 +108,10 @@ void ChooseEnemy(int floor, bool IsBoss, bool IfHard) {
     }
 
     cout << RED_BOLD;
-    if (!IsBoss) {
+    if (floor % 10 == 0) {
+        cout << "请注意，该敌人攻击力极高，防御力较低，请选择合适的技能以应对。" << endl;
+    }
+    else if (!IsBoss) {
         cout << "该次战斗的敌人【" << EnemyType[Choice] << "】,请选择合适的技能以应对。" << endl;
     }
     else {

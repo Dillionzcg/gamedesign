@@ -47,8 +47,6 @@ static inline void PrintCenteredHeader(const string& title) {
     if (sepLen > dispLen) {
         left = (sepLen - dispLen) / 2;
 
-        // 【微调区】如果当前肉眼看依然觉得偏右，可以尝试将左侧空格数减 1
-        // 你可以根据实际效果决定是否启用这一行：
         if (left > 0) left -= 5;
     }
 
@@ -57,31 +55,10 @@ static inline void PrintCenteredHeader(const string& title) {
     cout << display << endl;
     cout << sep << endl;
 }
-//模拟对战（默认胜利，需要补充）
-bool EventBattleStart(bool isBoss) {
-    cout << "\n 战斗开始！ (模拟战斗)" << endl;
-    // 简单模拟：玩家获胜
-    cout << "你经过一番苦战，击败了强敌！" << endl;
-    if (isBoss) {
-        // 额外战胜文案（Boss）
-        cout << "\n腐朽战甲在最后一击中轰然散落，化作一地锈蚀的铁片与灰烬。" << endl;
-        cout << "石棺内部传来一声极轻的、几乎像是叹息的回响：" << endl;
-        cout << "\n“你……过关了。”" << endl;
-        cout << "“带走你应得的。我不再需要它们了。”" << endl;
-        cout << "\n灰烬中浮现出微光" << endl;
-        cout << "\n 获得Boss级奖励：大量经验 + 高级藏品" << endl;
-    }
-    else {
-        cout << " 获得普通奖励：经验 + 藏品" << endl;
-    }
-    cout << "\n按回车继续..." << endl;
-    SafeEnter();
-    return true;
-}
 
 
 // ---------- 事件1：高难度敌人 ----------
-bool Event_BossChallenge(int floor) {
+bool Event_BossChallenge(int floor, bool IfHard) {
     Refresh();
     PrintCenteredHeader("试炼之影 · 挑战");
     cout << RED_DARK;
@@ -118,8 +95,8 @@ bool Event_BossChallenge(int floor) {
         cout << "它扬起焦黑的断刃，周遭的符文瞬间被剥离成虚无的死寂。" << endl;
         cout <<HUI<< "\n按回车继续..." << endl;
         SafeEnter();
-        Refresh();
-        return EventBattleStart(true);
+        return(BattleStart(floor * 10, false, IfHard));
+
     }
     else {
         cout << RED_BOLD;
@@ -181,7 +158,7 @@ bool Event_ChooseLoot() {
     cout << "被你选中的器物缓缓脱离石台，带着冰凉而凝重的触感，沉甸甸地落入你的掌心之中。" << endl;
     cout << "它的上一任主人早已在漫长的岁月中化作尘土，唯有残存的誓言在此刻与你遥遥共鸣。" << endl;
     cout << "从这一刻起，跨越时空的因果因你而延续，它将成为你穿行于秘境唯一的凭借。" << endl;
-    cout <<QING << "\n 获得高级藏品 x1" << endl;
+    cout <<QING << "\n 获得3级藏品 x1" << endl;
 
 
     cout <<HUI<< "\n按回车继续..." << endl;
@@ -549,7 +526,7 @@ private:
 };
 
 // ---------- 未知节点主入口 ----------
-bool EnterUnknownEvent(int floor) {
+bool EnterUnknownEvent(int floor,bool IfHard) {
     cout << RED_DARK;
     Refresh();
     // 随机决定事件类型 (1~6)
@@ -568,7 +545,7 @@ bool EnterUnknownEvent(int floor) {
     EventType_Experience.push_back(eventType);
     bool result = true;
     switch (eventType) {
-    case 1: result = Event_BossChallenge(floor); break;//传入层数
+    case 1: result = Event_BossChallenge(floor,IfHard); break;//传入层数
     case 2: result = Event_ChooseLoot(); break;
     case 3: result = Event_Sacrifice(); break;
     case 4: result = Event_ChangeRune(); break;//传入buff

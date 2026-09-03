@@ -561,6 +561,11 @@ int MapChoose(int floor, int step, int type) {
 	int MapChoice = 0;
 	while (1) {
 		DrawMap(floor, step);
+		switch (floor) {
+		case 1:cout << QING;break;
+		case 2:cout << YELLOW;break;
+		case 3:cout << RED_WINE;break;
+		}
 		cout << QING << "当前符文为：" << endl;
 		cout << RuneNow->GetDescribe() << endl;
 		cout << endl;
@@ -651,7 +656,7 @@ void MainProgress() {
 				break;
 			case 2://非战斗节点
 				IfSave = MapChoose(floor, step, 2);
-				Ifwin = EnterUnknownEvent(floor);
+				Ifwin = EnterUnknownEvent(floor,IfHard);
 				break;
 			case 3://商店节点
 				IfSave = MapChoose(floor, step, 3);
@@ -663,7 +668,7 @@ void MainProgress() {
 					Ifwin = BattleStart(floor, false, IfHard);
 				}
 				else if (IfSave == 2) {
-					Ifwin = EnterUnknownEvent(floor);
+					Ifwin = EnterUnknownEvent(floor,IfHard);
 				}
 				break;
 			}

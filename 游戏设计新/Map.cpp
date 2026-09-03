@@ -129,22 +129,22 @@ void DrawMap(int floor, int step) {
 	else {
 		Themap[7][step * 9 + 2] = "^";
 	}
-	cout << QING;
+
 	switch (floor) {
 	case 1:
-
+		cout << QING;
 		cout << "第一层 初始遗迹" << endl;
 		cout << endl;
 		cout << "远古石碑流转着晦暗的微光，斑驳的苔藓下封印着破碎的咒文。\n唯有踏入这片禁忌废墟，试炼的钟声方才悄然敲响。" << endl;
 		break;
 	case 2:
-
+		cout << YELLOW;
 		cout << "第二层 迷失回廊" << endl;
 		cout << endl;
 		cout << "虚无的迷雾中回荡着失落的低语，错综的符文法阵真假难辨。\n唯有堪破内心深处的恐惧，才能寻得通往核心的唯一生路。" << endl;
 		break;
 	case 3:
-
+		cout << RED_WINE;
 		cout << "第三层 终焉圣殿" << endl;
 		cout << endl;
 		cout << "狂暴的魔力风暴撕裂苍穹，远古神祇的虚影在血色符文中苏醒。\n唯有直面神明的终极审判，方能揭开秘境尘封的真相。" << endl;
@@ -426,7 +426,7 @@ void PrintBalttleGround(int* myData, int* enemyData, int round, int turn) {
 				cout << RED_LIGHT;
 			}
 			else {
-				cout << WHITE;
+				cout << HUI;
 			}
 			cout << Battlemap[i][j] << flush;
 		}
@@ -481,7 +481,7 @@ void PrintMyCharacterStatus() {
 
 	// 【基础属性栏】统一使用亮红/暗红系
 	cout << QING << "  【基础属性】" << RESET << endl;
-	cout << QING_GRAY << "  ────────────────────────────────────────────────" << RESET << endl;
+	cout << QING << "  ────────────────────────────────────────────────" << RESET << endl;
 	cout << STAT_HP << "    生命上限          :  " << mycharacter.GetCurrentMaxHP() << RESET << endl;
 	cout << STAT_ATK << "    攻击力            :  " << mycharacter.GetCurrentAttack() << RESET << endl;
 	cout << GREEN_BRIGHT << "    防御力            :  " << mycharacter.GetCurrentDefense() << RESET << endl;
@@ -490,14 +490,14 @@ void PrintMyCharacterStatus() {
 
 	// 【能量栏】统一使用亮黄系
 	cout << QING << "  【能量】" << RESET << endl;
-	cout << QING_GRAY << "  ────────────────────────────────────────────────" << RESET << endl;
+	cout << QING << "  ────────────────────────────────────────────────" << RESET << endl;
 	cout << PURPLE << "    能量上限          :  " << mycharacter.GetMaxEnergy() << RESET << endl;
 
 	cout << endl;
 
 	// 【治疗栏】统一使用亮绿系
 	cout << QING << "  【治疗】" << RESET << endl;
-	cout << QING_GRAY << "  ────────────────────────────────────────────────" << RESET << endl;
+	cout << QING << "  ────────────────────────────────────────────────" << RESET << endl;
 	cout << STAT_DEF << "    治疗能量上限      :  " << mycharacter.GetMaxHeal() << RESET << endl;
 	cout <<BLUE_DARK << "    每点治疗能量恢复  :  " << mycharacter.GetHealHP() << " 点生命" << RESET << endl;
 
@@ -505,8 +505,8 @@ void PrintMyCharacterStatus() {
 
 	// 【探险信息栏】统一使用金/紫系（这里用 GOLD_BOLD 凸显财富与等级）
 	cout << QING << "  【探险信息】" << RESET << endl;
-	cout << QING_GRAY << "  ────────────────────────────────────────────────" << RESET << endl;
-	cout << RED_BOLD << "    等级              :  Lv." << mycharacter.GetLevel() << RESET << endl;
+	cout << QING << "  ────────────────────────────────────────────────" << RESET << endl;
+	cout << RED_WINE << "    等级              :  Lv." << mycharacter.GetLevel() << RESET << endl;
 	cout << GOLD_BOLD << "    金币              :  " << mycharacter.GetCoins() << RESET << endl;
 
 	cout << endl;
