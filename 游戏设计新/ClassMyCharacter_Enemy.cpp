@@ -1,7 +1,6 @@
-#include "ClassMycharacter_Enemy.h"
+﻿#include "ClassMycharacter_Enemy.h"
 
 
-// --- MyCharacter 的成员函数实现 ---
 void MyCharacter::CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup) {
     CalculateMyRoundBuff(RoundBuffGroup);
     CalculateMyLevelBuff();
@@ -126,7 +125,7 @@ void MyCharacter::InitialMaxHPDevelopment(double num) { InitialMaxHP *= (1.0 + n
 void MyCharacter::InitialAttackDevelopment(double num) { InitialAttack *= (1.0 + num); }
 
 
-// --- Enemy 的成员函数实现 ---
+
 Enemy::Enemy(int hp, int atk, int dfs, std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup)
     : InitialMaxHP(hp), InitialAttack(atk), InitialDefense(dfs) {
     CalculateMyNum(RoundBuffGroup);
@@ -195,7 +194,7 @@ void Enemy::BeingAttacked_NoDefense(int damage, std::vector<std::shared_ptr<Roun
 
 bool Enemy::AttackPlayer(MyCharacter& player, std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup) {
     CalculateMyNum(RoundBuffGroup);
-    int NumforCritical = rm.getnum(1, 100); // 确保 rm 在你的工程中可用
+    int NumforCritical = rm.getnum(1, 100); 
     bool IfCritical = (NumforCritical <= CriticalRate);
     int damage = 0;
     if (IfCritical) {

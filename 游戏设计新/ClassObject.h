@@ -7,14 +7,15 @@ using namespace std;
 class Object {
 public:
     Object(int rarity, string camp, string type, string describe, int buffnum);
-
+    static void ResetObjectGroup();
     int GetRarity();
     int GetNeedingCoin();
     string GetDescribe();
     double GetBuffNum();
     bool GetIfGotten();
     void GainObject();
-
+    void ResetGaining();
+    
 private:
     int Rarity;                 // 稀有度,1/2/3
     vector<int> RarityCoin = { 2, 4, 6 }; // 稀有度对应金币数

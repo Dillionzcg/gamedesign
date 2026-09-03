@@ -607,10 +607,6 @@ int MapChoose(int floor, int step, int type) {
 void MainProgress() {
 	while (1) {
 		//程序运行总循环，输了之后会回到这里
-		mycharacter.ReSetNum();
-		RoundBuffGroup.clear();
-		InitialRoundBuffGroup.clear();
-		MyObjectGroup.clear();
 		int floor = 1;
 		int	step = 0;
 		int thisfloor = 0;
@@ -624,6 +620,11 @@ void MainProgress() {
 		else if (ModeChoice == 2) {
 			IfHard = true;
 		}
+		mycharacter.ReSetNum();
+		RoundBuffGroup.clear();
+		InitialRoundBuffGroup.clear();
+		MyObjectGroup.clear();
+		Object::ResetObjectGroup();
 		int selectedBuff = enterbuff();
 		switch (selectedBuff) {
 		case 0:

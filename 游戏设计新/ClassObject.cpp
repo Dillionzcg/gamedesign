@@ -29,6 +29,20 @@ bool Object::GetIfGotten() {
 void Object::GainObject() {
     IfGotten = true;
 }
+void Object::ResetGaining() {
+    IfGotten = false;
+}
+void Object::ResetObjectGroup() {
+    for (auto& item : ObjectPool1) {
+        item->ResetGaining();
+    }
+    for (auto& item : ObjectPool2) {
+        item->ResetGaining();
+    }
+    for (auto& item : ObjectPool3) {
+        item->ResetGaining();
+    }
+}
 
 // 定义并初始化全局藏品池与玩家藏品组
 vector<shared_ptr<Object>> ObjectPool1 = { // 初级藏品

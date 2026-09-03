@@ -5,4 +5,5 @@
 #include"ClassRuneManager.h"
 #include"ClassEnemyNum.h"
 #include"MainProcess.h"
+#include"ClassObject.h"
 bool EnterUnknownEvent(int floor,bool IfHard);

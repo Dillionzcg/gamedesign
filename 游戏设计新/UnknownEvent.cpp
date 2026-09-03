@@ -133,10 +133,23 @@ bool Event_ChooseLoot() {
     cout << "你只能带走其中一件，其余的注定随风消散。在此驻足的抉择，即是宿命的分岔口。" << endl;
     cout << "窗外的寒风自高耸的拱窗呼啸而过，拍打着悬挂的铁链，发出沉闷的低鸣。" << endl;
     cout << HUI;
+    vector<shared_ptr<Object>> ObjectForEventGaining;
+    for (auto& item : ObjectPool3) {
+        if (!item->GetIfGotten()) {
+            ObjectForEventGaining.push_back(item);
+        }
+    }
+    if ((int)ObjectForEventGaining.size() < 3) {
+        ObjectForEventGaining.push_back(ObjectPool3[0]);
+        ObjectForEventGaining.push_back(ObjectPool3[1]);
+        ObjectForEventGaining.push_back(ObjectPool3[2]);
+    }
+    vector<int> RandomNumEventObject;
+    RandomNumEventObject = rm.getSomeNum(0, (int)ObjectForEventGaining.size()-1, 3);
     vector<string> loots = {
-        "【断罪之刃】——镌刻着审判符文的古老重剑，剑身残存着洗刷罪孽的铁血寒光",
-        "【苦修士之契】——一枚沾染着干涸血迹的银色苦修徽章，触手如冰",
-        "【夜航罗盘】——指针永远指向迷雾深处的黄铜罗盘，周身缠绕着微弱的哀鸣"
+        ObjectForEventGaining[RandomNumEventObject[0]]->GetDescribe(),
+        ObjectForEventGaining[RandomNumEventObject[1]]->GetDescribe(),
+        ObjectForEventGaining[RandomNumEventObject[2]]->GetDescribe(),
     };
     cout << "\n1. " << loots[0] << endl;
     cout << "2. " << loots[1] << endl;
@@ -145,6 +158,7 @@ bool Event_ChooseLoot() {
     cout << endl;
     cout << "(选择一个3级藏品获得)" << endl;
     int choice = Safecin({ 1,2,3 }, false);
+    MyObjectGroup.push_back(ObjectForEventGaining[RandomNumEventObject[choice]]);
     Refresh();
 
 
@@ -159,7 +173,7 @@ bool Event_ChooseLoot() {
     cout << "它的上一任主人早已在漫长的岁月中化作尘土，唯有残存的誓言在此刻与你遥遥共鸣。" << endl;
     cout << "从这一刻起，跨越时空的因果因你而延续，它将成为你穿行于秘境唯一的凭借。" << endl;
     cout <<QING << "\n 获得3级藏品 x1" << endl;
-
+    cout << GREEN_BRIGHT << ObjectForEventGaining[RandomNumEventObject[choice]]->GetDescribe() << endl;
 
     cout <<HUI<< "\n按回车继续..." << endl;
     SafeEnter();
@@ -167,6 +181,40 @@ bool Event_ChooseLoot() {
 }
 
 // ---------- 事件3：消耗血量上限换藏品 ----------
+void RandomObject() {
+    int RandomNumForObject = rm.getnum(1, 100);
+    vector<shared_ptr<Object>> ObjectPoolForRandom;
+    //随机选择藏品池，20%概率一级，40%概率二级，40%概率三级
+    if (RandomNumForObject <= 20) {
+        for (auto& item : ObjectPool1) {
+            if (!item->GetIfGotten()) {
+                ObjectPoolForRandom.push_back(item);
+            }
+        }
+    }
+    else if (RandomNumForObject <= 60) {
+        for (auto& item : ObjectPool2) {
+            if (!item->GetIfGotten()) {
+                ObjectPoolForRandom.push_back(item);
+            }
+        }
+    }
+    else {
+        for (auto& item : ObjectPool3) {
+            if (!item->GetIfGotten()) {
+                ObjectPoolForRandom.push_back(item);
+            }
+        }
+    }
+    int ObjectNum = rm.getnum(0, (int)ObjectPoolForRandom.size() - 1);
+    shared_ptr<Object> RandomObject = ObjectPoolForRandom[ObjectNum];
+    MyObjectGroup.push_back(RandomObject);
+    cout << QING;
+    cout << RandomObject->GetRarity() << " 级藏品:" << endl;
+    cout << GREEN_BRIGHT;
+    cout << RandomObject->GetDescribe() << endl;
+}
+
 bool Event_Sacrifice() {
     static bool done[3] = { false, false, false };
     Refresh();
@@ -192,8 +240,8 @@ bool Event_Sacrifice() {
         if (current == -1) break; // 三次都已献祭，退出循环
 
         // 计算本次代价与奖励
-        int hpCost = (current == 0) ? 3 : (current == 1 ? 4 : 5);
-        string level = (current == 0) ? "初级" : (current == 1) ? "中级" : "高级";
+        int hpCost = (current == 0) ? 5 : (current == 1 ? 8 : 10);
+        string level = "随机";
         string ordinal;
         if (current == 0) ordinal = "第一阶段";
         else if (current == 1) ordinal = "第二阶段";
@@ -258,7 +306,8 @@ bool Event_Sacrifice() {
             }
             cout << endl;
             cout <<PURPLE_DARK<< "血量上限降低 " << hpCost << "%" << endl;
-            cout <<QING_GRAY<< "获得 " << level << " 藏品 x1" << endl;
+            MyObjectGroup.push_back(make_shared<Object>(0, "M", "H", "Special,MyHPDecrease", -hpCost/100.0));
+            RandomObject();
 
             if (done[0] && done[1] && done[2]) {
                 cout << RED_DARK;
@@ -405,7 +454,7 @@ bool Event_ChooseBoon() {
         cout << "纯净而温热的白色火焰瞬间将羊皮纸吞没，一股磅礴的暖流顺着掌心狂暴地涌入四肢百骸。" << endl;
         cout << "你的骨骼发出沉闷而悠长的脆响，肌肉深处传来一种生命被强行撑开、重新编织的饱胀感。" << endl;
         cout << "与此同时，桌上那份未被触碰的金之契约在无声无息中自行燃尽，化作一滩冰冷的黑灰。" << endl;
-        //此处添加角色血量变化
+        MyObjectGroup.push_back(make_shared<Object>(0, "M", "H", "Special,MyHPIncrease", 0.3));
         cout <<QING<< "\n 血量上限提升 30%" << endl;
     }
     else {
@@ -420,7 +469,7 @@ bool Event_ChooseBoon() {
         cout << "厚重的羊皮纸转瞬化作六枚沉甸甸的发烫古金币，叮当清脆地落入你的掌心之中。" << endl;
         cout << "金属碰撞的回响在空旷寂静的偏厅里久久回荡，空气中弥漫着一股陈旧的熔金气味。" << endl;
         cout << "与此同时，桌上那份关于血肉的契约在无声中腾起一团灰烬，彻底归于虚无。" << endl;
-        //此处添加金币变化
+        mycharacter.GainCoin(6);
         cout <<YELLOW<< "\n 获得 6 金币" << endl;
     }
     cout <<HUI<< "\n按回车继续..." << endl;
@@ -459,6 +508,7 @@ bool Event_SwapNodes() {
         cout << "你收下了那三枚发烫的金币，商人见状，嘴角咧开一个异样森冷而诡异的笑容。" << endl;
         cout << "他依然没有发出半点声音，只是飞快地将桌上那张错综复杂的地图合拢，身体因极度的兴奋而剧烈颤抖。" << endl;
         //此处获得三个金币并更换战斗节点
+        mycharacter.GainCoin(3);
         cout <<YELLOW<< "\n 获得 3 金币" << endl;
     }
     else {
