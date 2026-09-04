@@ -151,7 +151,7 @@ public:
     void UsingEnergy();
     void CriticalRateCrease(int num);
     void EnergyIncrease(int num);
-    void MustCritical();
+    void SkillMustCritical();
     void Re_CriticalRate();
 
 
@@ -182,4 +182,5 @@ private:
     int CriticalRate_Tem = 0;
     double CriticalHarm = 2;
     bool IsAlive = true;
+    bool MustCritical = false;
 };

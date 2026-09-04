@@ -118,7 +118,7 @@ void ChooseEnemy(int floor, bool IsBoss, bool IfHard) {
         cout << "以下是该次战斗的Boss的各项数值，请选择合适的技能以应对。" << endl;
     }
     cout << RED_DARK;
-    cout << "敌人的各项数值为：" << endl;
+    cout << "敌人的各项基础数值为：" << endl;
     cout << "攻击力：" << EnemyNum_ThisBattle->getAttack() << endl;
     cout << "防御力：" << EnemyNum_ThisBattle->getDefense() << endl;
     cout << "生命上限：" << EnemyNum_ThisBattle->getHP() << endl;

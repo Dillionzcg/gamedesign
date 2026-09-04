@@ -105,7 +105,7 @@ void MyDefend(shared_ptr<Enemy> enemy, int round, bool ifskill) {
 //回合开始函数
 int RoundStart(int round, shared_ptr<Enemy> enemy) {
 	EnemyIfDizzy = false;
-	if (round % 10 == 0) enemy->CriticalRateCrease(10);//每十回合敌方的暴击率提升10
+	if (round % 10 == 0) MyObjectGroup.push_back(make_shared<Object>(0, "E", "CR", "Special_EnemyCriticalRateUp", 10));//每十回合敌方的暴击率提升10
 	//检查该回合过期的buff
 	RoundBuffGroup.clear();
 	for (auto& item : InitialRoundBuffGroup) {
@@ -364,7 +364,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		else {//技能部分
 			int MyHP0 = mycharacter.GetCurrentHP();
 			bool IfCritical = false;
-			enemy->MustCritical();
+			enemy->SkillMustCritical();
 			UpdateData(enemy);
 			IfCritical = enemy->AttackPlayer(mycharacter, RoundBuffGroup);
 			enemy->UsingEnergy();
@@ -530,6 +530,7 @@ bool BattleStart(int floor, bool isBoss, bool IfHard) {
 	IfBattleIsOver = false;
 	int round = 1;
 	shared_ptr<Enemy> enemy = make_shared<Enemy>();
+	UpdateData(enemy);
 	MySkill = ChooseSkill(mycharacter.GetChoiceNum(), floor, isBoss, IfHard);
 	enemy = make_shared<Enemy>(EnemyNum_ThisBattle->getHP(), EnemyNum_ThisBattle->getAttack(), EnemyNum_ThisBattle->getDefense(), RoundBuffGroup);
 	int IfWin = -1;

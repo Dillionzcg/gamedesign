@@ -19,7 +19,7 @@ void MyCharacter::CalculateMyObject() {
                 BasicAttackDevelopment += Num;
             }
             else if(ObjectType=="D") {
-				BasicDefendingDeveloping += Num;
+				BasicDefenseDevelopment += Num;
             }
 			else if (ObjectType == "H") {
 				BasicHPDevelopment += Num;
@@ -62,6 +62,7 @@ void MyCharacter::CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBu
 	InitialHeal = 0 + BasicIHEdevelopment;
 	MaxEnergy = 3 + BasicENdevelopment;
 	SkillChoiceNum = 3 + BasicSCdevelopment;
+    if (SkillChoiceNum > 10) SkillChoiceNum = 10;
 	MaxHeal = 3 + BasicMHEdevelopment;
     if(InitialHeal>MaxHeal) {
         InitialHeal = MaxHeal;
@@ -176,7 +177,7 @@ void MyCharacter::ReSetNum() {
     InitialMaxHP = 300;
     InitialAttack = 80;
     InitialDefense = 50;
-    Coins = 100;
+    Coins = 0;
     Level = 1;
     IsAlive = true;
     SkillChoiceNum = 3;
@@ -255,6 +256,9 @@ void Enemy::CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBuffGrou
     if(CriticalRate<0) {
         CriticalRate = 0;
     }
+    if (MustCritical) {
+        CriticalRate = 100;
+    }
 }
 
 void Enemy::SetCurrentHP() { CurrentHP = CurrentMaxHP; }
@@ -323,13 +327,11 @@ void Enemy::UsingEnergy() { CurrentEnergy = 0; }
 void Enemy::CriticalRateCrease(int num) { CriticalRate += num; }
 void Enemy::EnergyIncrease(int num) { if (CurrentEnergy > 0) CurrentEnergy--; }
 
-void Enemy::MustCritical() {
-    CriticalRate_Tem = CriticalRate;
-    CriticalRate += 100;
-    if (CriticalRate > 100) CriticalRate = 100;
+void Enemy::SkillMustCritical() {
+    MustCritical = true;
 }
 
-void Enemy::Re_CriticalRate() { CriticalRate = CriticalRate_Tem; }
+void Enemy::Re_CriticalRate() { MustCritical = false; }
 
 void MyCharacter::AttackEnemy(std::shared_ptr<Enemy> enemy, std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup) {
     CalculateMyNum(RoundBuffGroup);

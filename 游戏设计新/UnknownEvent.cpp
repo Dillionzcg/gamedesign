@@ -602,8 +602,8 @@ bool EnterUnknownEvent(int floor,bool IfHard) {
     cout << RED_DARK;
     Refresh();
     // 随机决定事件类型 (1~6)
-    int eventType = 6;
-    //int eventType = EventType_Experience.back();
+    //int eventType = 6;
+    int eventType = EventType_Experience.back();
     EventType::Reset();
     while (eventType == EventType_Experience.back() || eventType == EventType_Experience[EventType_Experience.size() - 2]) {
         EventType_NotRepeat.clear();
@@ -626,5 +626,5 @@ bool EnterUnknownEvent(int floor,bool IfHard) {
     case 6: result = Event_SwapNodes(floor); break;
     default: result = true;
     }
-    return true;
+    return result;
 }

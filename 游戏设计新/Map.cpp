@@ -83,7 +83,7 @@ void PrintMaphelp() {
 	cout << " ^ :当前位置" << endl;
 }
 vector<int> Maptype;
-
+//int Map1[5] = {2,2,2,2,2};
 int Map1[5] = {1,2,5,3,4};
 int Map2[6] = {2,1,1,5,3,4};
 int Map3[7] = {2,2,1,1,5,3,4};

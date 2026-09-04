@@ -264,27 +264,40 @@ void ShopStart() {
 			ObjectForSale.push_back(ShopItems[ObjectChoice[i]]);
 		}
 	}
-	while ((int)ObjectForSale.size() < 12) {//如果藏品不足12个，则补充
+	while ((int)ObjectForSale.size() < 12) { // 如果藏品不足12个，则补充
 		vector<shared_ptr<Object>> ForFilling;
-		for (auto& item : ObjectPool3) {//优先补充3级藏品
-			if (!item->GetIfGotten()) {
+
+		// 优先补充3级藏品
+		for (auto& item : ObjectPool3) {
+			// 条件1：未被获得过
+			// 条件2：当前不在 ObjectForSale 售卖列表中（防止重复）
+			if (!item->GetIfGotten() && find(ObjectForSale.begin(), ObjectForSale.end(), item) == ObjectForSale.end()) {
 				ForFilling.push_back(item);
 			}
 		}
+
 		if (!ForFilling.empty()) {
 			int RandomNumForFilling = rm.getnum(0, (int)ForFilling.size() - 1);
 			ObjectForSale.push_back(ForFilling[RandomNumForFilling]);
 		}
-		else {//如果3级藏品不足，则补充2级藏品
+		else {
+			// 如果3级藏品不足或全都在商店里了，则尝试补充2级藏品
 			for (auto& item : ObjectPool2) {
-				if (!item->GetIfGotten()) {
+				if (!item->GetIfGotten() && find(ObjectForSale.begin(), ObjectForSale.end(), item) == ObjectForSale.end()) {
 					ForFilling.push_back(item);
 				}
 			}
-			int RandomNumForFilling = rm.getnum(0, (int)ForFilling.size() - 1);
-			ObjectForSale.push_back(ForFilling[RandomNumForFilling]);
-		}
 
+			if (!ForFilling.empty()) {
+				int RandomNumForFilling = rm.getnum(0, (int)ForFilling.size() - 1);
+				ObjectForSale.push_back(ForFilling[RandomNumForFilling]);
+			}
+			else {
+				while ((int)ObjectForSale.size() < 12) {
+					make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗量+15", 15);
+				}
+			}
+		}
 	}
 
 	//商品名称
@@ -335,7 +348,7 @@ void ShopStart() {
 				DrawingShop(BoughtNum, ItemName, ItemPrice, ItemRarity);
 				cout << YELLOW << "已消耗 "<<ItemPrice[BuyingChoice]<<" 枚金币购买 " << ItemRarity[BuyingChoice] << "级 藏品" << endl;
 				cout << GREEN_BRIGHT << ItemName[BuyingChoice] << endl;
-				cout <<HUI<< "请继续输入以购买商品...(或回车以离开商店，输入0以查看当前状态)" << endl;
+				cout <<WHITE<< "请继续输入以购买商品...(或回车以离开商店，输入0以查看当前状态)" << endl;
 				IfRefreshShop = false;
 			}
 			else {
