@@ -12,6 +12,7 @@ void ResetLastBarLength();
 void PrintBalttleGround(int* myData, int* enemyData, int round, int turn);
 void PrintEventGround(int Type);
 void PrintMyCharacterStatus();
+void ChangeShopToBattle(int floor);
 
 extern vector<vector<string>> Themap;
 extern vector<int> Maptype;

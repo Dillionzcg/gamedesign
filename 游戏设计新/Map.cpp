@@ -83,10 +83,21 @@ void PrintMaphelp() {
 	cout << " ^ :当前位置" << endl;
 }
 vector<int> Maptype;
-//int Map1[5] = { 1,2,5,3,4 };
-int Map1[5] = { 3,3,3,3,3 };
-int Map2[6] = { 2,1,1,5,3,4 };
-int Map3[7] = { 2,2,1,1,5,3,4 };
+
+int Map1[5] = {1,2,5,3,4};
+int Map2[6] = {2,1,1,5,3,4};
+int Map3[7] = {2,2,1,1,5,3,4};
+void ChangeShopToBattle(int floor) {
+	switch (floor) {
+	case 1:
+		Map1[3] = 1;break;
+	case 2:
+		Map2[4] = 1;break;
+	case 3:
+		Map3[5] = 1;break;
+	default:break;
+	}
+}
 void UpdateMap(int floor, int step) {
 	Maptype.clear();
 	switch (floor) {

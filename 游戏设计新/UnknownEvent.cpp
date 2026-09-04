@@ -482,7 +482,7 @@ bool Event_ChooseBoon() {
     return true;
 }
 // ---------- 事件6：交换商店和战斗节点 ----------
-bool Event_SwapNodes() {
+bool Event_SwapNodes(int floor) {
     Refresh();
     PrintCenteredHeader("幽暗商贾");
     cout << RED_DARK;
@@ -531,6 +531,23 @@ bool Event_SwapNodes() {
     cout <<HUI<< "\n按回车继续..." << endl;
     SafeEnter();
     Refresh();
+    if (choice == 1) {
+        ShopStart();
+        // 离开商店后的场景文案
+        Refresh();
+        ChangeShopToBattle(floor);
+        cout << RED_BOLD;
+        cout << endl;
+        cout << "Wo das Schicksal gewoben wird, bricht das Blut durch den Schleier." << endl;
+        cout << RED_DARK;
+        cout << endl;
+        cout << "（当命运被织就之时，鲜血便会撕裂这层虚妄的帷幕。）" << endl;
+        cout << endl;
+        cout << RED_BOLD;
+        cout << "\n该层的商店节点已改为了战斗节点" << endl;
+        cout << HUI << "\n按回车继续..." << endl;
+        SafeEnter();
+    }
     return true;
 }
 
@@ -585,7 +602,8 @@ bool EnterUnknownEvent(int floor,bool IfHard) {
     cout << RED_DARK;
     Refresh();
     // 随机决定事件类型 (1~6)
-    int eventType = EventType_Experience.back();
+    int eventType = 6;
+    //int eventType = EventType_Experience.back();
     EventType::Reset();
     while (eventType == EventType_Experience.back() || eventType == EventType_Experience[EventType_Experience.size() - 2]) {
         EventType_NotRepeat.clear();
@@ -605,8 +623,8 @@ bool EnterUnknownEvent(int floor,bool IfHard) {
     case 3: result = Event_Sacrifice(); break;
     case 4: result = Event_ChangeRune(); break;//传入buff
     case 5: result = Event_ChooseBoon(); break;
-    case 6: result = Event_SwapNodes(); break;
+    case 6: result = Event_SwapNodes(floor); break;
     default: result = true;
     }
-    return result;
+    return true;
 }
