@@ -294,7 +294,7 @@ void ShopStart() {
 			}
 			else {
 				while ((int)ObjectForSale.size() < 12) {
-					make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗量+15", 15);
+					make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗量+30", 30);
 				}
 			}
 		}

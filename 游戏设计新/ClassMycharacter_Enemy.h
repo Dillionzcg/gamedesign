@@ -68,9 +68,9 @@ public:
     void UsingCoins(int num);
 
 private:
-    int InitialMaxHP = 200;
+    int InitialMaxHP = 300;
     int InitialAttack = 80;
-    int InitialDefense = 50;
+    int InitialDefense = 100;
     int BasicMaxHP = 0;
     int BasicAttack = 0;
     int BasicDefense = 0;
@@ -171,6 +171,7 @@ private:
     double BasicDefenseDevelopment = 0;
 	double BasicCRdevelopment = 0;
     int BasicENdevelopment = 0;
+	double BasicCHdevelopment = 0;
 
     double RoundAttackDevelopment = 0;
     double RoundDefenseDevelopment = 0;

@@ -176,7 +176,7 @@ void MyCharacter::GainCoin(int num) { Coins += num; }
 void MyCharacter::ReSetNum() {
     InitialMaxHP = 300;
     InitialAttack = 80;
-    InitialDefense = 50;
+    InitialDefense = 100;
     Coins = 0;
     Level = 1;
     IsAlive = true;
@@ -218,6 +218,7 @@ void Enemy::CalculateMyObject() {
     BasicDefenseDevelopment = 0;
 	BasicCRdevelopment = 0;
 	BasicENdevelopment = 0;
+	BasicCHdevelopment = 0;
 	for (auto& item : MyObjectGroup) {
 		if (item->GetCamp() == "E") {
 			string ObjectType = item->GetType();
@@ -237,6 +238,9 @@ void Enemy::CalculateMyObject() {
             else if (ObjectType == "CR") {
                 BasicCRdevelopment += Num;
             }
+            else if (ObjectType == "CH") {
+                BasicCHdevelopment += Num;
+            }
 		}
 	}
 }
@@ -253,6 +257,7 @@ void Enemy::CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBuffGrou
 
 	MaxEnergy = 6 + BasicENdevelopment;
 	CriticalRate = 20 + BasicCRdevelopment;
+	CriticalHarm = 2 + BasicCHdevelopment;
     if(CriticalRate<0) {
         CriticalRate = 0;
     }

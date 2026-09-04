@@ -503,6 +503,8 @@ void PrintMyCharacterStatus() {
 	cout << QING << "  【能量】" << RESET << endl;
 	cout << QING << "  ────────────────────────────────────────────────" << RESET << endl;
 	cout << PURPLE << "    能量上限          :  " << mycharacter.GetMaxEnergy() << RESET << endl;
+	cout << PURPLE << "    初始能量          :  " << mycharacter.GetInitialEnergy() << RESET << endl;
+
 
 	cout << endl;
 
@@ -510,6 +512,7 @@ void PrintMyCharacterStatus() {
 	cout << QING << "  【治疗】" << RESET << endl;
 	cout << QING << "  ────────────────────────────────────────────────" << RESET << endl;
 	cout << STAT_DEF << "    治疗能量上限      :  " << mycharacter.GetMaxHeal() << RESET << endl;
+	cout << STAT_DEF << "    初始治疗能量      :  " << mycharacter.GetInitialHeal() << RESET << endl;
 	cout <<BLUE_DARK << "    每点治疗能量恢复  :  " << mycharacter.GetHealHP() << " 点生命" << RESET << endl;
 
 	cout << endl;
@@ -544,9 +547,12 @@ void PrintMyCharacterStatus() {
 		default:
 			break;
 		}
-		if (i % 2 == 0) {
-			cout << endl;
-			cout << "    ";
+		if (item->GetRarity() != 0) {
+			if (i % 2 == 0) {
+				cout << endl;
+				cout << endl;
+				cout << "    ";
+			}
 		}
 	}
 	if (i == 0) {

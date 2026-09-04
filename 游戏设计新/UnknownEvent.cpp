@@ -95,8 +95,24 @@ bool Event_BossChallenge(int floor, bool IfHard) {
         cout << "它扬起焦黑的断刃，周遭的符文瞬间被剥离成虚无的死寂。" << endl;
         cout <<HUI<< "\n按回车继续..." << endl;
         SafeEnter();
-        return(BattleStart(floor * 10, true, IfHard));
-
+        bool IfWin;
+        IfWin=BattleStart(floor * 10, true, IfHard);
+        if (IfWin) {
+            Refresh();
+            cout << RED_BOLD;
+            cout << endl;
+            cout << "Der eiserne Richter ist gefallen, und das Blut hat den Pfad von Neuem besiegelt." << endl;
+            cout << RED_DARK;
+            cout << endl;
+            cout << "（铁面审判者已然陨落，而鲜血重新封印了前行的道途。）" << endl;
+            cout << endl;
+            cout << RED_DARK;
+            cout << "沉重的机械巨响在空旷的废墟中回荡，石棺的残骸终于在无声的哀鸣中彻底崩解。" << endl;
+            cout << "那具不可一世的铁面卫士庞大的身躯轰然倒地，化作一地冰冷的黑色铁屑与消散的流光。" << endl;
+            cout << HUI << "\n按回车继续..." << endl;
+            SafeEnter();
+        }
+        return IfWin;
     }
     else {
         cout << RED_BOLD;
@@ -214,6 +230,7 @@ void RandomObject() {
     int ObjectNum = rm.getnum(0, (int)ObjectPoolForRandom.size() - 1);
     shared_ptr<Object> RandomObject = ObjectPoolForRandom[ObjectNum];
     MyObjectGroup.push_back(RandomObject);
+    RandomObject->GainObject();
     cout << QING;
     cout << RandomObject->GetRarity() << " 级藏品:" << endl;
     cout << GREEN_BRIGHT;
@@ -245,7 +262,7 @@ bool Event_Sacrifice() {
         if (current == -1) break; // 三次都已献祭，退出循环
 
         // 计算本次代价与奖励
-        int hpCost = (current == 0) ? 5 : (current == 1 ? 8 : 10);
+        int hpCost = (current == 0) ? 3 : (current == 1 ? 5 : 10);
         string level = "随机";
         string ordinal;
         if (current == 0) ordinal = "第一阶段";
@@ -375,7 +392,7 @@ bool Event_ChangeRune() {
     cout << endl;
     cout << "(依据你的意志塑造此层的命运，因为光明与黑暗只听从牺牲者。)" << endl;
     cout <<HUI<< "\n1. 触碰晶石，改写当前层的符文" << endl;
-    cout << "(有70%概率变为\"希望\"，有30概率变为\"绝望\")" << endl;
+    cout << "(有70%概率变为\"希望\"，有30%概率变为\"绝望\")" << endl;
     cout << "2. 保持原状，转身离开" << endl;
 
     int choice = Safecin({ 1,2 }, false);
@@ -442,7 +459,7 @@ bool Event_ChooseBoon() {
     cout << endl;
     cout << "（抉择生命或财富，契约不容迁延，背盟之徒终将为深渊所噬。）" << endl;
     cout << endl;
-    cout <<HUI<< "\n1. 签下血契——获得 30% 血量上限提升" << endl;
+    cout <<HUI<< "\n1. 签下血契——获得 50% 血量上限提升" << endl;
     cout << "2. 签下金契——获得 6 枚金币" << endl;
 
     int choice = Safecin({ 1,2 }, false);
@@ -459,8 +476,8 @@ bool Event_ChooseBoon() {
         cout << "纯净而温热的白色火焰瞬间将羊皮纸吞没，一股磅礴的暖流顺着掌心狂暴地涌入四肢百骸。" << endl;
         cout << "你的骨骼发出沉闷而悠长的脆响，肌肉深处传来一种生命被强行撑开、重新编织的饱胀感。" << endl;
         cout << "与此同时，桌上那份未被触碰的金之契约在无声无息中自行燃尽，化作一滩冰冷的黑灰。" << endl;
-        MyObjectGroup.push_back(make_shared<Object>(0, "M", "H", "Special,MyHPIncrease", 0.3));
-        cout <<QING<< "\n 血量上限提升 30%" << endl;
+        MyObjectGroup.push_back(make_shared<Object>(0, "M", "H", "Special,MyHPIncrease", 0.5));
+        cout <<QING<< "\n 血量上限提升 50%" << endl;
     }
     else {
         cout << RED_BOLD;
@@ -498,7 +515,7 @@ bool Event_SwapNodes(int floor) {
     cout << endl;
     cout << "(交易总能找到出路，哪怕是在唯有长剑统治的地方。)" << endl;
     cout << endl;
-    cout <<HUI<< "1. 获得3枚金币，该节点改为商店节点，但会触发某种效果" << endl;
+    cout <<HUI<< "1. 获得3枚金币，该节点改为商店节点，但会触发某种效果（当前金币数："<<mycharacter.GetCoins()<< "）" << endl;
     cout << "2. 拒绝交易，转身离去" << endl;
 
     int choice = Safecin({ 1,2 }, false);
@@ -602,7 +619,7 @@ bool EnterUnknownEvent(int floor,bool IfHard) {
     cout << RED_DARK;
     Refresh();
     // 随机决定事件类型 (1~6)
-    //int eventType = 6;
+    //int eventType = 4;
     int eventType = EventType_Experience.back();
     EventType::Reset();
     while (eventType == EventType_Experience.back() || eventType == EventType_Experience[EventType_Experience.size() - 2]) {

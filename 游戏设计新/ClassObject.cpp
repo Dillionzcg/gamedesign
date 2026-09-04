@@ -51,45 +51,47 @@ string Object::GetType() {
 }
 // 定义并初始化全局藏品池与玩家藏品组
 vector<shared_ptr<Object>> ObjectPool1 = { // 初级藏品
-    make_shared<Object>(1, "M", "A", "Kraft：攻击力+10%", 0.1),
-    make_shared<Object>(1, "M", "D", "Schutz：防御力+20%", 0.2),
-    make_shared<Object>(1, "M", "H", "Leben：生命上限+30%", 0.3),
-    make_shared<Object>(1, "M", "HE", "Labung：每点治疗能量治疗量+5", 5),
+    make_shared<Object>(1, "M", "A", "Kraft：攻击力+30%", 0.3),
+    make_shared<Object>(1, "M", "D", "Schutz：防御力+40%", 0.4),
+    make_shared<Object>(1, "M", "H", "Leben：生命上限+50%", 0.5),
+    make_shared<Object>(1, "M", "HE", "Labung：每点治疗能量治疗量+10", 5),
     make_shared<Object>(1, "E", "A", "Schwaechung：敌人攻击力-10%", -0.1),
     make_shared<Object>(1, "E", "D", "Bruch：敌人防御力-10%", -0.1),
     make_shared<Object>(1, "E", "H", "Verfall：敌人生命上限-10%", -0.1),
-    make_shared<Object>(1, "E", "CR", "Block：敌人暴击率-3%", -3),
+    make_shared<Object>(1, "E", "CR", "Block：敌人暴击率-5%", -5),
 };
 
 vector<shared_ptr<Object>> ObjectPool2 = { // 中级藏品
-    make_shared<Object>(2, "M", "A", "Macht：攻击力+20%", 0.2),
-    make_shared<Object>(2, "M", "D", "Schild：防御力+30%", 0.3),
-    make_shared<Object>(2, "M", "H", "Vitalitaet：生命上限+40%", 0.4),
-    make_shared<Object>(2, "M", "HE", "Wohl：每点治疗能量治疗量+10", 10),
-    make_shared<Object>(2, "E", "A", "Laehmung：敌人攻击力-15%", -0.15),
-    make_shared<Object>(2, "E", "D", "Riss：敌人防御力-15%", -0.15),
-    make_shared<Object>(2, "E", "H", "Schwund：敌人生命上限-15%", -0.15),
-    make_shared<Object>(2, "E", "CR", "Hemmung：敌人暴击率-5%", -5),
+    make_shared<Object>(2, "M", "A", "Macht：攻击力+50%", 0.5),
+    make_shared<Object>(2, "M", "D", "Schild：防御力+60%", 0.6),
+    make_shared<Object>(2, "M", "H", "Vitalitaet：生命上限+70%", 0.7),
+    make_shared<Object>(2, "M", "HE", "Wohl：每点治疗能量治疗量+20", 20),
+    make_shared<Object>(2, "E", "A", "Laehmung：敌人攻击力-20%", -0.2),
+    make_shared<Object>(2, "E", "D", "Riss：敌人防御力-20%", -0.2),
+    make_shared<Object>(2, "E", "H", "Schwund：敌人生命上限-20%", -0.20),
+    make_shared<Object>(2, "E", "CR", "Hemmung：敌人暴击率-10%", -10),
     make_shared<Object>(2, "M", "IE", "Antritt：我方初始能量+1", 1),
-    make_shared<Object>(2, "M", "IHE", "Auftakt：我方初始治疗能量+1", 1),
+    make_shared<Object>(2, "M", "IHE", "Auftakt：我方初始治疗能量+2", 2),
     make_shared<Object>(2, "M", "MHE", "Gefaess：我方治疗能量上限+2", 2),
     make_shared<Object>(2, "M", "SC", "Auswahl：可选择技能+1", 1),
+    make_shared<Object>(2, "E", "CH", "Daempfung：敌人暴击伤害-10%", -0.1),
 };
 
 vector<shared_ptr<Object>> ObjectPool3 = { // 高级藏品
-    make_shared<Object>(3, "M", "A", "Staerke：攻击力+30%", 0.3),
-    make_shared<Object>(3, "M", "D", "Ruestung：防御力+40%", 0.4),
-    make_shared<Object>(3, "M", "H", "Gedeihen：生命上限+50%", 0.5),
-    make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗量+15", 15),
-    make_shared<Object>(3, "E", "A", "Ermattung：敌人攻击力-20%", -0.2),
-    make_shared<Object>(3, "E", "D", "Zerfall：敌人防御力-20%", -0.2),
-    make_shared<Object>(3, "E", "H", "Siechtum：敌人生命上限-20%", -0.2),
-    make_shared<Object>(3, "E", "CR", "Stoerung：敌人暴击率-10%", -10),
+    make_shared<Object>(3, "M", "A", "Staerke：攻击力+70%", 0.7),
+    make_shared<Object>(3, "M", "D", "Ruestung：防御力+80%", 0.8),
+    make_shared<Object>(3, "M", "H", "Gedeihen：生命上限+90%", 0.9),
+    make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗量+30", 30),
+    make_shared<Object>(3, "E", "A", "Ermattung：敌人攻击力-30%", -0.3),
+    make_shared<Object>(3, "E", "D", "Zerfall：敌人防御力-30%", -0.3),
+    make_shared<Object>(3, "E", "H", "Siechtum：敌人生命上限-30%", -0.3),
+    make_shared<Object>(3, "E", "CR", "Stoerung：敌人暴击率-15%", -15),
     make_shared<Object>(3, "M", "IE", "Antrieb：我方初始能量+2", 2),
-    make_shared<Object>(3, "M", "IHE", "Ursprung：我方初始治疗能量+2", 2),
+    make_shared<Object>(3, "M", "IHE", "Ursprung：我方初始治疗能量+3", 3),
     make_shared<Object>(3, "M", "EN", "Effizienz：我方技能所需能量-1", -1),
     make_shared<Object>(3, "E", "EN", "Last：敌方技能所需能量+2", 2),
     make_shared<Object>(3, "M", "SC", "Vielfalt：可选择技能+2", 2),
+    make_shared<Object>(3, "E", "CH", "Stumpfung：敌人暴击伤害-20%", -0.2),
 };
 
 vector<shared_ptr<Object>> MyObjectGroup; // 我方藏品组初始化为空
@@ -115,6 +117,8 @@ Verfall —— 衰败（敌人生命上限 -10%）
 
 Block —— 阻挡（敌人暴击率 -5%）
 
+
+
 中级藏品 (ObjectPool2)
 
 Macht —— 权能（攻击力 +20%）
@@ -137,9 +141,13 @@ Antritt —— 启动（我方初始能量 +1）
 
 Auftakt —— 序曲（我方初始治疗能量 +1）
 
-Gefaess —— 器皿/容量（我方治疗能量上限 +2）
+Gefaess —— 器皿（我方治疗能量上限 +2）
 
 Auswahl —— 选择（可选择技能 +1）
+
+Daempfung —— 阻尼（敌人暴击伤害 -10%）
+
+
 
 高级藏品 (ObjectPool3)
 
@@ -168,5 +176,7 @@ Effizienz —— 效能（我方技能所需能量 -1）
 Last —— 负担（敌方技能所需能量 +2）
 
 Vielfalt —— 多样性（可选择技能 +2）
+
+Stumpfung  —— 钝化（敌人暴击伤害 -20%）
 
 */

@@ -105,7 +105,10 @@ void MyDefend(shared_ptr<Enemy> enemy, int round, bool ifskill) {
 //回合开始函数
 int RoundStart(int round, shared_ptr<Enemy> enemy) {
 	EnemyIfDizzy = false;
-	if (round % 10 == 0) MyObjectGroup.push_back(make_shared<Object>(0, "E", "CR", "Special_EnemyCriticalRateUp", 10));//每十回合敌方的暴击率提升10
+	if (round % 10 == 0) {
+		MyObjectGroup.push_back(make_shared<Object>(0, "E", "CR", "Special_ECR", 10));//每十回合敌方的暴击率提升10
+		cout << RED_DARK << "敌方的暴击率提升了10%！" << endl;
+	}
 	//检查该回合过期的buff
 	RoundBuffGroup.clear();
 	for (auto& item : InitialRoundBuffGroup) {
@@ -494,17 +497,17 @@ void PostWarSettleMent(bool IfBoss) {
 		cout << RandomObject_2->GetDescribe() << endl;
 	}
 	cout << endl;
-	int coinGain = IfBoss ? 6 : 3;
+	int coinGain = IfBoss ? 8 : 4;
 	vector<string> bossCoinStories = {
-		"你破开试炼之影的残骸，在厚重的黑霜下搜出了 6 枚刻有禁忌符文的古金币。",
-		"石棺的底座在震颤中裂开，里面整齐码放着 6 枚沉甸甸的殉葬金币。"
+		"你破开试炼之影的残骸，在厚重的黑霜下搜出了 8 枚刻有禁忌符文的古金币。",
+		"石棺的底座在震颤中裂开，里面整齐码放着 8 枚沉甸甸的殉葬金币。"
 	};
 
 	vector<string> normalCoinStories = {
-		"你在冰冷的尸骸中翻找，从凝固的血迹下摸出了 3 枚犹带余温的金币。",
-		"你掀开一块布满青苔的石板，狭窄的暗格内静静躺着 3 枚古旧金币。",
-		"你自敌人的褴褛行囊中剥离出 3 枚金属货币，上面还沾染着未干的尘土。",
-		"穿堂风卷过空旷的回廊，吹落了一只悬挂的钱袋，落地时散落出恰好 3 枚金币。"
+		"你在冰冷的尸骸中翻找，从凝固的血迹下摸出了 4 枚犹带余温的金币。",
+		"你掀开一块布满青苔的石板，狭窄的暗格内静静躺着 4 枚古旧金币。"
+		"你自敌人的褴褛行囊中剥离出 4 枚金属货币，上面还沾染着未干的尘土。",
+		"穿堂风卷过空旷的回廊，吹落了一只悬挂的钱袋，落地时散落出恰好 4 枚金币。"
 	};
 	vector<string>& stories = IfBoss ? bossCoinStories : normalCoinStories;
 	int storyIdx = rm.getnum(0, (int)stories.size() - 1);
@@ -528,6 +531,7 @@ bool BattleStart(int floor, bool isBoss, bool IfHard) {
 	RoundBuffGroup.clear();
 	InitialRoundBuffGroup.clear();
 	IfBattleIsOver = false;
+	erase_if(MyObjectGroup, [](auto& item) {return item->GetDescribe() == "Special_ECR";});
 	int round = 1;
 	shared_ptr<Enemy> enemy = make_shared<Enemy>();
 	UpdateData(enemy);
