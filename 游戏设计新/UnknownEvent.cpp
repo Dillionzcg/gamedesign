@@ -95,7 +95,7 @@ bool Event_BossChallenge(int floor, bool IfHard) {
         cout << "它扬起焦黑的断刃，周遭的符文瞬间被剥离成虚无的死寂。" << endl;
         cout <<HUI<< "\n按回车继续..." << endl;
         SafeEnter();
-        return(BattleStart(floor * 10, false, IfHard));
+        return(BattleStart(floor * 10, true, IfHard));
 
     }
     else {
@@ -163,6 +163,7 @@ bool Event_ChooseLoot() {
     cout << "(选择一个3级藏品获得)" << endl;
     int choice = Safecin({ 1,2,3 }, false);
     MyObjectGroup.push_back(ObjectForChoosing[choice-1]);
+    ObjectForChoosing[choice - 1]->GainObject();
     Refresh();
 
 

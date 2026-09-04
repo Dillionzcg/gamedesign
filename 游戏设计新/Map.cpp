@@ -84,7 +84,7 @@ void PrintMaphelp() {
 }
 vector<int> Maptype;
 //int Map1[5] = { 1,2,5,3,4 };
-int Map1[5] = { 2,2,2,2,2 };
+int Map1[5] = { 3,3,3,3,3 };
 int Map2[6] = { 2,1,1,5,3,4 };
 int Map3[7] = { 2,2,1,1,5,3,4 };
 void UpdateMap(int floor, int step) {
@@ -508,7 +508,39 @@ void PrintMyCharacterStatus() {
 	cout << QING << "  ────────────────────────────────────────────────" << RESET << endl;
 	cout << RED_DARK << "    等级              :  Lv." << mycharacter.GetLevel() << RESET << endl;
 	cout << GOLD_BOLD << "    金币              :  " << mycharacter.GetCoins() << RESET << endl;
-
+	cout << endl;
+	cout << QING << "  【已获得藏品】" << RESET << endl;
+	cout << QING << "  ────────────────────────────────────────────────" << RESET << endl;
+	int i = 0;
+	cout << "    ";
+	for (auto& item : MyObjectGroup) {
+		switch (item->GetRarity()) {
+		case 1:
+			cout << BLUE_S;
+			cout << item->GetDescribe() << "  ";
+			i++;
+			break;
+		case 2:
+			cout << PURPLE_S;
+			cout << item->GetDescribe() << "  ";
+			i++;
+			break;
+		case 3:
+			cout << GOLD_S;
+			cout << item->GetDescribe() << "  ";
+			i++;
+			break;
+		default:
+			break;
+		}
+		if (i % 2 == 0) {
+			cout << endl;
+			cout << "    ";
+		}
+	}
+	if (i == 0) {
+		cout <<QING<< "\n    暂未获得藏品" << endl;
+	}
 	cout << endl;
 	cout << QING << "==================================================" << RESET << endl;
 	cout << QING << "                    按回车键返回" << RESET << endl;

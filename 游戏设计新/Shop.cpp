@@ -1,32 +1,49 @@
-#include"Shop.h"
+ï»¿#include"Shop.h"
+
 using namespace std;
 
-// ±ß¿òÑÕÉ«
+// è¾¹æ¡†é¢œè‰²
 const string BLUE_S = "\033[38;5;39m";
 const string PURPLE_S = "\033[35m";
 const string GOLD_S = "\033[33m";
 const string RESET_S = "\033[0m";
 
-//ÉÌµêÏµÍ³
-// ÉÌµê½çÃæµÄĞĞÊı
+//å•†åº—ç³»ç»Ÿ
+// å•†åº—ç•Œé¢çš„è¡Œæ•°
 int Shoprow = 40;
-// ÉÌµê½çÃæµÄÁĞÊı
+// å•†åº—ç•Œé¢çš„åˆ—æ•°
 int Shopcol = 90;
-// ÉÌµêµØÍ¼
-// Shopmap ¿ÉÒÔÀí½â³ÉÒ»ÕÅ¡°¿Õ°×»­²¼¡±¡£
+// å•†åº—åœ°å›¾
+// Shopmap å¯ä»¥ç†è§£æˆä¸€å¼ â€œç©ºç™½ç”»å¸ƒâ€ã€‚
 
 vector<vector<string>> Shopmap(
 	Shoprow,
 	vector<string>(Shopcol, " ")
 );
-
-//ÏòÉÌµêµØÍ¼Ğ´Èë¾ÓÖĞÎÄ×Ö
+int Safecin_Shop(const vector<int>& legal, bool ifblank) {
+	string chose;
+	forcheck.clear();
+	for (auto v : legal) forcheck.push_back(to_string(v));
+	while (true) {
+		getline(cin, chose);
+		if (ifblank && chose.empty()) return -1;
+		for (auto& item : forcheck) {
+			if (item == chose) return stoi(chose);
+		}
+		cout << "è¯·åœ¨";
+		for (auto& item : forcheck) cout << item << ",";
+		cout << "ä¸­é€‰æ‹©ä¸€ä¸ªæ•°å­—:";
+		if (ifblank) cout << "ï¼ˆæˆ–è€…å›è½¦ä»¥é€€å‡ºå•†åº—ï¼‰";
+		cout << flush;
+	}
+}
+//å‘å•†åº—åœ°å›¾å†™å…¥å±…ä¸­æ–‡å­—
 void PutShopText(int row, int col, int width, string text) {
-	// Èç¹ûÎÄ×ÖÌ«³¤£¬½Ø¶Ï
+	// å¦‚æœæ–‡å­—å¤ªé•¿ï¼Œæˆªæ–­
 	if ((int)text.length() > width) {
 		text = text.substr(0, width);
 	}
-	// ¼ÆËã¿ªÊ¼Î»ÖÃ
+	// è®¡ç®—å¼€å§‹ä½ç½®
 	int textWidth = 0;
 	for (int i = 0; i < (int)text.length();) {
 		unsigned char c = text[i];
@@ -40,7 +57,7 @@ void PutShopText(int row, int col, int width, string text) {
 		}
 	}
 	int start = col + (width - textWidth) / 2;
-	// Öğ¸ö×Ö·ûĞ´Èë
+	// é€ä¸ªå­—ç¬¦å†™å…¥
 	for (int i = 0; i < (int)text.length(); i++) {
 		if (start + i >= 0 && start + i < Shopcol) {
 			Shopmap[row][start + i] = string(1, text[i]);
@@ -51,7 +68,7 @@ void PutShopText(int row, int col, int width, string text) {
 void DrawShopItem(int startRow, int startCol, string ItemName,
 	int ItemPrice, int ItemNumber, int ItemRarity) {
 
-	// ¸ù¾İÏ¡ÓĞ¶ÈÑ¡Ôñ±ß¿òÑÕÉ«
+	// æ ¹æ®ç¨€æœ‰åº¦é€‰æ‹©è¾¹æ¡†é¢œè‰²
 	string Color;
 
 	if (ItemRarity == 1) {
@@ -63,42 +80,45 @@ void DrawShopItem(int startRow, int startCol, string ItemName,
 	else if (ItemRarity == 3) {
 		Color = GOLD_S;
 	}
+	else if (ItemRarity == 0) {
+		Color = HUI;
+	}
 
-	int width = 35;
+	int width = 40;
 	int nameHeight = 3;
 	int priceHeight = 2;
 
-	// ÉÏ±ß¿ò
+	// ä¸Šè¾¹æ¡†
 	for (int j = startCol; j < startCol + width; j++) {
 		Shopmap[startRow][j] = Color + "#" + RESET_S;
 	}
 
-	// ×óÓÒ±ß¿ò
+	// å·¦å³è¾¹æ¡†
 	for (int i = startRow + 1; i < startRow + nameHeight; i++) {
 		Shopmap[i][startCol] = Color + "#" + RESET_S;
 		Shopmap[i][startCol + width - 1] = Color + "#" + RESET_S;
 	}
 
-	// ÏÂ±ß¿ò
+	// ä¸‹è¾¹æ¡†
 	for (int j = startCol; j < startCol + width; j++) {
 		Shopmap[startRow + nameHeight - 1][j] =
 			Color + "#" + RESET_S;
 	}
 
-	// ÉÌÆ·Ãû³Æ
+	// å•†å“åç§°
 	PutShopText(startRow + 1, startCol + 1, width - 2, ItemName);
 
-	// ÉÌÆ·¼Û¸ñ¿ò
+	// å•†å“ä»·æ ¼æ¡†
 	int priceStartRow = startRow + nameHeight;
 
-	string PriceText = "ËùĞè½ğ±Ò£º" + to_string(ItemPrice);
+	string PriceText = "æ‰€éœ€é‡‘å¸ï¼š" + to_string(ItemPrice);
 	PutShopText(priceStartRow, startCol + 12, width - 2, PriceText);
 
-	// Ï¡ÓĞ¶È
-	string RarityText = "Ï¡ÓĞ¶È£º" + to_string(ItemRarity);
+	// ç¨€æœ‰åº¦
+	string RarityText = "ç¨€æœ‰åº¦ï¼š" + to_string(ItemRarity);
 	PutShopText(priceStartRow, startCol - 13, width - 2, RarityText);
 
-	// ÉÌÆ·±àºÅ
+	// å•†å“ç¼–å·
 	string NumberText = "[" + to_string(ItemNumber) + "]";
 
 	for (int i = 0; i < (int)NumberText.length(); i++) {
@@ -108,11 +128,64 @@ void DrawShopItem(int startRow, int startCol, string ItemName,
 		}
 	}
 }
-//»æÖÆÍêÕûÉÌµê
+//ç»˜åˆ¶å®Œæ•´å•†åº—
 
-void DrawShop() {
+void DrawingShop(vector<int> BoughtNum,vector<string> ItemName,vector<int> ItemPrice,vector<int> ItemRarity) {
+	for (int i = 0; i < Shoprow; i++) {
+		for (int j = 0; j < Shopcol; j++) {
+			Shopmap[i][j] = " ";
+		}
+	}
+	string ShopName = RED_WINE + "ã€ ç¬¦æ–‡ç§˜å¢ƒ Â· å•†åº— ã€‘";
+	PutShopText(2, 1, Shopcol - 2, ShopName);
+	for (int j = 1; j < Shopcol - 1; j++) {
+		Shopmap[4][j] = "=";
+	}
+	for (int i = 0; i < 12; i++) {
+		// è®¡ç®—å•†å“æ‰€åœ¨çš„è¡Œ
+		int itemRow = i / 2;
+		// è®¡ç®—å•†å“æ‰€åœ¨çš„åˆ—
+		int itemCol = i % 2;
+		//
+		int startRow =
+			6 + itemRow * 5;
+		//å•†å“çš„èµ·å§‹åˆ—
+		int startCol;
+		if (itemCol == 0) { startCol = 3; }
+		else { startCol = 48; }
+		//ç»˜åˆ¶å•†å“
+		if (find(BoughtNum.begin(), BoughtNum.end(), i) == BoughtNum.end()) {
+			DrawShopItem(startRow, startCol, ItemName[i], ItemPrice[i], i + 1, ItemRarity[i]);
+		}
+		else {
+			DrawShopItem(startRow, startCol, ItemName[i], ItemPrice[i], i + 1, 0);
+		}
 
-	//Çå¿ÕÉÌµê»­²¼
+	}
+	//æ˜¾ç¤ºå½“å‰é‡‘å¸
+	string CoinText =YELLOW+ "å½“å‰é‡‘å¸ï¼š" + to_string(mycharacter.GetCoins());
+	PutShopText(37, 1, Shopcol - 2, CoinText);
+
+	//æ˜¾ç¤ºæ“ä½œè¯´æ˜
+	string HelpText =RED_WINE+
+		"è¾“å…¥å•†å“ç¼–å·è´­ä¹°å•†å“ï¼Œå›è½¦ä»¥ç¦»å¼€å•†åº—ï¼Œè¾“å…¥0ä»¥æŸ¥çœ‹å½“å‰çŠ¶æ€";
+	PutShopText(38, 1, Shopcol - 8, HelpText);
+
+	//åˆ·æ–°å±å¹•
+
+	Refresh();
+
+	//è¾“å‡ºå•†åº—
+	for (int i = 0; i < Shoprow; i++) {
+		for (int j = 0; j < Shopcol; j++) {
+			cout << Shopmap[i][j];
+		}
+		cout << endl;
+	}
+}
+void ShopStart() {
+	bool IfRefreshShop = true;
+	//æ¸…ç©ºå•†åº—ç”»å¸ƒ
 
 	for (int i = 0; i < Shoprow; i++) {
 		for (int j = 0; j < Shopcol; j++) {
@@ -120,20 +193,20 @@ void DrawShop() {
 		}
 	}
 
-	//»æÖÆÉÌµê×îÍâ²ã±ß¿ò
+	//ç»˜åˆ¶å•†åº—æœ€å¤–å±‚è¾¹æ¡†
 
-	//ÉÌµê±êÌâ
-	string ShopName = "¡¾ ·ûÎÄÃØ¾³ ¡¤ ÉÌµê ¡¿";
+	//å•†åº—æ ‡é¢˜
+	string ShopName = RED_WINE+"ã€ ç¬¦æ–‡ç§˜å¢ƒ Â· å•†åº— ã€‘";
 
 	PutShopText(2, 1, Shopcol - 2, ShopName);
 
-	//±êÌâ×°ÊÎÏß
+	//æ ‡é¢˜è£…é¥°çº¿
 	for (int j = 1; j < Shopcol - 1; j++) {
 		Shopmap[4][j] = "=";
 	}
 	vector<shared_ptr<Object>> ObjectForSale;
 	vector<shared_ptr<Object>> ShopItems;
-	//¼ÓÈë4¸ö1¼¶²ØÆ·
+	//åŠ å…¥4ä¸ª1çº§è—å“
 	for (auto& item : ObjectPool1) {
 		if (!item->GetIfGotten()) {
 			ShopItems.push_back(item);
@@ -152,7 +225,7 @@ void DrawShop() {
 		}
 	}
 
-	//¼ÓÈë4¸ö2¼¶²ØÆ·
+	//åŠ å…¥4ä¸ª2çº§è—å“
 	ShopItems.clear();
 	for (auto& item : ObjectPool2) {
 		if (!item->GetIfGotten()) {
@@ -172,7 +245,7 @@ void DrawShop() {
 		}
 	}
 
-	//¼ÓÈë4¸ö3¼¶²ØÆ·
+	//åŠ å…¥4ä¸ª3çº§è—å“
 	ShopItems.clear();
 	for (auto& item : ObjectPool3) {
 		if (!item->GetIfGotten()) {
@@ -191,9 +264,9 @@ void DrawShop() {
 			ObjectForSale.push_back(ShopItems[ObjectChoice[i]]);
 		}
 	}
-	while ((int)ObjectForSale.size() < 12) {//Èç¹û²ØÆ·²»×ã12¸ö£¬Ôò²¹³ä
+	while ((int)ObjectForSale.size() < 12) {//å¦‚æœè—å“ä¸è¶³12ä¸ªï¼Œåˆ™è¡¥å……
 		vector<shared_ptr<Object>> ForFilling;
-		for (auto& item : ObjectPool3) {//ÓÅÏÈ²¹³ä3¼¶²ØÆ·
+		for (auto& item : ObjectPool3) {//ä¼˜å…ˆè¡¥å……3çº§è—å“
 			if (!item->GetIfGotten()) {
 				ForFilling.push_back(item);
 			}
@@ -202,7 +275,7 @@ void DrawShop() {
 			int RandomNumForFilling = rm.getnum(0, (int)ForFilling.size() - 1);
 			ObjectForSale.push_back(ForFilling[RandomNumForFilling]);
 		}
-		else {//Èç¹û3¼¶²ØÆ·²»×ã£¬Ôò²¹³ä2¼¶²ØÆ·
+		else {//å¦‚æœ3çº§è—å“ä¸è¶³ï¼Œåˆ™è¡¥å……2çº§è—å“
 			for (auto& item : ObjectPool2) {
 				if (!item->GetIfGotten()) {
 					ForFilling.push_back(item);
@@ -214,72 +287,64 @@ void DrawShop() {
 
 	}
 
-	//ÉÌÆ·Ãû³Æ
+	//å•†å“åç§°
 	vector<string> ItemName;
 	for (auto& item : ObjectForSale) {
 		ItemName.push_back(item->GetDescribe());
 	}
-	//ÉÌÆ·Ï¡ÓĞ¶È
+	//å•†å“ç¨€æœ‰åº¦
 	vector<int> ItemRarity;
 	for (auto& item : ObjectForSale) {
 		ItemRarity.push_back(item->GetRarity());
 	}
-	//ÉÌÆ·¼Û¸ñ
+	//å•†å“ä»·æ ¼
 	vector<int> ItemPrice;
 	for (auto& item : ObjectForSale) {
 		ItemPrice.push_back(item->GetNeedingCoin());
 	}
 
-
-	//µÚÆß²½£º»æÖÆ12¸öÉÌÆ·
-
-	for (int i = 0; i < 12; i++) {
-		// ¼ÆËãÉÌÆ·ËùÔÚµÄĞĞ
-		int itemRow = i / 2;
-		// ¼ÆËãÉÌÆ·ËùÔÚµÄÁĞ
-		int itemCol = i % 2;
-		//
-		int startRow =
-			6 + itemRow * 5;
-		//ÉÌÆ·µÄÆğÊ¼ÁĞ
-		int startCol;
-		if (itemCol == 0) { startCol = 5; }
-		else { startCol = 50; }
-		//»æÖÆÉÌÆ·
-		DrawShopItem(startRow, startCol, ItemName[i], ItemPrice[i], i + 1, ItemRarity[i]);
-	}
-	int TestCoin = 10;
-	//ÏÔÊ¾µ±Ç°½ğ±Ò
-	string CoinText = "µ±Ç°½ğ±Ò£º" + to_string(TestCoin);
-	PutShopText(37, 1, Shopcol - 2, CoinText);
-
-	//ÏÔÊ¾²Ù×÷ËµÃ÷
-	string HelpText =
-		"ÊäÈëÉÌÆ·±àºÅ¹ºÂòÉÌÆ·£¬ÊäÈë0Àë¿ªÉÌµê";
-	PutShopText(38, 1, Shopcol - 2, HelpText);
-
-	//Ë¢ĞÂÆÁÄ»
-
-	Refresh();
-
-	//Êä³öÉÌµê
-
-	for (int i = 0; i < Shoprow; i++) {
-		for (int j = 0; j < Shopcol; j++) {
-			cout << Shopmap[i][j];
+	vector<int> BoughtNum;
+	vector<int> LegalShopChoice = {0,1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+	//ç¬¬ä¸ƒæ­¥ï¼šç»˜åˆ¶12ä¸ªå•†å“
+	while (1) {
+		if (IfRefreshShop) {
+			DrawingShop(BoughtNum, ItemName, ItemPrice, ItemRarity);
 		}
-		cout << endl;
+		int BuyingChoice=Safecin_Shop(LegalShopChoice, true)-1;
+		if (BuyingChoice == -2) {
+			IfRefreshShop = true;
+			break;
+		}
+		else if (BuyingChoice == -1) {
+			PrintMyCharacterStatus();
+			IfRefreshShop = true;
+			continue;
+		}
+		else {
+			if (ObjectForSale[BuyingChoice]->GetIfGotten()) {
+				cout <<YELLOW<< "å·²è´­ä¹°è¯¥è—å“ï¼è¯·é‡æ–°é€‰æ‹©ã€‚" << endl;
+				cout << HUI << "æŒ‰å›è½¦ç»§ç»­..." << endl;
+				IfRefreshShop = true;
+				SafeEnter();
+			}
+			else if (mycharacter.GetCoins() >= ItemPrice[BuyingChoice]) {
+				mycharacter.UsingCoins(ItemPrice[BuyingChoice]);
+				MyObjectGroup.push_back(ObjectForSale[BuyingChoice]);
+				ObjectForSale[BuyingChoice]->GainObject();
+				BoughtNum.push_back(BuyingChoice);
+				DrawingShop(BoughtNum, ItemName, ItemPrice, ItemRarity);
+				cout << YELLOW << "å·²æ¶ˆè€— "<<ItemPrice[BuyingChoice]<<" æšé‡‘å¸è´­ä¹° " << ItemRarity[BuyingChoice] << "çº§ è—å“" << endl;
+				cout << GREEN_BRIGHT << ItemName[BuyingChoice] << endl;
+				cout <<HUI<< "è¯·ç»§ç»­è¾“å…¥ä»¥è´­ä¹°å•†å“...(æˆ–å›è½¦ä»¥ç¦»å¼€å•†åº—ï¼Œè¾“å…¥0ä»¥æŸ¥çœ‹å½“å‰çŠ¶æ€)" << endl;
+				IfRefreshShop = false;
+			}
+			else {
+				cout << YELLOW << "é‡‘å¸ä¸è¶³ï¼è¯·é‡æ–°é€‰æ‹©ã€‚" << endl;
+				cout << HUI << "æŒ‰å›è½¦ç»§ç»­..." << endl;
+				IfRefreshShop = true;
+				SafeEnter();
+			}
+		}
 	}
 }
 
-//ÉÌµê²âÊÔ
-
-void ShopTest() {
-	// »æÖÆÉÌµê
-	DrawShop();
-	//µÈ´ıÊäÈë
-	cout << endl;
-	cout << "ÊäÈë0ÍË³ö²âÊÔ£º" << endl;
-	vector<int> legal = { 0 };
-	Safecin(legal, false);
-}

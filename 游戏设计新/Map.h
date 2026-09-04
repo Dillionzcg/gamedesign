@@ -1,8 +1,7 @@
 ﻿#pragma once
 
 #include "basis.h"
-#include"ClassMycharacter_Enemy.h"
-#include"ClassSkill_RoundBuff.h"
+#include"MainProcess.h"
 
 
 void DrawBlock(int blocktype, int line);

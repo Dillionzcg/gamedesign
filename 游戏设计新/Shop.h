@@ -1,24 +1,21 @@
-#pragma once
+ï»¿#pragma once
 
 #include "basis.h"
-#include "ClassObject.h"
+#include"MainProcess.h"
 
 
 using namespace std;
 
-// ±ß¿òÑÕÉ«ÉùÃ÷
+// è¾¹æ¡†é¢œè‰²å£°æ˜
 extern const string BLUE_S;
 extern const string PURPLE_S;
 extern const string GOLD_S;
 extern const string RESET_S;
 
-// ÉÌµêÏµÍ³Ïà¹ØÈ«¾Ö±äÁ¿ÉùÃ÷
+// å•†åº—ç³»ç»Ÿç›¸å…³å…¨å±€å˜é‡å£°æ˜
 extern int Shoprow;
 extern int Shopcol;
 extern vector<vector<string>> Shopmap;
 
-// º¯ÊıÉùÃ÷
-void PutShopText(int row, int col, int width, string text);
-void DrawShopItem(int startRow, int startCol, string ItemName, int ItemPrice, int ItemNumber, int ItemRarity);
-void DrawShop();
-void ShopTest();
+// å‡½æ•°å£°æ˜
+void ShopStart();

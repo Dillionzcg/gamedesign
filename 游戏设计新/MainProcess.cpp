@@ -454,6 +454,7 @@ void PostWarSettleMent(bool IfBoss) {
 	int ObjectNum = rm.getnum(0, (int)ObjectPoolForRandom.size() - 1);
 	shared_ptr<Object> RandomObject = ObjectPoolForRandom[ObjectNum];
 	MyObjectGroup.push_back(RandomObject);
+	RandomObject->GainObject();
 	cout << QING;
 	cout << RandomObject->GetRarity() << " 级藏品:" << endl;
 	cout << GREEN_BRIGHT;
@@ -486,6 +487,7 @@ void PostWarSettleMent(bool IfBoss) {
 		int ObjectNum_2 = rm.getnum(0, (int)ObjectPoolForRandom_2.size() - 1);
 		shared_ptr<Object> RandomObject_2 = ObjectPoolForRandom_2[ObjectNum_2];
 		MyObjectGroup.push_back(RandomObject_2);
+		RandomObject_2->GainObject();
 		cout << QING;
 		cout << RandomObject_2->GetRarity() << " 级藏品:" << endl;
 		cout << GREEN_BRIGHT;
@@ -582,7 +584,8 @@ int MapChoose(int floor, int step, int type) {
 			cout << "进入未知事件节点，按回车继续...（或输入0以查看当前状态，输入9以存档）" << endl;
 			break;
 		case 3://商店节点
-			cout << "进入商店节点，按回车继续...（或输入0以查看当前状态，输入9以存档）" << endl;
+			cout<<YELLOW << "请在进入商店节点前确保已将窗口全屏" << endl;
+			cout <<HUI<< "进入商店节点，按回车继续...（或输入0以查看当前状态，输入9以存档）" << endl;
 			break;
 		case 5://双节点
 			cout << "进入双节点，请选择节点。输入1以选择战斗节点，输入2以选择未知事件节点：（或输入0以查看当前状态，输入9以存档）" << endl;
@@ -661,7 +664,7 @@ void MainProgress() {
 				break;
 			case 3://商店节点
 				IfSave = MapChoose(floor, step, 3);
-				PrintEventGround(3);
+				ShopStart();
 				break;
 			case 5://双节点
 				IfSave = MapChoose(floor, step, 5);

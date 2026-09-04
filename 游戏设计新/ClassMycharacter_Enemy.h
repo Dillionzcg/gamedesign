@@ -65,6 +65,7 @@ public:
 
     void InitialMaxHPDevelopment(double num);
     void InitialAttackDevelopment(double num);
+    void UsingCoins(int num);
 
 private:
     int InitialMaxHP = 200;
@@ -152,6 +153,7 @@ public:
     void EnergyIncrease(int num);
     void MustCritical();
     void Re_CriticalRate();
+
 
 private:
     int InitialMaxHP = 0;

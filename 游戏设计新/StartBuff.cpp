@@ -13,8 +13,8 @@ void DrawBuffCard(int index, const string& icon, const string& name,
     const string& desc, int indent) {
     const int W = 40;
     const string CORNER = "*", H_LINE = "*", V_LINE = "|";
-    const string borderColor = HUI;         // 边框星号红色加粗
-    const string vColor = HUI;              // 竖线红色加粗
+    const string borderColor = DARK_GOLD;         // 边框星号红色加粗
+    const string vColor = DARK_GOLD;              // 竖线红色加粗
     const string textColor = RED_BOLD;   
     const string descColor = GREEN_BRIGHT;
     string firstLine =  to_string(index) + "." + icon + name;

@@ -176,10 +176,14 @@ void MyCharacter::ReSetNum() {
     InitialMaxHP = 300;
     InitialAttack = 80;
     InitialDefense = 50;
-    Coins = 0;
+    Coins = 100;
     Level = 1;
     IsAlive = true;
     SkillChoiceNum = 3;
+}
+
+void MyCharacter::UsingCoins(int num) {
+    Coins -= num;
 }
 
 void MyCharacter::InitialMaxHPDevelopment(double num) { InitialMaxHP *= (1.0 + num); }
