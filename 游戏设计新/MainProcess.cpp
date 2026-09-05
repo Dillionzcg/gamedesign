@@ -799,6 +799,21 @@ void MainProgress() {
 								item->GainObject();
 							}
 						}
+						for (auto& item : ObjectPool1) {
+							if (item->GetDescribe() == OBJECTDESCRIBE) {
+								item->GainObject();
+							}
+						}
+						for (auto& item : ObjectPool2) {
+							if (item->GetDescribe() == OBJECTDESCRIBE) {
+								item->GainObject();
+							}
+						}
+						for (auto& item : ObjectPool3) {
+							if (item->GetDescribe() == OBJECTDESCRIBE) {
+								item->GainObject();
+							}
+						}
 					}
 					int SPECIALNUM;
 					inFile >> SPECIALNUM;
