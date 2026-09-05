@@ -34,3 +34,4 @@ extern vector<shared_ptr<Object>> ObjectPool1; // 初级藏品池
 extern vector<shared_ptr<Object>> ObjectPool2; // 中级藏品池
 extern vector<shared_ptr<Object>> ObjectPool3; // 高级藏品池
 extern vector<shared_ptr<Object>> MyObjectGroup; // 我方藏品组
+extern vector<shared_ptr<Object>> TotalObjectGroup_ForSaving;//总藏品池，包括特殊藏品

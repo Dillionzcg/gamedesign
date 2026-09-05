@@ -12,11 +12,13 @@ public:
     string GetDescribe();
     string GetDescribethroughNum(int num);
     string GetName();
-
+    int GetNum();
+   
     static void RandomChangeRune();
     static void ChangetoHope();
     static void ChangetoDesperation();
-
+    static void ChangeRuneByNum(int num);
+   
 private:
     int ID = 0;
     string name = "0";

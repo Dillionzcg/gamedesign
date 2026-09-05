@@ -156,6 +156,9 @@ int MyCharacter::GetInitialHeal() { return InitialHeal; }
 int MyCharacter::GetHealHP() { return HealHP; }
 int MyCharacter::GetCoins() { return Coins; }
 int MyCharacter::GetLevel() { return Level; }
+int MyCharacter::GetInitialAttack() { return InitialAttack; }
+int MyCharacter::GetInitialDefense() { return InitialDefense; }
+int MyCharacter::GetInitialMaxHP() { return InitialMaxHP; }
 
 void MyCharacter::BeingAttacked(int damage, std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup) {
     CalculateMyNum(RoundBuffGroup);
@@ -222,6 +225,13 @@ void MyCharacter::UsingCoins(int num) {
 void MyCharacter::InitialMaxHPDevelopment(double num) { InitialMaxHP *= (1.0 + num); }
 void MyCharacter::InitialAttackDevelopment(double num) { InitialAttack *= (1.0 + num); }
 
+void MyCharacter::ReadData(int inihp, int iniatk, int inidfs, int level, int coins) {
+    InitialMaxHP = inihp;
+    InitialAttack = iniatk;
+    InitialDefense = inidfs;
+    Level = level;
+    Coins = coins;
+}
 
 
 Enemy::Enemy(int hp, int atk, int dfs, std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup)

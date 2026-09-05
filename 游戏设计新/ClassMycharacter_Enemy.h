@@ -22,6 +22,10 @@ public:
     int GetCurrentAttack();
     int GetCurrentDefense();
 
+    int GetInitialMaxHP();
+    int GetInitialAttack();
+    int GetInitialDefense();
+
     int GetCurrentEnergy();
     int GetMaxEnergy();
     int GetInitialEnergy();
@@ -65,6 +69,8 @@ public:
     void InitialMaxHPDevelopment(double num);
     void InitialAttackDevelopment(double num);
     void UsingCoins(int num);
+
+    void ReadData(int inihp, int iniatk, int inidfs, int level, int coins);
 
 private:
     int InitialMaxHP = 300;

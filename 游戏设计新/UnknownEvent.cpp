@@ -1,7 +1,7 @@
 ﻿#include"UnknownEvent.h"
 
 using namespace std;
-
+bool IfChangingShop = false;
 // 在文件内添加一个小工具函数用于居中打印标题
 // 辅助函数：计算 UTF-8 字符串在终端中的实际显示宽度
 static inline int GetDisplayWidth(const string& str) {
@@ -337,7 +337,16 @@ bool Event_Sacrifice() {
             }
             cout << endl;
             cout <<PURPLE_DARK<< "血量上限降低 " << hpCost << "%" << endl;
-            MyObjectGroup.push_back(make_shared<Object>(0, "M", "H", "Special,MyHPDecrease", -hpCost/100.0));
+            if (current == 1) {
+                MyObjectGroup.push_back(make_shared<Object>(0, "M", "H", "Special,MyHPDecrease1", -0.03));
+            }
+            else if (current == 2) {
+                MyObjectGroup.push_back(make_shared<Object>(0, "M", "H", "Special,MyHPDecrease2", -0.05));
+            }
+            else {
+                MyObjectGroup.push_back(make_shared<Object>(0, "M", "H", "Special,MyHPDecrease3", -0.1));
+            }
+
             RandomObject();
 
             if (done[0] && done[1] && done[2]) {
@@ -562,6 +571,7 @@ bool Event_SwapNodes(int floor) {
         // 离开商店后的场景文案
         Refresh();
         ChangeShopToBattle(floor);
+        IfChangingShop = true;
         cout << RED_BOLD;
         cout << endl;
         cout << "Wo das Schicksal gewoben wird, bricht das Blut durch den Schleier." << endl;

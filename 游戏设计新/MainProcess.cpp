@@ -610,6 +610,39 @@ bool BattleStart(int floor, bool isBoss, bool IfHard) {
 	}
 }
 
+int SaveData(int floor,int step,bool IfHard) {
+	ofstream outFile("gamedata.txt");
+	if (!outFile.is_open()) {
+		cerr << "存档文件打开失败!" << endl;
+		return 1;
+	}
+	outFile << mycharacter.GetInitialMaxHP()<<endl;
+	outFile << mycharacter.GetInitialAttack() << endl;
+	outFile << mycharacter.GetInitialDefense() << endl;
+	outFile << mycharacter.GetLevel() << endl;
+	outFile << mycharacter.GetCoins() << endl;
+	outFile << floor << endl;
+	outFile << step << endl;
+	outFile << IfHard << endl;
+	outFile << IfChangingShop << endl;
+	outFile << IfRuneRedemptionUsed << endl;
+	outFile << RuneNow->GetNum() << endl;
+	int NormalObjectNum = (int)MyObjectGroup.size();
+	outFile << NormalObjectNum << endl;
+	for (auto& item : MyObjectGroup) {
+		outFile << item->GetDescribe() << endl;
+	}
+	int RuneObjectNum = (int)RuneDevelopment.size();
+	outFile << RuneObjectNum << endl;
+	for (auto& item : RuneDevelopment) {
+		outFile << item->GetDescribe() << endl;
+	}
+	outFile.close();
+	cout << RED_BOLD << "存档成功！" << endl;
+	cout << HUI << "按回车返回标题界面..." << endl;
+	SafeEnter();
+	return 0;
+}
 
 int MapChoose(int floor, int step, int type) {
 	vector<int> MapLegalChoice;
@@ -681,6 +714,14 @@ void GainingCoinsWhenMoving() {
 		mycharacter.GainCoin(2);
 	}
 }
+bool isFileEmpty(std::ifstream& file) {
+	if (!file.is_open()) return true;
+	auto currentPos = file.tellg();
+	file.seekg(0, std::ios::end);
+	bool empty = (file.tellg() == 0);
+	file.seekg(currentPos);
+	return empty;
+}
 void MainProgress() {
 	while (1) {
 		//程序运行总循环，输了之后会回到这里
@@ -690,30 +731,98 @@ void MainProgress() {
 		bool Ifwin = true;
 		int ModeChoice = 0;
 		bool IfHard = false;
-		ModeChoice = showTitle();
-		if (ModeChoice == 1) {
-			IfHard = false;
+		bool IfRead = false;
+		while (1) {
+			ModeChoice = showTitle();
+			if (ModeChoice == 1) {
+				IfHard = false;
+			}
+			else if (ModeChoice == 2) {
+				IfHard = true;
+			}
+			if (ModeChoice != 3) {
+				mycharacter.ReSetNum();
+				RoundBuffGroup.clear();
+				InitialRoundBuffGroup.clear();
+				MyObjectGroup.clear();
+				Object::ResetObjectGroup();
+				int selectedBuff = enterbuff();
+				switch (selectedBuff) {
+				case 0:
+					mycharacter.InitialAttackDevelopment(0.1);
+					break;
+				case 1:
+					mycharacter.InitialMaxHPDevelopment(0.3);
+					break;
+				case 2:
+					mycharacter.GainCoin(6);
+					break;
+				}
+				break;
+			}
+			else {
+				mycharacter.ReSetNum();
+				RoundBuffGroup.clear();
+				InitialRoundBuffGroup.clear();
+				MyObjectGroup.clear();
+				Object::ResetObjectGroup();
+				ifstream inFile("gamedata.txt");
+				if (isFileEmpty(inFile)) {
+					cout << RED_BOLD << "  暂无存档" << endl;
+					cout << HUI << "  按回车重新加载标题界面..." << endl;
+					SafeEnter();
+				}
+				else {
+					int BH, BA, BD, LV, COIN, RUNE;
+					inFile >> BH
+						>> BA
+						>> BD
+						>> LV
+						>> COIN
+						>> floor
+						>> step;
+					thisfloor = floor;
+					mycharacter.ReadData(BH, BA, BD, LV, COIN);
+					inFile >> IfHard
+						>> IfChangingShop
+						>> IfRuneRedemptionUsed;
+					inFile >> RUNE;
+					RuneManager::ChangeRuneByNum(RUNE);
+					int NORMOLNUM;
+					inFile >> NORMOLNUM;
+					string OBJECTDESCRIBE;
+					for (int i = 0;i < NORMOLNUM;i++) {
+						inFile >> OBJECTDESCRIBE;
+						for (auto& item : TotalObjectGroup_ForSaving) {
+							if (item->GetDescribe() == OBJECTDESCRIBE) {
+								MyObjectGroup.push_back(item);
+								item->GainObject();
+							}
+						}
+					}
+					int SPECIALNUM;
+					inFile >> SPECIALNUM;
+					for (int i = 0;i < SPECIALNUM;i++) {
+						inFile >> OBJECTDESCRIBE;
+						for (auto& item : TotalObjectGroup_ForSaving) {
+							if (item->GetDescribe() == OBJECTDESCRIBE) {
+								RuneDevelopment.push_back(item);
+								item->GainObject();
+							}
+						}
+					}
+					mycharacter.CalculateMyNum(RoundBuffGroup);
+					cout << RED_BOLD << "  读档成功！" << endl;
+					cout << HUI << "  按回车继续..." << endl;
+					SafeEnter();
+					IfRead = true;
+					break;
+				}
+
+			}
 		}
-		else if (ModeChoice == 2) {
-			IfHard = true;
-		}
-		mycharacter.ReSetNum();
-		RoundBuffGroup.clear();
-		InitialRoundBuffGroup.clear();
-		MyObjectGroup.clear();
-		Object::ResetObjectGroup();
-		int selectedBuff = enterbuff();
-		switch (selectedBuff) {
-		case 0:
-			mycharacter.InitialAttackDevelopment(0.1);
-			break;
-		case 1:
-			mycharacter.InitialMaxHPDevelopment(0.3);
-			break;
-		case 2:
-			mycharacter.GainCoin(6);
-			break;
-		}
+
+
 		while (1) {
 			//一局游戏循环
 			if (thisfloor != floor) {
@@ -721,31 +830,55 @@ void MainProgress() {
 				if (RuneNow->GetName() == "救赎") {
 					IfRuneRedemptionUsed = false;
 				}
+				IfChangingShop = false;
 			}
 			thisfloor = floor;
 			int IfSave = 0;
 			Ifwin = true;
 			UpdateMap(floor, step);
-			GainingCoinsWhenMoving();
+			if (!IfRead) {
+				GainingCoinsWhenMoving();
+			}
+			IfRead = false;
 			switch (Maptype[step]) {
 			case 1://普通战斗
 				IfSave = MapChoose(floor, step, 1);
+				if (IfSave == 9) {
+					SaveData(floor, step, IfHard);
+					break;
+				}
 				Ifwin = BattleStart(floor, false, IfHard);
 				break;
 			case 4://boss战斗
 				IfSave = MapChoose(floor, step, 4);
+				if (IfSave == 9) {
+					SaveData(floor, step, IfHard);
+					break;
+				}
 				Ifwin = BattleStart(floor, true, IfHard);
 				break;
 			case 2://非战斗节点
 				IfSave = MapChoose(floor, step, 2);
+				if (IfSave == 9) {
+					SaveData(floor, step, IfHard);
+					break;
+				}
 				Ifwin = EnterUnknownEvent(floor,IfHard);
 				break;
 			case 3://商店节点
 				IfSave = MapChoose(floor, step, 3);
+				if (IfSave == 9) {
+					SaveData(floor, step, IfHard);
+					break;
+				}
 				ShopStart();
 				break;
 			case 5://双节点
 				IfSave = MapChoose(floor, step, 5);
+				if (IfSave == 9) {
+					SaveData(floor, step, IfHard);
+					break;
+				}
 				if (IfSave == 1) {
 					Ifwin = BattleStart(floor, false, IfHard);
 				}
@@ -754,13 +887,14 @@ void MainProgress() {
 				}
 				break;
 			}
-			if (!Ifwin) {
+			if (!Ifwin||IfSave==9) {
 				break;
 			}
 			step++;
 			if (step >= Maptype.size() && floor < 3) {
 				step = 0;
 				floor++;
+
 			}
 			if (step >= Maptype.size() && floor == 3) {
 				break;
