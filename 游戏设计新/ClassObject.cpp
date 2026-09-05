@@ -3,7 +3,12 @@
 // Object 类成员函数实现
 Object::Object(int rarity, string camp, string type, string describe, double buffnum)
     : Rarity(rarity), Camp(camp), Type(type), Describe(describe), BuffNum(buffnum) {
-    NeedingCoin = RarityCoin[Rarity - 1];
+    if (rarity != 0) {
+        NeedingCoin = RarityCoin[Rarity - 1];
+    }
+    else {
+        NeedingCoin = 0;
+    }
 }
 
 int Object::GetRarity() {

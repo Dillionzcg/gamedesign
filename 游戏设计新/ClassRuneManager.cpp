@@ -21,8 +21,7 @@ int RuneManager::GetNum() {
 }
 void RuneManager::RandomChangeRune() {
     int num = rm.getnum(0, 9);
-    RuneNow=make_shared<RuneManager>(9);
-    //RuneNow = make_shared<RuneManager>(num);
+    RuneNow = make_shared<RuneManager>(num);
 }
 
 void RuneManager::ChangetoHope() {

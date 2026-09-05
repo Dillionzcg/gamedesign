@@ -19,8 +19,8 @@ public:
     string GetCamp();
     
 private:
-    int Rarity;                 // 稀有度,1/2/3
     vector<int> RarityCoin = { 2, 4, 6 }; // 稀有度对应金币数
+    int Rarity;                 // 稀有度,1/2/3
     int NeedingCoin;            // 购买所需金币数
     string Describe;            // 藏品描述
     string Camp;                // 阵营，"M"为我方，"E"为敌方
