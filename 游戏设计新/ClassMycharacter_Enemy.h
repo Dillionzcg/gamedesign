@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include"basis.h"
-#include "ClassSkill_RoundBuff.h"
-#include"ClassObject.h"
+#include"ClassSkill_RoundBuff.h"
 
 // 前向声明
 class Enemy;
@@ -152,6 +151,7 @@ public:
     void CriticalRateCrease(int num);
     void EnergyIncrease(int num);
     void SkillMustCritical();
+    void MustNotCritical();
     void Re_CriticalRate();
 
 
@@ -172,6 +172,7 @@ private:
 	double BasicCRdevelopment = 0;
     int BasicENdevelopment = 0;
 	double BasicCHdevelopment = 0;
+    int BasicIEdevelopment = 0;
 
     double RoundAttackDevelopment = 0;
     double RoundDefenseDevelopment = 0;
@@ -179,9 +180,10 @@ private:
     int CurrentEnergy = 0;
     int InitialEnergy = 0;
     int MaxEnergy = 6;
-    int CriticalRate = 20;
+    int CriticalRate = 30;
     int CriticalRate_Tem = 0;
-    double CriticalHarm = 2;
+    double CriticalHarm = 2.5;
     bool IsAlive = true;
     bool MustCritical = false;
+    bool MustNotCriticalBool = false;
 };

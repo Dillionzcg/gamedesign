@@ -16,9 +16,9 @@ void ChangeShopToBattle(int floor);
 
 extern vector<vector<string>> Themap;
 extern vector<int> Maptype;
-extern int Map1[5];
-extern int Map2[6];
-extern int Map3[7];
+extern vector<int> Map1;
+extern vector<int> Map2;
+extern vector<int> Map3;
 extern int Battlerow;
 extern int Battlecol;
 extern bool IfBattleIsOver;

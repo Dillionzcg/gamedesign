@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "basis.h"
+#include "ClassObject.h"
 
 using namespace std;
 
@@ -24,8 +25,8 @@ private:
     vector<string> RuneList = {
         // 通常(0~9)
         "//死仇：我方和敌方的攻击力+30%//",
-        "//瘟疫：我方和敌方的攻击力-30%//",
-        "//崩溃：我方和敌方的防御力-50%//",
+        "//瘟疫：我方和敌方的攻击力-20%//",
+        "//崩溃：我方和敌方的防御力-30%//",
         "//狂热：我方和敌方技能条初始能量+2//",
         "//暗市：该层的商店不再展示商品详细信息，但该层商店的售价-50%//",
         "//迷雾：该层不再提前展示敌人信息，但可选择的技能+2//",
@@ -46,3 +47,4 @@ private:
 
 // 声明全局变量（供其他文件使用）
 extern shared_ptr<RuneManager> RuneNow;
+extern vector<shared_ptr<Object>> RuneDevelopment;

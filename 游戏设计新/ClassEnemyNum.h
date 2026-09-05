@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include"basis.h"
+#include"ClassRuneManager.h"
 
 using namespace std;
 

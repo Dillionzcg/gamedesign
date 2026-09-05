@@ -182,6 +182,15 @@ void DrawingShop(vector<int> BoughtNum,vector<string> ItemName,vector<int> ItemP
 		}
 		cout << endl;
 	}
+	if (RuneNow->GetName() == "暗市") {
+		cout<<RED_BOLD << "受符文//暗市//影响，商品信息不可见，但是商品售价-50%。" << endl;
+	}
+	else if (RuneNow->GetName() == "繁荣") {
+		cout << RED_BOLD << "受符文//繁荣//影响，商品售价+50%。" << endl;
+	}
+	else if (RuneNow->GetName() == "荒芜") {
+		cout << RED_BOLD << "受符文//荒芜//影响，商品售价-50%。" << endl;
+	}
 }
 void ShopStart() {
 	bool IfRefreshShop = true;
@@ -303,7 +312,12 @@ void ShopStart() {
 	//商品名称
 	vector<string> ItemName;
 	for (auto& item : ObjectForSale) {
-		ItemName.push_back(item->GetDescribe());
+		if (RuneNow->GetName() == "暗市") {
+			ItemName.push_back("?");
+		}
+		else {
+			ItemName.push_back(item->GetDescribe());
+		}
 	}
 	//商品稀有度
 	vector<int> ItemRarity;
@@ -313,7 +327,15 @@ void ShopStart() {
 	//商品价格
 	vector<int> ItemPrice;
 	for (auto& item : ObjectForSale) {
-		ItemPrice.push_back(item->GetNeedingCoin());
+		if (RuneNow->GetName() == "暗市"|| RuneNow->GetName() == "荒芜") {
+			ItemPrice.push_back(item->GetNeedingCoin()*0.5);
+		}
+		else if (RuneNow->GetName() == "繁荣") {
+			ItemPrice.push_back(item->GetNeedingCoin()*1.5);
+		}
+		else {
+			ItemPrice.push_back(item->GetNeedingCoin());
+		}
 	}
 
 	vector<int> BoughtNum;
@@ -347,7 +369,7 @@ void ShopStart() {
 				BoughtNum.push_back(BuyingChoice);
 				DrawingShop(BoughtNum, ItemName, ItemPrice, ItemRarity);
 				cout << YELLOW << "已消耗 "<<ItemPrice[BuyingChoice]<<" 枚金币购买 " << ItemRarity[BuyingChoice] << "级 藏品" << endl;
-				cout << GREEN_BRIGHT << ItemName[BuyingChoice] << endl;
+				cout << GREEN_BRIGHT << ObjectForSale[BuyingChoice]->GetDescribe() << endl;
 				cout <<WHITE<< "请继续输入以购买商品...(或回车以离开商店，输入0以查看当前状态)" << endl;
 				IfRefreshShop = false;
 			}

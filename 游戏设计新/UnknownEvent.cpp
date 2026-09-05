@@ -212,6 +212,9 @@ void RandomObject() {
                 ObjectPoolForRandom.push_back(item);
             }
         }
+        if (ObjectPoolForRandom.empty()) {
+            ObjectPoolForRandom.push_back(make_shared<Object>(1, "M", "HE", "Labung：每点治疗能量治疗量+10", 5));
+        }
     }
     else if (RandomNumForObject <= 60) {
         for (auto& item : ObjectPool2) {
@@ -219,12 +222,18 @@ void RandomObject() {
                 ObjectPoolForRandom.push_back(item);
             }
         }
+        if (ObjectPoolForRandom.empty()) {
+            ObjectPoolForRandom.push_back(make_shared<Object>(2, "M", "HE", "Wohl：每点治疗能量治疗量+20", 20));
+        }
     }
     else {
         for (auto& item : ObjectPool3) {
             if (!item->GetIfGotten()) {
                 ObjectPoolForRandom.push_back(item);
             }
+        }
+        if (ObjectPoolForRandom.empty()) {
+            ObjectPoolForRandom.push_back(make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗量+30", 30));
         }
     }
     int ObjectNum = rm.getnum(0, (int)ObjectPoolForRandom.size() - 1);
@@ -506,7 +515,7 @@ bool Event_SwapNodes(int floor) {
     cout << "斑驳的石柱后隐匿着一处狭小的凹室，堆满了沉重的货箱与成捆的羊皮纸。" << endl;
     cout << "一个身着华贵但沾满污渍的商人正蹲在阴影中，用一把小刀仔细地刮擦着一枚金币上的铜锈。" << endl;
     cout << "察觉到你的脚步声，他猛地抬起头，露出一张堆满意外与狂喜的面孔，却死死紧闭着双唇，不发一言。" << endl;
-    cout << "他颤抖着将三枚沉甸甸的发烫金币推到你面前，双手疯狂地比划着，眼中闪烁着狂热而贪婪的光芒。" << endl;
+    cout << "他颤抖着将四枚沉甸甸的发烫金币推到你面前，双手疯狂地比划着，眼中闪烁着狂热而贪婪的光芒。" << endl;
     cout << "石壁上用沾血的炭笔草草勾勒出一行冰冷的符文：" << endl;
     cout << RED_BOLD;
     cout << endl;
@@ -515,7 +524,7 @@ bool Event_SwapNodes(int floor) {
     cout << endl;
     cout << "(交易总能找到出路，哪怕是在唯有长剑统治的地方。)" << endl;
     cout << endl;
-    cout <<HUI<< "1. 获得3枚金币，该节点改为商店节点，但会触发某种效果（当前金币数："<<mycharacter.GetCoins()<< "）" << endl;
+    cout <<HUI<< "1. 获得4枚金币，该节点改为商店节点，但会触发某种效果（当前金币数："<<mycharacter.GetCoins()<< "）" << endl;
     cout << "2. 拒绝交易，转身离去" << endl;
 
     int choice = Safecin({ 1,2 }, false);
@@ -527,11 +536,11 @@ bool Event_SwapNodes(int floor) {
         cout << endl;
         cout << "（荒野中的契约带来祝福，与不为人知的转机。）" << endl;
         cout << endl;
-        cout << "你收下了那三枚发烫的金币，商人见状，嘴角咧开一个异样森冷而诡异的笑容。" << endl;
+        cout << "你收下了那四枚发烫的金币，商人见状，嘴角咧开一个异样森冷而诡异的笑容。" << endl;
         cout << "他依然没有发出半点声音，只是飞快地将桌上那张错综复杂的地图合拢，身体因极度的兴奋而剧烈颤抖。" << endl;
         //此处获得三个金币并更换战斗节点
-        mycharacter.GainCoin(3);
-        cout <<YELLOW<< "\n 获得 3 金币" << endl;
+        mycharacter.GainCoin(4);
+        cout <<YELLOW<< "\n 获得 4 金币" << endl;
     }
     else {
         cout << RED_BOLD;

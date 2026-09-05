@@ -84,17 +84,17 @@ void PrintMaphelp() {
 }
 vector<int> Maptype;
 //int Map1[5] = {2,2,2,2,2};
-int Map1[5] = {1,2,5,3,4};
-int Map2[6] = {2,1,1,5,3,4};
-int Map3[7] = {2,2,1,1,5,3,4};
+vector<int> Map1 = {1,2,1,5,3,4};
+vector<int> Map2 = {2,1,2,1,5,3,4};
+vector<int> Map3 = {2,2,1,1,2,5,3,4};
 void ChangeShopToBattle(int floor) {
 	switch (floor) {
 	case 1:
-		Map1[3] = 1;break;
+		Map1[(int)Map1.size()-2] = 1;break;
 	case 2:
-		Map2[4] = 1;break;
+		Map2[(int)Map2.size()-2] = 1;break;
 	case 3:
-		Map3[5] = 1;break;
+		Map3[(int)Map3.size()-2] = 1;break;
 	default:break;
 	}
 }
@@ -102,17 +102,17 @@ void UpdateMap(int floor, int step) {
 	Maptype.clear();
 	switch (floor) {
 	case 1:
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 6; i++) {
 			Maptype.push_back(Map1[i]);
 		}
 		break;
 	case 2:
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 7; i++) {
 			Maptype.push_back(Map2[i]);
 		}
 		break;
 	case 3:
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 8; i++) {
 			Maptype.push_back(Map3[i]);
 		}
 		break;
@@ -478,12 +478,44 @@ void PrintEventGround(int Type) {
 int MydataWhenBattle[9] = { 0 };
 int EnemydataWhenBattle[7] = { 0 };
 void PrintMyCharacterStatus() {
+	RuneDevelopment.clear();
+	if (RuneNow->GetName() == "死仇") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "A", "Special:死仇", 0.3));
+		RuneDevelopment.push_back(make_shared<Object>(0, "E", "A", "Special:死仇", 0.3));
+	}
+	else if (RuneNow->GetName() == "瘟疫") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "A", "Special:瘟疫", -0.2));
+		RuneDevelopment.push_back(make_shared<Object>(0, "E", "A", "Special:瘟疫", -0.2));
+	}
+	else if (RuneNow->GetName() == "崩溃") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "D", "Special:崩溃", -0.3));
+		RuneDevelopment.push_back(make_shared<Object>(0, "E", "D", "Special:崩溃", -0.3));
+	}
+	else if (RuneNow->GetName() == "狂热") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "IE", "Special:狂热", 2));
+		RuneDevelopment.push_back(make_shared<Object>(0, "E", "IE", "Special:狂热", 2));
+	}
+	else if (RuneNow->GetName() == "迷雾") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "SC", "Special:迷雾", 2));
+	}
+	else if (RuneNow->GetName() == "贪婪") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "E", "A", "Special:贪婪", 0.2));
+	}
+	else if (RuneNow->GetName() == "救赎") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "D", "Special:救赎", -0.3));
+	}
+	else if (RuneNow->GetName() == "希望") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "A", "Special:希望", 0.3));
+	}
+	else if (RuneNow->GetName() == "绝望") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "A", "Special:绝望", -0.2));
+		RuneDevelopment.push_back(make_shared<Object>(0, "E", "A", "Special:绝望", 0.2));
+	}
 	//清屏
 	Refresh();
-
 	//重新计算当前属性
 	mycharacter.CalculateMyNum(RoundBuffGroup);
-
+	RuneDevelopment.clear();
 	cout << endl;
 	cout <<QING << "==================================================" << RESET << endl;
 	cout << QING << "                  【角色状态】" << RESET << endl;

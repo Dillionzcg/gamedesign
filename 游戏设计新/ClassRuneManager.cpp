@@ -19,7 +19,8 @@ string RuneManager::GetName() {
 
 void RuneManager::RandomChangeRune() {
     int num = rm.getnum(0, 9);
-    RuneNow = make_shared<RuneManager>(num);
+    RuneNow=make_shared<RuneManager>(9);
+    //RuneNow = make_shared<RuneManager>(num);
 }
 
 void RuneManager::ChangetoHope() {
@@ -29,3 +30,5 @@ void RuneManager::ChangetoHope() {
 void RuneManager::ChangetoDesperation() {
     RuneNow = make_shared<RuneManager>(11);
 }
+
+vector<shared_ptr<Object>> RuneDevelopment;

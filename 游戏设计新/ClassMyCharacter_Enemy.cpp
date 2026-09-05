@@ -10,7 +10,6 @@ void MyCharacter::CalculateMyObject() {
     BasicMHEdevelopment = 0;
     BasicSCdevelopment = 0;
     BasicENdevelopment = 0;
-
     for (auto& item : MyObjectGroup) {
         if (item->GetCamp() == "M") {
             string ObjectType=item->GetType();
@@ -44,6 +43,39 @@ void MyCharacter::CalculateMyObject() {
             }
         }
     }
+    for (auto& item : RuneDevelopment) {
+        if (item->GetCamp() == "M") {
+            string ObjectType = item->GetType();
+            double Num = item->GetBuffNum();
+            if (ObjectType == "A") {
+                BasicAttackDevelopment += Num;
+            }
+            else if (ObjectType == "D") {
+                BasicDefenseDevelopment += Num;
+            }
+            else if (ObjectType == "H") {
+                BasicHPDevelopment += Num;
+            }
+            else if (ObjectType == "HE") {
+                BasicHEdevelopment += Num;
+            }
+            else if (ObjectType == "IE") {
+                BasicIEdevelopment += Num;
+            }
+            else if (ObjectType == "IHE") {
+                BasicIHEdevelopment += Num;
+            }
+            else if (ObjectType == "MHE") {
+                BasicMHEdevelopment += Num;
+            }
+            else if (ObjectType == "SC") {
+                BasicSCdevelopment += Num;
+            }
+            else if (ObjectType == "EN") {
+                BasicENdevelopment += Num;
+            }
+        }
+    }
 }
 void MyCharacter::CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup) {
     CalculateMyRoundBuff(RoundBuffGroup);
@@ -56,7 +88,7 @@ void MyCharacter::CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBu
     CurrentAttack = BasicAttack * (1.0 + RoundAttackDevelopment);
     CurrentDefense = BasicDefense * (1.0 + RoundDefenseDevelopment);
     DefendingDeveloping = BasicDefendingDeveloping + RoundDefendingBuff;
-
+    if (CurrentDefense < 0) CurrentDefense = 0;
 	HealHP = 30 + BasicHEdevelopment;
 	InitialEnergy = 0 + BasicIEdevelopment;
 	InitialHeal = 0 + BasicIHEdevelopment;
@@ -219,6 +251,7 @@ void Enemy::CalculateMyObject() {
 	BasicCRdevelopment = 0;
 	BasicENdevelopment = 0;
 	BasicCHdevelopment = 0;
+	BasicIEdevelopment = 0;
 	for (auto& item : MyObjectGroup) {
 		if (item->GetCamp() == "E") {
 			string ObjectType = item->GetType();
@@ -241,8 +274,38 @@ void Enemy::CalculateMyObject() {
             else if (ObjectType == "CH") {
                 BasicCHdevelopment += Num;
             }
+            else if (ObjectType == "IE") {
+                BasicIEdevelopment += Num;
+            }
 		}
 	}
+    for (auto& item : RuneDevelopment) {
+        if (item->GetCamp() == "E") {
+            string ObjectType = item->GetType();
+            double Num = item->GetBuffNum();
+            if (ObjectType == "A") {
+                BasicAttackDevelopment += Num;
+            }
+            else if (ObjectType == "D") {
+                BasicDefenseDevelopment += Num;
+            }
+            else if (ObjectType == "H") {
+                BasicHPDevelopment += Num;
+            }
+            else if (ObjectType == "EN") {
+                BasicENdevelopment += Num;
+            }
+            else if (ObjectType == "CR") {
+                BasicCRdevelopment += Num;
+            }
+            else if (ObjectType == "CH") {
+                BasicCHdevelopment += Num;
+            }
+            else if (ObjectType == "IE") {
+                BasicIEdevelopment += Num;
+            }
+        }
+    }
 }
 void Enemy::CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup) {
     CalculateMyRoundBuff(RoundBuffGroup);
@@ -256,13 +319,20 @@ void Enemy::CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBuffGrou
     if (CurrentDefense <= 0) CurrentDefense = 0;
 
 	MaxEnergy = 6 + BasicENdevelopment;
-	CriticalRate = 20 + BasicCRdevelopment;
+	InitialEnergy = 0 + BasicIEdevelopment;
+	CriticalRate = 30 + BasicCRdevelopment;
 	CriticalHarm = 2 + BasicCHdevelopment;
+    if (InitialEnergy > MaxEnergy) {
+        InitialEnergy = MaxEnergy;
+    }
     if(CriticalRate<0) {
         CriticalRate = 0;
     }
     if (MustCritical) {
         CriticalRate = 100;
+    }
+    if (MustNotCriticalBool) {
+        CriticalRate = 0;
     }
 }
 
@@ -336,7 +406,13 @@ void Enemy::SkillMustCritical() {
     MustCritical = true;
 }
 
-void Enemy::Re_CriticalRate() { MustCritical = false; }
+void Enemy::MustNotCritical() {
+    MustNotCriticalBool = true;
+}
+void Enemy::Re_CriticalRate() {
+    MustCritical = false; 
+    MustNotCriticalBool = false;
+}
 
 void MyCharacter::AttackEnemy(std::shared_ptr<Enemy> enemy, std::vector<std::shared_ptr<RoundBuff>> RoundBuffGroup) {
     CalculateMyNum(RoundBuffGroup);

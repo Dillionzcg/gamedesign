@@ -101,7 +101,8 @@ void MyDefend(shared_ptr<Enemy> enemy, int round, bool ifskill) {
 	}
 	cout << YELLOW << "已使用防御，本回合防御力提升至" << mycharacter.GetDefendingDeveloping() << "倍。" << endl;
 }
-
+int NoneCriticalRound=0;
+bool IfRuneRedemptionUsed=false;
 //回合开始函数
 int RoundStart(int round, shared_ptr<Enemy> enemy) {
 	EnemyIfDizzy = false;
@@ -116,6 +117,15 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		if (!item->GetIfover()) {
 			RoundBuffGroup.push_back(item);
 		}
+	}
+	if (enemy->GetIfSkill()) {
+		enemy->SkillMustCritical();
+	}
+	else if (NoneCriticalRound > 0) {
+		enemy->MustNotCritical();
+	}
+	else {
+		enemy->Re_CriticalRate();
 	}
 	UpdateData(enemy);
 	if (round == 1) {
@@ -356,6 +366,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 
 			cout << RESET << "敌方发动了普通攻击！" << endl;
 			if (IfCritical) {
+				NoneCriticalRound = 2;
 				cout << RED_BOLD << "敌方造成了暴击伤害！攻击力提升至" << enemy->GetCriticalHarm() << "倍!" << endl;
 			}
 			cout << RED_DARK << "我方受到了 " << Harm << " 点伤害！" << endl;
@@ -379,6 +390,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			int Harm = MyHP0 - mycharacter.GetCurrentHP();
 			cout << RED_BOLD << "敌方发动了技能！" << endl;
 			if (IfCritical) {
+				NoneCriticalRound = 2;
 				cout << RED_BOLD << "敌方造成了暴击伤害！攻击力提升至" << enemy->GetCriticalHarm() << "倍!" << endl;
 			}
 			enemy->EnergyUp();
@@ -388,28 +400,84 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 				cout << BLUE << "我方回复了 " << mycharacter.GetHealAfterHarm() << " 点血量。" << endl;
 			}
 		}
+		if (NoneCriticalRound > 0) NoneCriticalRound--;
 		UpdateData(enemy);
 		if (mycharacter.GetIsAlive()) {
 			cout << HUI << "按回车以进入我方回合..." << endl;
 			return -1;
 		}
 		else {
-			IfBattleIsOver = true;
-			cout << PURPLE << "生命值归零。" << endl;
-			cout << "你迷失在符文秘境。" << endl;
-			cout << HUI << "按回车以返回标题界面..." << endl;
-			RoundBuffGroup.clear();
-			MyObjectGroup.clear();
-			SafeEnter();
-			return 0;
+			if (RuneNow->GetName() == "救赎" && IfRuneRedemptionUsed == false) {
+				IfBattleIsOver = true;
+				IfRuneRedemptionUsed = true;
+			    cout << PURPLE << "生命值归零。" << endl;
+				cout << "受符文//救赎//影响，你复活了一次。复活次数已耗尽。" << endl;
+				cout << HUI << "按回车继续..." << endl;
+				SafeEnter();
+				return 3;
+			}
+			else {
+				IfBattleIsOver = true;
+				cout << PURPLE << "生命值归零。" << endl;
+				cout << "你迷失在符文秘境。" << endl;
+				cout << HUI << "按回车以返回标题界面..." << endl;
+				RoundBuffGroup.clear();
+				MyObjectGroup.clear();
+				SafeEnter();
+				return 0;
+			}
+
 		}
 	}
 	else {
+		if (NoneCriticalRound > 0) NoneCriticalRound--;
 		PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 2);
 		cout << YELLOW << "敌方被晕眩，按回车进入我方回合..." << endl;
 		return -1;
 	}
-
+}
+void SettlementGainingObject() {
+	int RandomNumForObject = rm.getnum(1, 100);
+	vector<shared_ptr<Object>> ObjectPoolForRandom;
+	//随机选择藏品池，40%概率一级，40%概率二级，20%概率三级
+	if (RandomNumForObject <= 40) {
+		for (auto& item : ObjectPool1) {
+			if (!item->GetIfGotten()) {
+				ObjectPoolForRandom.push_back(item);
+			}
+		}
+		if (ObjectPoolForRandom.empty()) {
+			ObjectPoolForRandom.push_back(make_shared<Object>(1, "M", "HE", "Labung：每点治疗能量治疗量+10", 5));
+		}
+	}
+	else if (RandomNumForObject <= 80) {
+		for (auto& item : ObjectPool2) {
+			if (!item->GetIfGotten()) {
+				ObjectPoolForRandom.push_back(item);
+			}
+		}
+		if (ObjectPoolForRandom.empty()) {
+			ObjectPoolForRandom.push_back(make_shared<Object>(2, "M", "HE", "Wohl：每点治疗能量治疗量+20", 20));
+		}
+	}
+	else {
+		for (auto& item : ObjectPool3) {
+			if (!item->GetIfGotten()) {
+				ObjectPoolForRandom.push_back(item);
+			}
+		}
+		if (ObjectPoolForRandom.empty()) {
+			ObjectPoolForRandom.push_back(make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗量+30", 30));
+		}
+	}
+	int ObjectNum = rm.getnum(0, (int)ObjectPoolForRandom.size() - 1);
+	shared_ptr<Object> RandomObject = ObjectPoolForRandom[ObjectNum];
+	MyObjectGroup.push_back(RandomObject);
+	RandomObject->GainObject();
+	cout << QING;
+	cout << RandomObject->GetRarity() << " 级藏品:" << endl;
+	cout << GREEN_BRIGHT;
+	cout << RandomObject->GetDescribe() << endl;
 }
 void PostWarSettleMent(bool IfBoss) {
 	Refresh();
@@ -430,71 +498,18 @@ void PostWarSettleMent(bool IfBoss) {
 	};
 	cout << WHITE;
 	cout << "你从秘境中获得了藏品！" << endl;
-	int RandomNumForObject = rm.getnum(1, 100);
-	vector<shared_ptr<Object>> ObjectPoolForRandom;
-	//随机选择藏品池，40%概率一级，40%概率二级，20%概率三级
-	if (RandomNumForObject <= 40) {
-		for (auto& item : ObjectPool1) {
-			if (!item->GetIfGotten()) {
-				ObjectPoolForRandom.push_back(item);
-			}
-		}
-	}
-	else if (RandomNumForObject <= 80) {
-		for (auto& item : ObjectPool2) {
-			if (!item->GetIfGotten()) {
-				ObjectPoolForRandom.push_back(item);
-			}
-		}
-	}
-	else {
-		for (auto& item : ObjectPool3) {
-			if (!item->GetIfGotten()) {
-				ObjectPoolForRandom.push_back(item);
-			}
-		}
-	}
-	int ObjectNum = rm.getnum(0, (int)ObjectPoolForRandom.size() - 1);
-	shared_ptr<Object> RandomObject = ObjectPoolForRandom[ObjectNum];
-	MyObjectGroup.push_back(RandomObject);
-	RandomObject->GainObject();
-	cout << QING;
-	cout << RandomObject->GetRarity() << " 级藏品:" << endl;
-	cout << GREEN_BRIGHT;
-	cout << RandomObject->GetDescribe() << endl;
+	int SettlementGainingNum = 1;
 	if (IfBoss) {//如果是boss战斗，额外获得一个藏品
-		int RandomNumForObject_2 = rm.getnum(1, 100);
-		vector<shared_ptr<Object>> ObjectPoolForRandom_2;
-		//随机选择藏品池，40%概率一级，40%概率二级，20%概率三级
-		if (RandomNumForObject_2 <= 40) {
-			for (auto& item : ObjectPool1) {
-				if (!item->GetIfGotten()) {
-					ObjectPoolForRandom_2.push_back(item);
-				}
-			}
-		}
-		else if (RandomNumForObject_2 <= 80) {
-			for (auto& item : ObjectPool2) {
-				if (!item->GetIfGotten()) {
-					ObjectPoolForRandom_2.push_back(item);
-				}
-			}
-		}
-		else {
-			for (auto& item : ObjectPool3) {
-				if (!item->GetIfGotten()) {
-					ObjectPoolForRandom_2.push_back(item);
-				}
-			}
-		}
-		int ObjectNum_2 = rm.getnum(0, (int)ObjectPoolForRandom_2.size() - 1);
-		shared_ptr<Object> RandomObject_2 = ObjectPoolForRandom_2[ObjectNum_2];
-		MyObjectGroup.push_back(RandomObject_2);
-		RandomObject_2->GainObject();
-		cout << QING;
-		cout << RandomObject_2->GetRarity() << " 级藏品:" << endl;
-		cout << GREEN_BRIGHT;
-		cout << RandomObject_2->GetDescribe() << endl;
+		SettlementGainingNum++;
+	}
+	if (RuneNow->GetName() == "繁荣") {
+		SettlementGainingNum++;
+	}
+	else if (RuneNow->GetName() == "荒芜") {
+		SettlementGainingNum--;
+	}
+	for (int i = 0;i < SettlementGainingNum;i++) {
+		SettlementGainingObject();
 	}
 	cout << endl;
 	int coinGain = IfBoss ? 8 : 4;
@@ -531,6 +546,40 @@ bool BattleStart(int floor, bool isBoss, bool IfHard) {
 	RoundBuffGroup.clear();
 	InitialRoundBuffGroup.clear();
 	IfBattleIsOver = false;
+	NoneCriticalRound = 0;
+	RuneDevelopment.clear();
+	if (RuneNow->GetName() == "死仇") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "A", "Special:死仇", 0.3));
+		RuneDevelopment.push_back(make_shared<Object>(0, "E", "A", "Special:死仇", 0.3));
+	}
+	else if (RuneNow->GetName() == "瘟疫") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "A", "Special:瘟疫", -0.2));
+		RuneDevelopment.push_back(make_shared<Object>(0, "E", "A", "Special:瘟疫", -0.2));
+	}
+	else if (RuneNow->GetName() == "崩溃") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "D", "Special:崩溃", -0.3));
+		RuneDevelopment.push_back(make_shared<Object>(0, "E", "D", "Special:崩溃", -0.3));
+	}
+	else if (RuneNow->GetName() == "狂热") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "IE", "Special:狂热", 2));
+		RuneDevelopment.push_back(make_shared<Object>(0, "E", "IE", "Special:狂热", 2));
+	}
+	else if (RuneNow->GetName() == "迷雾") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "SC", "Special:迷雾", 2));
+	}
+	else if (RuneNow->GetName() == "贪婪") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "E", "A", "Special:贪婪", 0.2));
+	}
+	else if (RuneNow->GetName() == "救赎") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "D", "Special:救赎", -0.3));
+	}
+	else if (RuneNow->GetName() == "希望") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "A", "Special:希望", 0.3));
+	}
+	else if (RuneNow->GetName() == "绝望") {
+		RuneDevelopment.push_back(make_shared<Object>(0, "M", "A", "Special:绝望", -0.2));
+		RuneDevelopment.push_back(make_shared<Object>(0, "E", "A", "Special:绝望", 0.2));
+	}
 	erase_if(MyObjectGroup, [](auto& item) {return item->GetDescribe() == "Special_ECR";});
 	int round = 1;
 	shared_ptr<Enemy> enemy = make_shared<Enemy>();
@@ -540,7 +589,7 @@ bool BattleStart(int floor, bool isBoss, bool IfHard) {
 	int IfWin = -1;
 	while (1) {
 		IfWin = RoundStart(round, enemy);
-		if (IfWin == 1 || IfWin == 0) {
+		if (IfWin == 1 || IfWin == 0||IfWin==3) {
 			break;
 		}
 		round++;
@@ -548,9 +597,15 @@ bool BattleStart(int floor, bool isBoss, bool IfHard) {
 	}
 	if (IfWin == 1) {
 		PostWarSettleMent(isBoss);
+		RuneDevelopment.clear();
+		return true;
+	}
+	else if (IfWin == 3) {
+		RuneDevelopment.clear();
 		return true;
 	}
 	else {
+		RuneDevelopment.clear();
 		return false;
 	}
 }
@@ -568,6 +623,13 @@ int MapChoose(int floor, int step, int type) {
 	int MapChoice = 0;
 	while (1) {
 		DrawMap(floor, step);
+
+		if (RuneNow->GetName() == "希望") {
+			cout <<DARK_GOLD<< "受符文//希望//影响，获得了2枚金币" << endl;
+		}
+		else if	(RuneNow->GetName() == "贪婪") {
+			cout << DARK_GOLD << "受符文//贪婪//影响，获得了2枚金币" << endl;
+		}
 		switch (floor) {
 		case 1:cout << QING;break;
 		case 2:cout << YELLOW;break;
@@ -612,6 +674,13 @@ int MapChoose(int floor, int step, int type) {
 	}
 	return MapChoice;
 }
+void GainingCoinsWhenMoving() {
+	if (RuneNow->GetName() == "贪婪") {
+		mycharacter.GainCoin(2);
+	}else if (RuneNow->GetName() == "希望") {
+		mycharacter.GainCoin(2);
+	}
+}
 void MainProgress() {
 	while (1) {
 		//程序运行总循环，输了之后会回到这里
@@ -649,11 +718,15 @@ void MainProgress() {
 			//一局游戏循环
 			if (thisfloor != floor) {
 				RuneManager::RandomChangeRune();
+				if (RuneNow->GetName() == "救赎") {
+					IfRuneRedemptionUsed = false;
+				}
 			}
 			thisfloor = floor;
 			int IfSave = 0;
 			Ifwin = true;
 			UpdateMap(floor, step);
+			GainingCoinsWhenMoving();
 			switch (Maptype[step]) {
 			case 1://普通战斗
 				IfSave = MapChoose(floor, step, 1);
