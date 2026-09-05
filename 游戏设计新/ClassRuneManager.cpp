@@ -20,6 +20,7 @@ int RuneManager::GetNum() {
     return ID;
 }
 void RuneManager::RandomChangeRune() {
+    //int num=3;
     int num = rm.getnum(0, 9);
     RuneNow = make_shared<RuneManager>(num);
 }

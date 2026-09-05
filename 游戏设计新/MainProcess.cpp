@@ -130,6 +130,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 	UpdateData(enemy);
 	if (round == 1) {
 		mycharacter.SetCurrentNum();
+		enemy->SetCurrentNum();
 		UpdateData(enemy);
 	}
 	//我方回合

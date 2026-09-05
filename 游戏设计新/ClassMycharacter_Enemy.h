@@ -159,7 +159,7 @@ public:
     void SkillMustCritical();
     void MustNotCritical();
     void Re_CriticalRate();
-
+    void SetCurrentNum();
 
 private:
     int InitialMaxHP = 0;

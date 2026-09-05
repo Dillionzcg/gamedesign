@@ -142,7 +142,11 @@ void MyCharacter::SetCurrentNum() {
     CurrentEnergy = InitialEnergy;
     IsAlive = true;
 }
-
+void Enemy::SetCurrentNum() {
+    CurrentHP = CurrentMaxHP;
+    CurrentEnergy = InitialEnergy;
+    IsAlive = true;
+}
 int MyCharacter::GetCurrentHP() { return CurrentHP; }
 int MyCharacter::GetCurrentMaxHP() { return CurrentMaxHP; }
 int MyCharacter::GetCurrentAttack() { return CurrentAttack; }
