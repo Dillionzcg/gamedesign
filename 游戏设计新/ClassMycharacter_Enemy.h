@@ -188,7 +188,7 @@ private:
     int MaxEnergy = 6;
     int CriticalRate = 30;
     int CriticalRate_Tem = 0;
-    double CriticalHarm = 2.5;
+    double CriticalHarm = 2;
     bool IsAlive = true;
     bool MustCritical = false;
     bool MustNotCriticalBool = false;

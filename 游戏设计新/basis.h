@@ -13,6 +13,7 @@
 #include<chrono>
 #include<limits>
 #include<fstream>
+#include<cctype>
 
 using namespace std;
 
@@ -91,22 +92,40 @@ inline void WaitForSeconds(double Time) {
     int second = (int)(Time * 1000);
     this_thread::sleep_for(chrono::milliseconds(second));
 }
-
 inline int Safecin(const vector<int>& legal, bool ifblank) {
     string chose;
     forcheck.clear();
     for (auto v : legal) forcheck.push_back(to_string(v));
+
     while (true) {
-        getline(cin, chose);
-        if (ifblank && chose.empty()) return -1;
-        for (auto& item : forcheck) {
-            if (item == chose) return stoi(chose);
+        // 检查并重置输入流状态，防止流崩溃导致死循环卡死
+        if (!cin) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
-        cout << "请在";
-        for (auto& item : forcheck) cout << item << ",";
-        cout << "中选择一个数字:";
+
+        getline(cin, chose);
+
+        // 如果允许空白且输入为空，直接返回 -1
+        if (ifblank && chose.empty()) {
+            return -1;
+        }
+
+        // 检查输入是否在合法列表中
+        for (auto& item : forcheck) {
+            if (item == chose) {
+                return stoi(chose);
+            }
+        }
+
+        // 提示重新输入
+        cout << "请在 ";
+        for (size_t i = 0; i < forcheck.size(); ++i) {
+            cout << forcheck[i] << (i == forcheck.size() - 1 ? "" : ",");
+        }
+        cout << " 中选择一个数字:";
         if (ifblank) cout << "(或者回车以继续)";
-        cout << flush;
+        cout << endl << flush;
     }
 }
 

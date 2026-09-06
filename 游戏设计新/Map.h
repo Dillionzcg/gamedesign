@@ -10,9 +10,12 @@ void UpdateMap(int floor, int step);
 void DrawMap(int floor, int step);
 void ResetLastBarLength();
 void PrintBalttleGround(int* myData, int* enemyData, int round, int turn);
-void PrintEventGround(int Type);
 void PrintMyCharacterStatus();
 void ChangeShopToBattle(int floor);
+void Game_OpeningPrologue();
+void Game_GameOverPrologue();
+void Game_VictoryPrologue();
+void GameHelp();
 
 extern vector<vector<string>> Themap;
 extern vector<int> Maptype;

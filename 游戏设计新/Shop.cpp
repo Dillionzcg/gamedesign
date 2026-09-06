@@ -26,6 +26,10 @@ int Safecin_Shop(const vector<int>& legal, bool ifblank) {
 	for (auto v : legal) forcheck.push_back(to_string(v));
 	while (true) {
 		getline(cin, chose);
+		// 去除可能存在的 Windows 回车 '\r' 以及首尾空白，避免比较失败
+		chose.erase(remove(chose.begin(), chose.end(), '\r'), chose.end());
+		while (!chose.empty() && isspace((unsigned char)chose.front())) chose.erase(chose.begin());
+		while (!chose.empty() && isspace((unsigned char)chose.back())) chose.pop_back();
 		if (ifblank && chose.empty()) return -1;
 		for (auto& item : forcheck) {
 			if (item == chose) return stoi(chose);
@@ -303,7 +307,8 @@ void ShopStart() {
 			}
 			else {
 				while ((int)ObjectForSale.size() < 12) {
-					make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗量+30", 30);
+					auto fallbackObj = make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗量+30", 30);
+					ObjectForSale.push_back(fallbackObj);
 				}
 			}
 		}

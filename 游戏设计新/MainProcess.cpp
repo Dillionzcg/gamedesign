@@ -421,10 +421,11 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 				IfBattleIsOver = true;
 				cout << PURPLE << "生命值归零。" << endl;
 				cout << "你迷失在符文秘境。" << endl;
-				cout << HUI << "按回车以返回标题界面..." << endl;
+				cout << HUI << "按回车继续..." << endl;
 				RoundBuffGroup.clear();
 				MyObjectGroup.clear();
 				SafeEnter();
+				Game_GameOverPrologue();
 				return 0;
 			}
 
@@ -736,9 +737,11 @@ void MainProgress() {
 		while (1) {
 			ModeChoice = showTitle();
 			if (ModeChoice == 1) {
+				Game_OpeningPrologue();
 				IfHard = false;
 			}
 			else if (ModeChoice == 2) {
+				Game_OpeningPrologue();
 				IfHard = true;
 			}
 			if (ModeChoice != 3) {
@@ -913,6 +916,7 @@ void MainProgress() {
 
 			}
 			if (step >= Maptype.size() && floor == 3) {
+				Game_VictoryPrologue();
 				break;
 			}
 		}
