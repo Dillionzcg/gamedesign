@@ -40,15 +40,15 @@ shared_ptr<EnemyNumManager> Floor2_Event_S = make_shared<EnemyNumManager>(2000, 
 
 shared_ptr<EnemyNumManager> Floor2A_H = make_shared<EnemyNumManager>(1000, 600, 100);
 shared_ptr<EnemyNumManager> Floor2D_H = make_shared<EnemyNumManager>(1000, 600, 200);
-shared_ptr<EnemyNumManager> Floor2H_H = make_shared<EnemyNumManager>(1500, 500, 100);
+shared_ptr<EnemyNumManager> Floor2H_H = make_shared<EnemyNumManager>(1200, 500, 100);
 vector<shared_ptr<EnemyNumManager>> Floor2_H = { Floor2A_H, Floor2D_H, Floor2H_H };
 shared_ptr<EnemyNumManager> Boss2_H = make_shared<EnemyNumManager>(3000, 700, 200);
 shared_ptr<EnemyNumManager> Floor2_Event_H = make_shared<EnemyNumManager>(2000, 800, 100);
 
 // 定义并初始化第三层敌人数据
 shared_ptr<EnemyNumManager> Floor3A_S = make_shared<EnemyNumManager>(2000, 900, 200);
-shared_ptr<EnemyNumManager> Floor3D_S = make_shared<EnemyNumManager>(2000, 700, 200);
-shared_ptr<EnemyNumManager> Floor3H_S = make_shared<EnemyNumManager>(3000, 700, 300);
+shared_ptr<EnemyNumManager> Floor3D_S = make_shared<EnemyNumManager>(2000, 700, 300);
+shared_ptr<EnemyNumManager> Floor3H_S = make_shared<EnemyNumManager>(3000, 700, 200);
 vector<shared_ptr<EnemyNumManager>> Floor3_S = { Floor3A_S, Floor3D_S, Floor3H_S };
 shared_ptr<EnemyNumManager> Boss3_S = make_shared<EnemyNumManager>(5000, 1200, 300);
 shared_ptr<EnemyNumManager> Floor3_Event_S = make_shared<EnemyNumManager>(3000, 1000, 200);
