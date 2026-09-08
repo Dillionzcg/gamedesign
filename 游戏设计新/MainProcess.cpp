@@ -62,7 +62,7 @@ int UseSkill(shared_ptr<SkillManage> skill) {
 		return 2;
 	}
 	else if (name == "HA") {
-		AddRoundBuff("HA", 20, 3);
+		AddRoundBuff("HA", 0.1, 3);
 		return 2;
 	}
 	else if (name == "AH") {
@@ -282,7 +282,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			int EnemyHP0 = enemy->GetCurrentHP();
 			UpdateData(enemy);
 			mycharacter.SpecialAttackEnemy(enemy, RoundBuffGroup, true, 1.5);
-			int SkillHeal_14 = 40;
+			int SkillHeal_14 = mycharacter.GetCurrentMaxHP()*0.2;
 			mycharacter.Heal(SkillHeal_14);
 			UpdateData(enemy);
 			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 3);
