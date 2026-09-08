@@ -4,70 +4,70 @@ int showTitle() {
     Refresh();
     // ==================== БъЬт ====================
 
-    cout << QING;
+    cout << GOLD_BOLD;
     cout << "\n ===================================================================================================" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "         #         #              #                  ##                                  #         ";
-    cout << QING << "|" << endl;
+    cout << GOLD_BOLD << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "       ###       ###              ##                ##                                   ##        ";
-    cout << QING << "|" << endl;
+    cout << GOLD_BOLD << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "      ##        ##                  #             #  #         #      #              #########     ";
-    cout << QING << "|" << endl;
+    cout << GOLD_BOLD   << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "   #     ##   #    ##     ##################         #         ##     #               #     #      ";
-    cout << QING << "|" << endl;
+    cout << GOLD_BOLD << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "                              #         #        ########  #    #    #        #     ###########    ";
-    cout << QING << "|" << endl;
+    cout << GOLD_BOLD << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "      #           #            #       #            ##      #       #       #####    #########     ";
-    cout << QING << "|" << endl;
+    cout << GOLD_BOLD << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "    ##       ########           #    #             # ##     #      #          #      # ##### #     ";
-    cout << QING << "|" << endl;
+    cout << GOLD_BOLD << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "  ##  #           #               ##              #  #  #    #    #           #      #########     ";
-    cout << QING << "|" << endl;
+    cout << GOLD_BOLD << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "      #     ##    #                #             #   #     #  #  #  #      #######    #    #       ";
-    cout << QING << "|" << endl;
+    cout << GOLD_BOLD << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "      #      #    #              #  #           #    #   ##    ##   ##                #    #       ";
-    cout << QING << "|" << endl;
+    cout << GOLD_BOLD << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "      #           #            #      #              #   #    #  #     #             #      #   #  ";
-    cout << QING << "|" << endl;
+    cout << GOLD_BOLD << "|" << endl;
 
     cout << "|";
     cout << RED_BOLD;
     cout << "      #          ##         ##          ###          #     ##     ######          ###        ###   ";
-    cout << QING << "|" << endl;
+    cout << GOLD_BOLD << "|" << endl;
 
-    cout << QING;
+    cout << GOLD_BOLD;
     cout << " ===================================================================================================" << endl;
 
 
