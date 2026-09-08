@@ -500,7 +500,6 @@ void PostWarSettleMent(bool IfBoss) {
 		string rarity;
 	};
 	cout << WHITE;
-	cout << "你从秘境中获得了藏品！" << endl;
 	int SettlementGainingNum = 1;
 	if (IfBoss) {//如果是boss战斗，额外获得一个藏品
 		SettlementGainingNum++;
@@ -510,6 +509,15 @@ void PostWarSettleMent(bool IfBoss) {
 	}
 	else if (RuneNow->GetName() == "荒芜") {
 		SettlementGainingNum--;
+	}
+	if (SettlementGainingNum != 0) {
+		cout << "你从秘境中获得了藏品！" << endl;
+	}
+	else {
+		cout <<RED_BOLD<< "受符文//荒芜//影响，该次战斗不获得藏品。" << endl;
+	}
+	if (RuneNow->GetName() == "繁荣") {
+		cout <<RED_BOLD<< "受符文//繁荣//影响，该次战斗获得藏品+1。" << endl;
 	}
 	for (int i = 0;i < SettlementGainingNum;i++) {
 		SettlementGainingObject();

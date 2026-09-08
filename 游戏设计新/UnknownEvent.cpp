@@ -247,20 +247,8 @@ void RandomObject() {
 }
 
 bool Event_Sacrifice() {
-    static bool done[3] = { false, false, false };
+    bool done[3] = { false, false, false };
     Refresh();
-
-    // 检查是否三次都已献祭完
-    if (done[0] && done[1] && done[2]) {
-        cout << RED_DARK;
-        cout << "\n告解室的百叶格栅后已经空无一人，木制靠背椅上落满了陈旧的灰尘。" << endl;
-        cout << "三次符文契约的额度已经见底，沉重的隔板在机械卡榫的咬合声中彻底封死。" << endl;
-        cout << "你没有再作逗留，推开沉重的包铁木门离开了这间昏暗的小隔间。" << endl;
-        cout <<HUI<< "\n按回车继续..." << endl;
-        SafeEnter();
-        return true;
-    }
-
     // 循环献祭，直到玩家离开或三次完成
     while (true) {
         // 查当前是第几次（0开始）

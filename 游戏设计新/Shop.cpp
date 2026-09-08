@@ -307,7 +307,7 @@ void ShopStart() {
 			}
 			else {
 				while ((int)ObjectForSale.size() < 12) {
-					auto fallbackObj = make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗量+30", 30);
+					auto fallbackObj = make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗效果+10%", 0.1);
 					ObjectForSale.push_back(fallbackObj);
 				}
 			}
