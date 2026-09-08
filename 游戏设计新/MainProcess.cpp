@@ -751,6 +751,8 @@ void MainProgress() {
 				MyObjectGroup.clear();
 				Object::ResetObjectGroup();
 				int selectedBuff = enterbuff();
+				IfChangingShop = false;
+				IfRuneRedemptionUsed = false;
 				switch (selectedBuff) {
 				case 0:
 					mycharacter.InitialAttackDevelopment(0.1);
@@ -770,6 +772,8 @@ void MainProgress() {
 				InitialRoundBuffGroup.clear();
 				MyObjectGroup.clear();
 				Object::ResetObjectGroup();
+				IfChangingShop = false;
+				IfRuneRedemptionUsed = false;
 				ifstream inFile("gamedata.txt");
 				if (isFileEmpty(inFile)) {
 					cout << RED_BOLD << "  暂无存档" << endl;

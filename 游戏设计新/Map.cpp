@@ -888,9 +888,10 @@ void GameHelp() {
 	SafeEnter();
 	Refresh();
 	cout << BLUE << "战斗画面如下：" << endl;
-	cout << HUI;
+	cout << WHITE;
 	cout << endl;
 	PrintBalttleGround_Help();
+	cout << HUI;
 	cout << "请选择本回合的行动：" << endl;
 	cout << "1.攻击" << endl;
 	cout << "2.防御(不攻击且防御力提升至2倍)" << endl;
@@ -907,7 +908,7 @@ void GameHelp() {
 	cout << RED_WINE << "选择攻击或防御时可以同时选择为能量条或治疗条的其中之一充能。" << endl;
 	cout <<BLUE<< "能量条满时可以释放技能，技能在战斗开始前根据提供的敌人的属性在随机列表中选择。" << endl;
 	cout << "治疗条不为空时可以消耗所有治疗能量进行治疗，每点能量为自己回复一定生命值。" << endl;
-	cout << RED_WINE << "在对战斗玩法熟悉后，可以直接在输入界面同时输入该回合行动与充能方向，如输入\"12\"代表攻击且为治疗条充能" << endl;
+	cout << RED_BOLD << "\n在对战斗玩法熟悉后，可以直接在输入界面同时输入该回合行动与充能方向，如输入\"12\"代表攻击且为治疗条充能" << endl;
 	cout << BLUE << "\n在敌方回合中，敌方默认进行普通攻击，每次攻击均会为敌方能量条充能。" << endl;
 	cout << RED_WINE << "请注意，敌方攻击时有概率触发暴击，造成数倍伤害，基础暴击伤害为敌方攻击力的2倍。敌方的暴击率见战场下方的标识。基础暴击率为30%" << endl;
 	cout << RED_WINE << "敌方技能能量满之后将释放技能，释放技能时必定暴击。" << endl;
