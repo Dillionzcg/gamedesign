@@ -526,7 +526,7 @@ void PrintMyCharacterStatus() {
 	cout << QING << "  ────────────────────────────────────────────────" << RESET << endl;
 	cout << STAT_DEF << "    治疗能量上限      :  " << mycharacter.GetMaxHeal() << RESET << endl;
 	cout << STAT_DEF << "    初始治疗能量      :  " << mycharacter.GetInitialHeal() << RESET << endl;
-	cout <<BLUE_DARK << "    每点治疗能量恢复  :  " << mycharacter.GetHealHP() << " 点生命" << RESET << endl;
+	cout <<BLUE_DARK << "    每点治疗能量恢复  :  " << mycharacter.GetHealHP()*mycharacter.GetCurrentMaxHP() << " 点生命" << RESET << endl;
 
 	cout << endl;
 
@@ -909,7 +909,7 @@ void GameHelp() {
 	cout << BLUE;
 	cout << endl;
 	cout << "战斗为回合制。我方回合开始。" << endl;
-	cout << RED_WINE << "每次战斗开始时都会回复生命值至当前生命值的上限。" << endl;
+	cout << RED_WINE << "每次战斗开始时都会回复我方生命值至当前生命值的上限。" << endl;
 	cout <<QING<< "每回合可以选择攻击，防御，释放技能和治疗。具体效果如上所示。" << endl;
 	cout << RED_WINE << "选择攻击或防御时可以同时选择为能量条或治疗条的其中之一充能。" << endl;
 	cout <<BLUE<< "能量条满时可以释放技能，技能在战斗开始前根据提供的敌人的属性在随机列表中选择。" << endl;
