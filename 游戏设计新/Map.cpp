@@ -944,7 +944,7 @@ void Game_GameOverPrologue() {
 }
 
 // ---------- 游戏通关：破晓与荣光 ----------
-void Game_VictoryPrologue() {
+void Game_VictoryPrologue(bool IfHard) {
 	Refresh();
 	cout << RED_BOLD;
 	cout << "\n\"Wer den Abgrund bezwingt, bricht den Fluch der Eiseskaelte," << endl;
@@ -961,6 +961,15 @@ void Game_VictoryPrologue() {
 	cout << "那些曾经禁锢你前行的迷雾与锁链在阳光下化作点点流光，消散在呼啸而过的自由之风中。" << endl;
 	cout << "你用双脚丈量了这片被遗忘的绝望之地，并用手中的利刃为自己劈开了一条通往新生的道路。" << endl;
 	cout << endl;
+	cout << endl;
+	cout << RED_BOLD;
+	cout << "你通关了该游戏的";
+	if (IfHard) {
+		cout << "困难模式" << endl;
+	}
+	else {
+		cout << "普通模式" << endl;
+	}
 	cout << endl;
 	cout << BLUE << "感谢游玩" << endl;
 	cout << "\n制作：" << endl;

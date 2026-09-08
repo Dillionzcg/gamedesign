@@ -921,7 +921,7 @@ void MainProgress() {
 
 			}
 			if (step >= Maptype.size() && floor == 3) {
-				Game_VictoryPrologue();
+				Game_VictoryPrologue(IfHard);
 				break;
 			}
 		}
