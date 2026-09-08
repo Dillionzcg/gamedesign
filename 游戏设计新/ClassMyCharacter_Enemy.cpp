@@ -130,7 +130,7 @@ void MyCharacter::CalculateMyRoundBuff(std::vector<std::shared_ptr<RoundBuff>> R
                 RoundDefendingBuff += item->GetDevelopment();
             }
             else if (item->GetType() == "HA") {
-                HealAfterHarm += item->GetDevelopment();
+                HealAfterHarm += item->GetDevelopment()*mycharacter.GetCurrentMaxHP();
             }
         }
     }

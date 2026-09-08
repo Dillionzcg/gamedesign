@@ -893,9 +893,10 @@ void GameHelp() {
 	SafeEnter();
 	Refresh();
 	cout << BLUE << "战斗画面如下：" << endl;
-	cout << HUI;
+	cout << WHITE;
 	cout << endl;
 	PrintBalttleGround_Help();
+	cout << HUI;
 	cout << "请选择本回合的行动：" << endl;
 	cout << "1.攻击" << endl;
 	cout << "2.防御(不攻击且防御力提升至2倍)" << endl;
