@@ -11,14 +11,11 @@
 #include"UnknownEvent.h"
 #include"ClassEnemyNum.h"
 
-
-
 extern shared_ptr<SkillManage> MySkill;
 extern shared_ptr<SkillManage> EnemySkill;
 extern bool EnemyIfDizzy;
 extern bool IfBattleIsOver;
 extern vector<int> Maptype;
-
 
 // º¯ÊýÉùÃ÷
 void AddRoundBuff(string type, double buffnum, int round);

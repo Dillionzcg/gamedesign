@@ -626,7 +626,7 @@ void DrawMap_Help(int floor, int step) {
 	else {
 		Themap[7][step * 9 + 2] = "^";
 	}
-
+	cout << HUI;
 	switch (floor) {
 	case 1:
 		cout << "第一层 初始遗迹" << endl;
@@ -646,6 +646,7 @@ void DrawMap_Help(int floor, int step) {
 	}
 	cout << endl;
 	cout << endl;
+	cout << RED_DARK;
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 100; j++) {
 			cout << Themap[i][j] ;
@@ -655,6 +656,7 @@ void DrawMap_Help(int floor, int step) {
 	cout << endl;
 }
 void PrintBalttleGround_Help() {
+	cout << WHITE;
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 90; j++) {
 			Battlemap[i][j] = " ";
@@ -866,23 +868,26 @@ void PrintBalttleGround_Help() {
 }
 void GameHelp() {
 	Refresh();
-	cout << YELLOW << "将窗口全屏以获得最佳游戏体验" << endl;
 	cout << BLUE << "本游戏为基于终端的Roguelike类MUD游戏" << endl;
-	cout << "游戏地图如下：" << endl;
+	cout << "游戏地图如下：(例)" << endl;
 	cout << endl;
 	DrawMap_Help(2, 1);
-	cout << "当前符文为：" << endl;
+	cout << RED_DARK << "当前符文(例)为：" << endl;
 	cout << "//死仇：我方和敌方的攻击力+30%//" << endl;
 	PrintMaphelp();
 	cout << endl;
 	cout << BLUE;
+	cout <<HUI << "玩法介绍" << endl;
 	cout << "符文秘境一共有三层，通过三层后即为通关。" << endl;
 	cout << "中途在战斗过程中血量归零则游戏结束。" << endl;
+	cout << BLUE;
 	cout << "\n每层都会随机刷新出一个带有特殊增益减益效果的符文，符文效果仅作用于该层。一些事件可能可以改变该层符文。" << endl;
+	cout << RED_DARK;
 	cout << "\n战斗节点中可通过与敌人战斗，战斗胜利后获得升级，金币与随机藏品" << endl;
 	cout << "其中升级后生命值，攻击力与防御力均能得到提升。" << endl;
 	cout << "金币可以用与在商店购买不同稀有度的藏品" << endl;
 	cout << "藏品为获得后将作用于一整局的增益效果，可通过战斗掉落，商店购买与事件获得。" << endl;
+	cout << BLUE;
 	cout << "\n未知事件节点中，玩家可以通过碰到不同的事件，触发不同的增益减益效果，获取资源等。部分未知事件节点带有特殊效果。" << endl;
 	cout <<HUI<< "\n按回车以进入战斗界面说明..." << endl;
 	SafeEnter();
@@ -907,7 +912,7 @@ void GameHelp() {
 	cout << RED_WINE << "选择攻击或防御时可以同时选择为能量条或治疗条的其中之一充能。" << endl;
 	cout <<BLUE<< "能量条满时可以释放技能，技能在战斗开始前根据提供的敌人的属性在随机列表中选择。" << endl;
 	cout << "治疗条不为空时可以消耗所有治疗能量进行治疗，每点能量为自己回复一定生命值。" << endl;
-	cout << RED_WINE << "在对战斗玩法熟悉后，可以直接在输入界面同时输入该回合行动与充能方向，如输入\"12\"代表攻击且为治疗条充能" << endl;
+	cout << YELLOW << "\n在对战斗玩法熟悉后，可以直接在输入界面同时输入该回合行动与充能方向，如输入" << RED_BOLD << "\"12\"" << YELLOW << "代表攻击且为治疗条充能" << endl;
 	cout << BLUE << "\n在敌方回合中，敌方默认进行普通攻击，每次攻击均会为敌方能量条充能。" << endl;
 	cout << RED_WINE << "请注意，敌方攻击时有概率触发暴击，造成数倍伤害，基础暴击伤害为敌方攻击力的2倍。敌方的暴击率见战场下方的标识。基础暴击率为30%" << endl;
 	cout << RED_WINE << "敌方技能能量满之后将释放技能，释放技能时必定暴击。" << endl;
