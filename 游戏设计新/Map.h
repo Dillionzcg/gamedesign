@@ -14,7 +14,7 @@ void PrintMyCharacterStatus();
 void ChangeShopToBattle(int floor);
 void Game_OpeningPrologue();
 void Game_GameOverPrologue();
-void Game_VictoryPrologue();
+void Game_VictoryPrologue(bool IfHard);
 void GameHelp();
 
 extern vector<vector<string>> Themap;

@@ -107,8 +107,8 @@ bool IfRuneRedemptionUsed=false;
 int RoundStart(int round, shared_ptr<Enemy> enemy) {
 	EnemyIfDizzy = false;
 	if (round % 10 == 0) {
-		MyObjectGroup.push_back(make_shared<Object>(0, "E", "CR", "Special_ECR", 10));//每十回合敌方的暴击率提升10
-		cout << RED_DARK << "敌方的暴击率提升了10%！" << endl;
+		MyObjectGroup.push_back(make_shared<Object>(0, "E", "CR", "Special_ECR", 5));//每十回合敌方的暴击率提升5
+		cout << RED_DARK << "敌方的暴击率提升了5%！" << endl;
 	}
 	//检查该回合过期的buff
 	RoundBuffGroup.clear();
