@@ -16,7 +16,7 @@ int EnemyNumManager::getDefense() {
 }
 
 // 定义并初始化第一层敌人数据
-shared_ptr<EnemyNumManager> Floor1A_S = make_shared<EnemyNumManager>(200, 150, 20);
+shared_ptr<EnemyNumManager> Floor1A_S = make_shared<EnemyNumManager>(200, 120, 20);
 shared_ptr<EnemyNumManager> Floor1D_S = make_shared<EnemyNumManager>(200, 100, 50);
 shared_ptr<EnemyNumManager> Floor1H_S = make_shared<EnemyNumManager>(300, 100, 20);
 vector<shared_ptr<EnemyNumManager>> Floor1_S = { Floor1A_S, Floor1D_S, Floor1H_S };
