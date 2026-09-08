@@ -670,7 +670,7 @@ int MapChoose(int floor, int step, int type) {
 		case 2:cout << YELLOW;break;
 		case 3:cout << RED_WINE;break;
 		}
-		cout << "当前符文为：" << endl;
+		cout << RED_DARK << "当前符文为：" << endl;
 		cout << RuneNow->GetDescribe() << endl;
 		cout << endl;
 		PrintMaphelp();

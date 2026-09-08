@@ -4,70 +4,70 @@ int showTitle() {
     Refresh();
     // ==================== 标题 ====================
 
-    cout << GOLD_BOLD;
+    cout << DARK_GOLD;
     cout << "\n ===================================================================================================" << endl;
 
     cout << "|";
-    cout << RED_BOLD;
+    cout << RED_DARK;
     cout << "         #         #              #                  ##                                  #         ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << DARK_GOLD << "|" << endl;
 
     cout << "|";
-    cout << RED_BOLD;
+    cout << RED_DARK;
     cout << "       ###       ###              ##                ##                                   ##        ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << DARK_GOLD << "|" << endl;
 
     cout << "|";
-    cout << RED_BOLD;
+    cout << RED_DARK;
     cout << "      ##        ##                  #             #  #         #      #              #########     ";
-    cout << GOLD_BOLD   << "|" << endl;
+    cout << DARK_GOLD   << "|" << endl;
 
     cout << "|";
-    cout << RED_BOLD;
+    cout << RED_DARK;
     cout << "   #     ##   #    ##     ##################         #         ##     #               #     #      ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << DARK_GOLD << "|" << endl;
 
     cout << "|";
-    cout << RED_BOLD;
+    cout << RED_DARK;
     cout << "                              #         #        ########  #    #    #        #     ###########    ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << DARK_GOLD << "|" << endl;
 
     cout << "|";
-    cout << RED_BOLD;
+    cout << RED_DARK;
     cout << "      #           #            #       #            ##      #       #       #####    #########     ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << DARK_GOLD << "|" << endl;
 
     cout << "|";
-    cout << RED_BOLD;
+    cout << RED_DARK;
     cout << "    ##       ########           #    #             # ##     #      #          #      # ##### #     ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << DARK_GOLD << "|" << endl;
 
     cout << "|";
-    cout << RED_BOLD;
+    cout << RED_DARK;
     cout << "  ##  #           #               ##              #  #  #    #    #           #      #########     ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << DARK_GOLD << "|" << endl;
 
     cout << "|";
-    cout << RED_BOLD;
+    cout << RED_DARK;
     cout << "      #     ##    #                #             #   #     #  #  #  #      #######    #    #       ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << DARK_GOLD << "|" << endl;
 
     cout << "|";
-    cout << RED_BOLD;
+    cout << RED_DARK;
     cout << "      #      #    #              #  #           #    #   ##    ##   ##                #    #       ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << DARK_GOLD << "|" << endl;
 
     cout << "|";
-    cout << RED_BOLD;
+    cout << RED_DARK;
     cout << "      #           #            #      #              #   #    #  #     #             #      #   #  ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << DARK_GOLD << "|" << endl;
 
     cout << "|";
-    cout << RED_BOLD;
+    cout << RED_DARK;
     cout << "      #          ##         ##          ###          #     ##     ######          ###        ###   ";
-    cout << GOLD_BOLD << "|" << endl;
+    cout << DARK_GOLD << "|" << endl;
 
-    cout << GOLD_BOLD;
+    cout << DARK_GOLD;
     cout << " ===================================================================================================" << endl;
 
 
@@ -103,12 +103,12 @@ int showTitle() {
 
 
     cout << endl;
-    cout << endl;
-    cout << HUI;
-    cout << "  请选择游戏模式：";
+    cout  << endl;
     cout << WHITE;
+    cout << "  请选择游戏模式( " << RED_WINE << "将窗口全屏以获得最佳游戏体验" << WHITE << ")：";
     int TitleChoice;
     TitleChoice = Safecin({ 1, 2, 3 }, false);
+    cout << WHITE;
     return TitleChoice;
 
 }

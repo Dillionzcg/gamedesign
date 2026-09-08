@@ -1,6 +1,5 @@
 ﻿#include "ClassEnemyNum.h"
 
-
 // EnemyNumManager 成员函数实现
 EnemyNumManager::EnemyNumManager(int hp, int atk, int dfs) : HP(hp), Attack(atk), Defense(dfs) {}
 
