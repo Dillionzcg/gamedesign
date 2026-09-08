@@ -25,7 +25,7 @@ void UpdateData(shared_ptr<Enemy> enemy) {
 	MydataWhenBattle[5] = mycharacter.GetMaxHeal();
 	MydataWhenBattle[6] = mycharacter.GetCurrentAttack();
 	MydataWhenBattle[7] = mycharacter.GetCurrentDefense();
-	MydataWhenBattle[8] = mycharacter.GetHealHP();
+	MydataWhenBattle[8] = mycharacter.GetHealHP()*mycharacter.GetCurrentMaxHP();
 	//血量，血量上限，能量，能量上限，治疗条，治疗条上限，攻击，防御，每剂治疗量
 	EnemydataWhenBattle[0] = enemy->GetCurrentHP();
 	EnemydataWhenBattle[1] = enemy->GetCurrentMaxHP();
@@ -167,7 +167,7 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 		}
 		cout << "4.治疗";
 		cout << "(治疗条能量不低于2时将额外进行一次防御)";
-		cout << "(将消耗所有治疗条进行治疗，每点治疗条回复" << mycharacter.GetHealHP() << "点生命值)";
+		cout << "(将消耗所有治疗条进行治疗，每点治疗条回复" << mycharacter.GetHealHP()*mycharacter.GetCurrentMaxHP()<< "点生命值)";
 		cout << endl;
 		RoundChoice = Safecin(LegalRoundChoice, false);
 		if (RoundChoice == 1 || RoundChoice == 2 || RoundChoice == 11 || RoundChoice == 12 || RoundChoice == 21 || RoundChoice == 22) {
@@ -383,12 +383,13 @@ int RoundStart(int round, shared_ptr<Enemy> enemy) {
 			UpdateData(enemy);
 			IfCritical = enemy->AttackPlayer(mycharacter, RoundBuffGroup);
 			enemy->UsingEnergy();
+			int Harm = MyHP0 - mycharacter.GetCurrentHP();
 			if (mycharacter.GetIsAlive() && mycharacter.GetHealAfterHarm() != 0) {
 				mycharacter.Heal(mycharacter.GetHealAfterHarm());
 			}
 			UpdateData(enemy);
 			PrintBalttleGround(MydataWhenBattle, EnemydataWhenBattle, round, 2);
-			int Harm = MyHP0 - mycharacter.GetCurrentHP();
+
 			cout << RED_BOLD << "敌方发动了技能！" << endl;
 			if (IfCritical) {
 				NoneCriticalRound = 2;
@@ -449,7 +450,7 @@ void SettlementGainingObject() {
 			}
 		}
 		if (ObjectPoolForRandom.empty()) {
-			ObjectPoolForRandom.push_back(make_shared<Object>(1, "M", "HE", "Labung：每点治疗能量治疗量+10", 5));
+			ObjectPoolForRandom.push_back(make_shared<Object>(1, "M", "HE", "Labung：每点治疗能量治疗效果+3%", 0.03));
 		}
 	}
 	else if (RandomNumForObject <= 80) {
@@ -459,7 +460,7 @@ void SettlementGainingObject() {
 			}
 		}
 		if (ObjectPoolForRandom.empty()) {
-			ObjectPoolForRandom.push_back(make_shared<Object>(2, "M", "HE", "Wohl：每点治疗能量治疗量+20", 20));
+			ObjectPoolForRandom.push_back(make_shared<Object>(2, "M", "HE", "Wohl：每点治疗能量治疗效果+6%", 0.06));
 		}
 	}
 	else {
@@ -469,7 +470,7 @@ void SettlementGainingObject() {
 			}
 		}
 		if (ObjectPoolForRandom.empty()) {
-			ObjectPoolForRandom.push_back(make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗量+30", 30));
+			ObjectPoolForRandom.push_back(make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗效果+10%", 0.1));
 		}
 	}
 	int ObjectNum = rm.getnum(0, (int)ObjectPoolForRandom.size() - 1);

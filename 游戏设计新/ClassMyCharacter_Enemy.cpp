@@ -89,7 +89,7 @@ void MyCharacter::CalculateMyNum(std::vector<std::shared_ptr<RoundBuff>> RoundBu
     CurrentDefense = BasicDefense * (1.0 + RoundDefenseDevelopment);
     DefendingDeveloping = BasicDefendingDeveloping + RoundDefendingBuff;
     if (CurrentDefense < 0) CurrentDefense = 0;
-	HealHP = 30 + BasicHEdevelopment;
+	HealHP = 0.1 + BasicHEdevelopment;
 	InitialEnergy = 0 + BasicIEdevelopment;
 	InitialHeal = 0 + BasicIHEdevelopment;
 	MaxEnergy = 3 + BasicENdevelopment;
@@ -157,7 +157,7 @@ int MyCharacter::GetInitialEnergy() { return InitialEnergy; }
 int MyCharacter::GetCurrentHeal() { return CurrentHeal; }
 int MyCharacter::GetMaxHeal() { return MaxHeal; }
 int MyCharacter::GetInitialHeal() { return InitialHeal; }
-int MyCharacter::GetHealHP() { return HealHP; }
+double MyCharacter::GetHealHP() { return HealHP; }
 int MyCharacter::GetCoins() { return Coins; }
 int MyCharacter::GetLevel() { return Level; }
 int MyCharacter::GetInitialAttack() { return InitialAttack; }
@@ -196,7 +196,7 @@ void MyCharacter::UsingEnergy() { CurrentEnergy = 0; }
 void MyCharacter::UsingHeal() { CurrentHeal = 0; }
 
 void MyCharacter::Heal_UsingHeal() {
-    int heal = CurrentHeal * HealHP;
+    int heal = CurrentHeal * HealHP * CurrentMaxHP;
     if (CurrentHP + heal <= CurrentMaxHP) { CurrentHP += heal; }
     else { CurrentHP = CurrentMaxHP; }
     UsingHeal();

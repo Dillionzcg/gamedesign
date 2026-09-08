@@ -33,7 +33,7 @@ public:
     int GetCurrentHeal();
     int GetMaxHeal();
     int GetInitialHeal();
-    int GetHealHP();
+    double GetHealHP();
 
     int GetCoins();
     int GetLevel();
@@ -86,7 +86,7 @@ private:
     double BasicHPDevelopment = 0;
     double BasicAttackDevelopment = 0;
     double BasicDefenseDevelopment = 0;
-    int BasicHEdevelopment = 0;
+    double BasicHEdevelopment = 0;
     int BasicIEdevelopment = 0;
     int BasicIHEdevelopment = 0;
     int BasicMHEdevelopment = 0;
@@ -107,7 +107,7 @@ private:
     int CurrentHeal = 0;
     int InitialHeal = 0;
     int MaxHeal = 3;
-    int HealHP = 30;
+    double HealHP = 0.1;
     int Coins = 0;
     int Level = 1;
     bool IsAlive = true;

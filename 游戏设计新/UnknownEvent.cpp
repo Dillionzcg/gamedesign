@@ -213,7 +213,7 @@ void RandomObject() {
             }
         }
         if (ObjectPoolForRandom.empty()) {
-            ObjectPoolForRandom.push_back(make_shared<Object>(1, "M", "HE", "Labung：每点治疗能量治疗量+10", 5));
+            ObjectPoolForRandom.push_back(make_shared<Object>(1, "M", "HE", "Labung：每点治疗能量治疗效果+3%", 0.03));
         }
     }
     else if (RandomNumForObject <= 60) {
@@ -223,7 +223,7 @@ void RandomObject() {
             }
         }
         if (ObjectPoolForRandom.empty()) {
-            ObjectPoolForRandom.push_back(make_shared<Object>(2, "M", "HE", "Wohl：每点治疗能量治疗量+20", 20));
+            ObjectPoolForRandom.push_back(make_shared<Object>(2, "M", "HE", "Wohl：每点治疗能量治疗效果+6%", 0.06));
         }
     }
     else {
@@ -233,7 +233,7 @@ void RandomObject() {
             }
         }
         if (ObjectPoolForRandom.empty()) {
-            ObjectPoolForRandom.push_back(make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗量+30", 30));
+            ObjectPoolForRandom.push_back(make_shared<Object>(3, "M", "HE", "Wunder：每点治疗能量治疗效果+10%", 0.1));
         }
     }
     int ObjectNum = rm.getnum(0, (int)ObjectPoolForRandom.size() - 1);
