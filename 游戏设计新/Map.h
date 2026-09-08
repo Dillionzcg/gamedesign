@@ -16,6 +16,15 @@ void Game_OpeningPrologue();
 void Game_GameOverPrologue();
 void Game_VictoryPrologue(bool IfHard);
 void GameHelp();
+void FirstFloor_ShopPrologue();
+void SecondFloor_ShopPrologue();
+void ThirdFloor_ShopPrologue();
+void FirstFloor_UniqueBattlePrologue();
+void FirstFloor_BossPrologue();
+void SecondFloor_BossPrologue();
+void SecondFloor_UniqueBattlePrologue();
+void ThirdFloor_UniqueBattlePrologue();
+void ThirdFloor_BossPrologue();
 
 extern vector<vector<string>> Themap;
 extern vector<int> Maptype;

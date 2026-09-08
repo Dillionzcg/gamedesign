@@ -121,7 +121,7 @@ bool Event_BossChallenge(int floor, bool IfHard) {
         cout << endl;
         cout << "（回避战斗者保全了生命，却也失去了道途。）" << endl;
         cout << endl;
-        cout << "你向后退去，靴底踩碎了一地枯萎的符文。" << endl;
+        cout << "你向后退去，靴底踩碎了一地枯萎的野草。" << endl;
         cout << "石棺在无声中轰然阖上，将所有的窥探隔绝于虚空之外。\n" << endl;
         cout << "残垣间的微光逐渐黯淡，唯有深渊的冷风在低声呜咽。\n" << endl;
         cout << "你转过身，将那抹古老的杀意留在了黑暗中。" << endl;

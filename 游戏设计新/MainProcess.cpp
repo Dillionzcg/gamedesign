@@ -519,6 +519,9 @@ void PostWarSettleMent(bool IfBoss) {
 	if (RuneNow->GetName() == "繁荣") {
 		cout <<RED_BOLD<< "受符文//繁荣//影响，该次战斗获得藏品+1。" << endl;
 	}
+	if (RuneNow->GetName() == "荒芜"&&SettlementGainingNum!=0) {
+		cout << RED_BOLD << "受符文//荒芜//影响，该次战斗获得藏品-1。" << endl;
+	}
 	for (int i = 0;i < SettlementGainingNum;i++) {
 		SettlementGainingObject();
 	}
@@ -879,12 +882,38 @@ void MainProgress() {
 					SaveData(floor, step, IfHard);
 					break;
 				}
+				switch (floor) {
+				case 1:
+					FirstFloor_UniqueBattlePrologue();
+					break;
+				case 2:
+					SecondFloor_UniqueBattlePrologue();
+					break;
+				case 3:
+					ThirdFloor_UniqueBattlePrologue();
+					break;
+				default:
+					break;
+				}
 				Ifwin = BattleStart(floor, false, IfHard);
 				break;
 			case 4://boss战斗
 				IfSave = MapChoose(floor, step, 4);
 				if (IfSave == 9) {
 					SaveData(floor, step, IfHard);
+					break;
+				}
+				switch (floor) {
+				case 1:
+					FirstFloor_BossPrologue();
+					break;
+				case 2:
+					SecondFloor_BossPrologue();
+					break;
+				case 3:
+					ThirdFloor_BossPrologue();
+					break;
+				default:
 					break;
 				}
 				Ifwin = BattleStart(floor, true, IfHard);
@@ -903,6 +932,19 @@ void MainProgress() {
 					SaveData(floor, step, IfHard);
 					break;
 				}
+				switch (floor) {
+				case 1:
+					FirstFloor_ShopPrologue();
+					break;
+				case 2:
+					SecondFloor_ShopPrologue();
+					break;
+				case 3:
+					ThirdFloor_ShopPrologue();
+					break;
+				default:
+					break;
+				}
 				ShopStart();
 				break;
 			case 5://双节点
@@ -912,6 +954,19 @@ void MainProgress() {
 					break;
 				}
 				if (IfSave == 1) {
+					switch (floor) {
+					case 1:
+						FirstFloor_UniqueBattlePrologue();
+						break;
+					case 2:
+						SecondFloor_UniqueBattlePrologue();
+						break;
+					case 3:
+						ThirdFloor_UniqueBattlePrologue();
+						break;
+					default:
+						break;
+					}
 					Ifwin = BattleStart(floor, false, IfHard);
 				}
 				else if (IfSave == 2) {
